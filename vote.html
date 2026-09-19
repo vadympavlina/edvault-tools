@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234F6BF4'/%3E%3Cpath d='M16 6l2.5 6.5L25 14l-5.5 5 1.5 7L16 22.5 10.5 26l1.5-7L6 14l6.5-1.5z' fill='white'/%3E%3C/svg%3E">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Голосування за роботи · Edvault</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f0f2f5;
+    --surface: #ffffff;
+    --surface2: #f7f8fa;
+    --border: #e2e5ea;
+    --border2: #d0d5dd;
+    --accent: #4F6BF4;
+    --accent-light: #eef0fe;
+    --accent-hover: #3d57e0;
+    --danger: #ef4444;
+    --danger-light: #fef2f2;
+    --gold: #f5b942;
+    --silver: #b6bfcc;
+    --bronze: #d08a52;
+    --text: #1a1d23;
+    --text2: #4b5563;
+    --muted: #9ca3af;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06);
+    --shadow-lg: 0 24px 60px rgba(0,0,0,.14), 0 4px 16px rgba(0,0,0,.08);
+  }
+
+  html, body { height: 100%; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font-family: inherit; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 6px; }
+
+  /* =========== TOPBAR =========== */
+  .topbar {
+    height: 64px; background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; padding: 0 28px;
+    position: sticky; top: 0; z-index: 30;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .topbar-logo {
+    width: 36px; height: 36px; border-radius: 10px; background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(79,107,244,.3); flex-shrink: 0;
+  }
+  .topbar-logo svg { width: 18px; height: 18px; }
+  .topbar-text h1 { font-size: 16px; font-weight: 700; letter-spacing: -.3px; }
+  .topbar-text p { font-size: 11.5px; color: var(--muted); font-weight: 500; margin-top: 1px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px;
+    border-radius: 11px; border: none; font-size: 13.5px; font-weight: 700;
+    cursor: pointer; transition: all .13s ease; white-space: nowrap;
+  }
+  .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 2px 10px rgba(79,107,244,.28); }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary:disabled { background: var(--border2); color: var(--muted); box-shadow: none; cursor: not-allowed; }
+  .btn-ghost { background: var(--surface); color: var(--text2); border: 1.5px solid var(--border2); }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+  .btn-danger-ghost { background: var(--surface); color: var(--danger); border: 1.5px solid #fecaca; }
+  .btn-danger-ghost:hover { background: var(--danger-light); }
+  .btn-lg { padding: 13px 26px; font-size: 14.5px; border-radius: 13px; }
+
+  /* =========== MAIN / MANAGE SCREEN =========== */
+  .main { max-width: 1180px; width: 100%; margin: 0 auto; padding: 32px 28px 90px; }
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+    gap: 14px; margin-bottom: 26px;
+  }
+  .page-header h2 { font-size: 23px; font-weight: 800; letter-spacing: -.4px; }
+  .page-header p { font-size: 13px; color: var(--muted); margin-top: 3px; font-weight: 500; }
+  .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .works-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px;
+  }
+  .work-card {
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: 16px;
+    overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;
+  }
+  .work-thumb {
+    width: 100%; aspect-ratio: 4/3; background: var(--surface2); position: relative;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .work-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .work-thumb .no-photo { color: var(--muted); font-size: 12px; font-weight: 600; }
+  .work-thumb .no-photo svg { width: 28px; height: 28px; margin-bottom: 6px; }
+  .photo-count-badge {
+    position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,.6); color: #fff;
+    font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+    backdrop-filter: blur(2px);
+  }
+  .work-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .work-name { font-size: 14.5px; font-weight: 800; letter-spacing: -.2px; }
+  .work-desc { font-size: 12px; color: var(--text2); line-height: 1.5; flex: 1;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .work-actions { display: flex; gap: 8px; padding: 0 16px 14px; }
+  .work-actions .icon-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px; border-radius: 9px; border: 1.5px solid var(--border);
+    background: var(--surface); color: var(--text2); font-size: 12px; font-weight: 700;
+    cursor: pointer; transition: all .13s ease;
+  }
+  .work-actions .icon-btn svg { width: 13px; height: 13px; }
+  .work-actions .icon-btn:hover { background: var(--surface2); border-color: var(--border2); color: var(--text); }
+  .work-actions .icon-btn.danger:hover { background: var(--danger-light); border-color: #fecaca; color: var(--danger); }
+
+  .empty-state { text-align: center; padding: 90px 20px; }
+  .empty-state .icon-lg { font-size: 46px; margin-bottom: 14px; }
+  .empty-state h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .empty-state p { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+
+  .work-thumb { cursor: zoom-in; }
+
+  /* =========== LIGHTBOX (zoom фото в списку робіт) =========== */
+  .lightbox-overlay {
+    position: fixed; inset: 0; background: rgba(10,11,20,.88); display: none;
+    align-items: center; justify-content: center; z-index: 300; padding: 40px;
+    backdrop-filter: blur(3px);
+  }
+  .lightbox-overlay.visible { display: flex; }
+  .lightbox-img-wrap { position: relative; max-width: 90vw; max-height: 84vh; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .lightbox-img-wrap img { max-width: 90vw; max-height: 74vh; border-radius: 12px; box-shadow: var(--shadow-lg); object-fit: contain; }
+  .lightbox-close {
+    position: absolute; top: -46px; right: 0; width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(255,255,255,.1); border: 1.5px solid rgba(255,255,255,.2); color: #fff;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .lightbox-close:hover { background: rgba(255,255,255,.2); }
+  .lightbox-close svg { width: 16px; height: 16px; }
+  .lightbox-nav {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .lightbox-arrow {
+    width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.1);
+    border: 1.5px solid rgba(255,255,255,.2); color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: background .13s ease;
+  }
+  .lightbox-arrow:hover { background: rgba(255,255,255,.2); }
+  .lightbox-arrow:disabled { opacity: .3; cursor: not-allowed; }
+  .lightbox-arrow svg { width: 16px; height: 16px; }
+  .lightbox-counter { color: rgba(255,255,255,.6); font-size: 12.5px; font-weight: 700; font-family: 'JetBrains Mono', monospace; min-width: 46px; text-align: center; }
+
+  /* =========== MODAL (add/edit work) =========== */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(20,22,28,.5); display: none;
+    align-items: flex-start; justify-content: center; padding: 40px 20px; z-index: 100;
+    overflow-y: auto; backdrop-filter: blur(2px);
+  }
+  .modal-overlay.visible { display: flex; }
+  .modal {
+    background: var(--surface); border-radius: 20px; box-shadow: var(--shadow-lg);
+    max-width: 560px; width: 100%; overflow: hidden;
+  }
+  .modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+  }
+  .modal-head h3 { font-size: 16px; font-weight: 800; }
+  .modal-close {
+    width: 30px; height: 30px; border-radius: 8px; border: none; background: var(--surface2);
+    color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: var(--border); color: var(--text); }
+  .modal-close svg { width: 14px; height: 14px; }
+  .modal-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 16px; max-height: 72vh; overflow-y: auto; }
+  .modal-foot {
+    display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+    padding: 16px 24px; border-top: 1px solid var(--border); background: var(--surface2);
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; font-weight: 700; color: var(--text2); }
+  .field input, .field textarea {
+    font-family: inherit; font-size: 13.5px; color: var(--text);
+    border: 1.5px solid var(--border2); border-radius: 10px; padding: 9px 12px;
+    outline: none; transition: border-color .13s ease; background: var(--surface); width: 100%;
+  }
+  .field input:focus, .field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,107,244,.1); }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .form-error {
+    font-size: 12px; font-weight: 600; color: var(--danger); background: var(--danger-light);
+    border: 1px solid #fecaca; border-radius: 9px; padding: 8px 12px; display: none;
+  }
+  .form-error.visible { display: block; }
+
+  .photo-dropzone {
+    border: 1.5px dashed var(--border2); border-radius: 14px; padding: 22px;
+    text-align: center; cursor: pointer; transition: all .13s ease; background: var(--surface2);
+  }
+  .photo-dropzone:hover, .photo-dropzone.dragover { border-color: var(--accent); background: var(--accent-light); }
+  .photo-dropzone svg { width: 26px; height: 26px; color: var(--muted); margin-bottom: 8px; }
+  .photo-dropzone p { font-size: 12.5px; font-weight: 600; color: var(--text2); }
+  .photo-dropzone .kbd {
+    display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+    background: var(--surface); border: 1px solid var(--border2); border-radius: 5px;
+    padding: 1px 6px; margin: 0 2px;
+  }
+
+  .photo-thumbs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .photo-thumb { position: relative; width: 68px; height: 68px; border-radius: 10px; overflow: hidden; border: 1.5px solid var(--border); }
+  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-thumb .rm-photo {
+    position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(0,0,0,.6); color: #fff; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; line-height: 1;
+  }
+  .photo-thumb .rm-photo:hover { background: var(--danger); }
+
+  /* =========== FULLSCREEN STAGE (voting / countdown / tie / results) =========== */
+  .stage {
+    position: fixed; inset: 0; z-index: 500; display: none;
+    background: radial-gradient(circle at 50% 0%, #232842 0%, #14162a 55%, #0c0d1a 100%);
+    color: #fff; overflow: hidden;
+  }
+  .stage.visible { display: flex; flex-direction: column; }
+  .stage-particles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .stage-particle {
+    position: absolute; border-radius: 50%; background: rgba(255,255,255,.35);
+    animation: float-up linear infinite;
+  }
+  @keyframes float-up {
+    from { transform: translateY(10vh) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    to { transform: translateY(-110vh) translateX(var(--drift, 0px)); opacity: 0; }
+  }
+
+  /* ── voting stage ── */
+  .vstage-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 28px; position: relative; z-index: 2; flex-wrap: wrap; gap: 12px;
+  }
+  .vstage-back {
+    display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.08);
+    border: 1.5px solid rgba(255,255,255,.14); color: #fff; padding: 9px 16px;
+    border-radius: 11px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .13s ease;
+  }
+  .vstage-back:hover { background: rgba(255,255,255,.15); }
+  .vstage-back svg { width: 15px; height: 15px; }
+  .vstage-title { text-align: center; }
+  .vstage-title h2 { font-size: 19px; font-weight: 800; letter-spacing: -.3px; }
+  .vstage-title p { font-size: 12px; color: rgba(255,255,255,.55); font-weight: 600; margin-top: 2px; }
+  .vstage-stop {
+    display: inline-flex; align-items: center; gap: 8px; background: var(--accent);
+    border: none; color: #fff; padding: 11px 22px; border-radius: 12px;
+    font-size: 13.5px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 18px rgba(79,107,244,.4);
+    transition: all .13s ease;
+  }
+  .vstage-stop:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .vstage-stop svg { width: 15px; height: 15px; }
+
+  .vstage-total {
+    display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,.07);
+    border: 1.5px solid rgba(255,255,255,.14); padding: 9px 16px; border-radius: 12px;
+  }
+  .vstage-total svg { width: 15px; height: 15px; color: rgba(255,255,255,.55); }
+  .vstage-total b { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; }
+  .vstage-total span { font-size: 11.5px; color: rgba(255,255,255,.55); font-weight: 600; }
+
+  .vstage-grid {
+    flex: 1; overflow-y: auto; padding: 10px 28px 40px; position: relative; z-index: 2;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px;
+    align-content: start;
+  }
+  .vote-card {
+    background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.1);
+    border-radius: 18px; overflow: hidden; cursor: pointer; user-select: none;
+    transition: transform .1s ease, border-color .15s ease, background .15s ease;
+    display: flex; flex-direction: column; position: relative;
+  }
+  .vote-card:hover { border-color: rgba(255,255,255,.24); background: rgba(255,255,255,.09); }
+  .vote-card:active { transform: scale(.97); }
+  .vote-card.bumped { animation: card-bump .28s ease; }
+  @keyframes card-bump { 0% { transform: scale(1); } 40% { transform: scale(1.045); } 100% { transform: scale(1); } }
+  .vote-card.leader { border-color: rgba(245,185,66,.65); box-shadow: 0 0 0 2px rgba(245,185,66,.25), 0 8px 24px rgba(245,185,66,.15); }
+  .vote-card.leader:hover { border-color: rgba(245,185,66,.8); }
+  .vote-card.lead-flash { animation: lead-flash .7s ease; }
+  @keyframes lead-flash {
+    0% { box-shadow: 0 0 0 0 rgba(245,185,66,.7); }
+    50% { box-shadow: 0 0 0 14px rgba(245,185,66,0); }
+    100% { box-shadow: 0 0 0 0 rgba(245,185,66,0); }
+  }
+  .leader-badge {
+    position: absolute; top: 10px; left: 10px; z-index: 3;
+    display: flex; align-items: center; gap: 4px; background: var(--gold); color: #4a3300;
+    font-size: 10px; font-weight: 800; padding: 4px 9px 4px 7px; border-radius: 7px;
+    letter-spacing: .02em; text-transform: uppercase; box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+  .leader-badge svg { width: 11px; height: 11px; }
+  .vote-card .vc-photo { width: 100%; aspect-ratio: 4/3; background: rgba(255,255,255,.04); overflow: hidden; position: relative; }
+  .vote-card .vc-photo .vc-photo-track { display: flex; width: 100%; height: 100%; transition: transform .4s cubic-bezier(.16,1,.3,1); }
+  .vote-card .vc-photo .vc-photo-track img { width: 100%; height: 100%; object-fit: cover; display: block; flex-shrink: 0; }
+  .vote-card .vc-photo .no-photo { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color: rgba(255,255,255,.3); font-size: 30px; font-weight: 800; }
+  .vc-photo-dots {
+    position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 3;
+    display: flex; gap: 4px; background: rgba(0,0,0,.35); padding: 4px 6px; border-radius: 20px;
+  }
+  .vc-photo-dots span { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.4); transition: background .15s ease; }
+  .vc-photo-dots span.active { background: #fff; }
+  .vote-card .vc-body { padding: 12px 14px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .vote-card .vc-name { font-size: 13.5px; font-weight: 700; letter-spacing: -.1px; }
+  .vote-card .vc-count {
+    font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 800; color: var(--accent-light);
+    min-width: 30px; text-align: right;
+  }
+  .vote-card .vc-minus {
+    position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 9px;
+    background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.15); color: #fff;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 3;
+    font-size: 17px; font-weight: 700; line-height: 1; transition: background .13s ease;
+  }
+  .vote-card .vc-minus:hover { background: rgba(239,68,68,.7); }
+  .vote-card .vc-minus:disabled { opacity: .3; cursor: not-allowed; }
+  .vote-card .vc-tap-hint {
+    position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,.4); color: rgba(255,255,255,.75);
+    font-size: 9.5px; font-weight: 700; padding: 3px 7px; border-radius: 6px; letter-spacing: .02em;
+  }
+
+  /* ── countdown ── */
+  .countdown-stage { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; }
+  .countdown-num {
+    font-size: 220px; font-weight: 900; line-height: 1; letter-spacing: -.05em;
+    background: linear-gradient(180deg, #fff, #b8c2ff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: countdown-pop .82s cubic-bezier(.16,1,.3,1);
+    text-shadow: 0 0 60px rgba(79,107,244,.5);
+  }
+  @keyframes countdown-pop {
+    0% { transform: scale(.3); opacity: 0; }
+    35% { transform: scale(1.15); opacity: 1; }
+    60% { transform: scale(1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* ── tie screen ── */
+  .tie-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; position: relative; z-index: 2; padding: 30px; text-align: center; }
+  .tie-badge {
+    display: inline-flex; align-items: center; gap: 8px; background: rgba(245,158,11,.14);
+    border: 1.5px solid rgba(245,158,11,.4); color: #fbbf24; padding: 8px 18px;
+    border-radius: 30px; font-size: 12.5px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase;
+  }
+  .tie-stage h2 { font-size: 30px; font-weight: 900; letter-spacing: -.5px; }
+  .tie-stage > p { font-size: 14px; color: rgba(255,255,255,.6); max-width: 440px; }
+  .tie-list { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+  .tie-item {
+    width: 160px; background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.14);
+    border-radius: 16px; overflow: hidden;
+  }
+  .tie-item .ti-photo { width: 100%; aspect-ratio: 4/3; background: rgba(255,255,255,.05); }
+  .tie-item .ti-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .tie-item .ti-body { padding: 10px 12px; }
+  .tie-item .ti-name { font-size: 13px; font-weight: 700; }
+  .tie-item .ti-votes { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: rgba(255,255,255,.55); margin-top: 2px; }
+
+  /* ── results / podium ── */
+  .results-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; position: relative; z-index: 2; padding: 40px 30px 0; }
+  .results-title { text-align: center; margin-bottom: 34px; }
+  .results-title h2 { font-size: 26px; font-weight: 900; letter-spacing: -.4px; }
+  .results-title p { font-size: 13px; color: rgba(255,255,255,.5); margin-top: 4px; font-weight: 600; }
+
+  .podium { display: flex; align-items: flex-end; justify-content: center; gap: 22px; width: 100%; max-width: 900px; }
+  .podium-slot { display: flex; flex-direction: column; align-items: center; opacity: 0; transform: translateY(40px); transition: all .55s cubic-bezier(.16,1,.3,1); }
+  .podium-slot.shown { opacity: 1; transform: translateY(0); }
+  .podium-card {
+    width: 190px; background: rgba(255,255,255,.07); border: 1.5px solid rgba(255,255,255,.14);
+    border-radius: 18px; overflow: hidden; margin-bottom: -1px; position: relative;
+  }
+  .podium-slot[data-place="1"] .podium-card { width: 220px; border-color: rgba(245,185,66,.5); box-shadow: 0 0 40px rgba(245,185,66,.25); }
+  .podium-card .pc-photo { width: 100%; aspect-ratio: 4/3; background: rgba(255,255,255,.05); }
+  .podium-card .pc-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .podium-card .pc-medal {
+    position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+  .podium-slot[data-place="1"] .pc-medal { background: var(--gold); color: #4a3300; }
+  .podium-slot[data-place="2"] .pc-medal { background: var(--silver); color: #2a2f38; }
+  .podium-slot[data-place="3"] .pc-medal { background: var(--bronze); color: #3a2210; }
+  .podium-card .pc-body { padding: 12px 14px 14px; }
+  .podium-card .pc-name { font-size: 13.5px; font-weight: 800; }
+  .podium-card .pc-votes { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(255,255,255,.55); margin-top: 2px; }
+  .podium-base {
+    width: 190px; border-radius: 10px 10px 0 0;
+    background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.03));
+    border: 1.5px solid rgba(255,255,255,.14); border-bottom: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 34px; font-weight: 900; color: rgba(255,255,255,.25);
+  }
+  .podium-slot[data-place="1"] .podium-base { height: 130px; width: 220px; color: rgba(245,185,66,.55); font-size: 40px; }
+  .podium-slot[data-place="2"] .podium-base { height: 92px; }
+  .podium-slot[data-place="3"] .podium-base { height: 60px; }
+
+  .results-actions { display: flex; gap: 12px; justify-content: center; padding: 30px 0 40px; position: relative; z-index: 2; }
+  .results-actions .btn-ghost { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); color: #fff; }
+  .results-actions .btn-ghost:hover { background: rgba(255,255,255,.14); }
+
+  .confetti-canvas { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+
+  @media (max-width: 720px) {
+    .podium { gap: 10px; }
+    .podium-card, .podium-base { width: 110px !important; }
+    .podium-slot[data-place="1"] .podium-card, .podium-slot[data-place="1"] .podium-base { width: 130px !important; }
+    .countdown-num { font-size: 130px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ MANAGE SCREEN ═══ -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.5 6.5L21 9l-5 4.5 1.5 7L12 17l-5.5 3.5L8 13.5 3 9l6.5-.5z"/></svg>
+    </div>
+    <div class="topbar-text">
+      <h1>Edvault</h1>
+      <p>Голосування за роботи</p>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <div>
+      <h2>Роботи студентів</h2>
+      <p id="works-subtitle">Додай роботи, потім натисни «Почати голосування»</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-danger-ghost" id="reset-all-btn" onclick="resetAll()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Скинути все
+      </button>
+      <button class="btn btn-ghost" onclick="openWorkModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Додати роботу
+      </button>
+      <button class="btn btn-primary btn-lg" id="start-voting-btn" onclick="startVoting()" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Почати голосування
+      </button>
+    </div>
+  </div>
+
+  <div class="empty-state" id="empty-state">
+    <div class="icon-lg">🖼️</div>
+    <h3>Ще немає жодної роботи</h3>
+    <p>Додай роботи студентів з фото, щоб почати голосування</p>
+    <button class="btn btn-primary" onclick="openWorkModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Додати першу роботу
+    </button>
+  </div>
+
+  <div class="works-grid" id="works-grid"></div>
+</div>
+
+<!-- ═══ LIGHTBOX: ZOOM ФОТО ═══ -->
+<div class="lightbox-overlay" id="lightbox-overlay" onclick="if(event.target===this) closeLightbox()">
+  <div class="lightbox-img-wrap">
+    <button class="lightbox-close" onclick="closeLightbox()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <img id="lightbox-img" src="" alt="">
+    <div class="lightbox-nav">
+      <button class="lightbox-arrow" id="lightbox-prev" onclick="lightboxStep(-1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span class="lightbox-counter" id="lightbox-counter">1 / 1</span>
+      <button class="lightbox-arrow" id="lightbox-next" onclick="lightboxStep(1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: ADD / EDIT WORK ═══ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-title">Нова робота</h3>
+      <button class="modal-close" onclick="closeWorkModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-error" id="form-error"></div>
+
+      <div class="field">
+        <label for="f-name">Ім'я студента</label>
+        <input type="text" id="f-name" placeholder="Наприклад: Олена К.">
+      </div>
+
+      <div class="field">
+        <label for="f-desc">Опис (необов'язково)</label>
+        <textarea id="f-desc" placeholder="Короткий опис роботи"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Фото роботи</label>
+        <div class="photo-dropzone" id="photo-dropzone" onclick="document.getElementById('file-input').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <p>Натисни, щоб обрати файли,<br>перетягни сюди або встав <span class="kbd">Ctrl</span>+<span class="kbd">V</span></p>
+        </div>
+        <input type="file" id="file-input" accept="image/*" multiple style="display:none;" onchange="handleFileInput(this.files)">
+        <div class="photo-thumbs" id="photo-thumbs"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeWorkModal()">Скасувати</button>
+      <button class="btn btn-primary" onclick="saveWork()">Зберегти</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FULLSCREEN STAGE ═══ -->
+<div class="stage" id="stage">
+  <div class="stage-particles" id="stage-particles"></div>
+  <canvas class="confetti-canvas" id="confetti-canvas"></canvas>
+
+  <!-- voting -->
+  <div id="voting-view">
+    <div class="vstage-head">
+      <button class="vstage-back" onclick="exitVoting()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Назад
+      </button>
+      <div class="vstage-title">
+        <h2 id="vstage-heading">Голосування</h2>
+        <p id="vstage-subheading">Натисни на роботу, щоб додати голос</p>
+      </div>
+      <button class="vstage-stop" onclick="stopVoting()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+        Зупинити голосування
+      </button>
+    </div>
+    <div class="vstage-head" style="padding-top:0; justify-content:center;">
+      <div class="vstage-total">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.5 6.5L21 9l-5 4.5 1.5 7L12 17l-5.5 3.5L8 13.5 3 9l6.5-.5z"/></svg>
+        <b id="vstage-total-count">0</b>
+        <span id="vstage-total-label">голосів віддано</span>
+      </div>
+    </div>
+    <div class="vstage-grid" id="vstage-grid"></div>
+  </div>
+
+  <!-- countdown -->
+  <div class="countdown-stage" id="countdown-view" style="display:none;">
+    <div class="countdown-num" id="countdown-num">3</div>
+  </div>
+
+  <!-- tie -->
+  <div class="tie-stage" id="tie-view" style="display:none;">
+    <span class="tie-badge">⚡ Нічия за 1 місце</span>
+    <h2>Потрібне додаткове голосування</h2>
+    <p>У цих робіт однакова кількість голосів. Проведи ще один раунд голосування лише серед них, щоб визначити переможця.</p>
+    <div class="tie-list" id="tie-list"></div>
+    <button class="btn btn-primary btn-lg" onclick="startRunoff()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Почати додаткове голосування
+    </button>
+  </div>
+
+  <!-- results -->
+  <div class="results-stage" id="results-view" style="display:none;">
+    <div class="results-title">
+      <h2>🏆 Результати голосування</h2>
+      <p id="results-subtitle">Вітаємо переможців!</p>
+    </div>
+    <div class="podium" id="podium"></div>
+    <div class="results-actions">
+      <button class="btn btn-ghost" onclick="backToManageFromResults(false)">До списку робіт</button>
+      <button class="btn btn-primary" onclick="backToManageFromResults(true)">Переголосувати</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  Дані живуть тільки в пам'яті сторінки — без localStorage/
+//  Firebase. Перезавантаження сторінки скидає все, як і
+//  потрібно для разового сеансу голосування на уроці.
+// ═══════════════════════════════════════════════════════════
+
+let works = []; // { id, name, desc, photos: [dataURL...], votes }
+let nextWorkId = 1;
+
+// стан модалки додавання/редагування
+let editingWorkId = null;
+let modalPhotos = [];
+
+// стан голосування
+let votingScope = [];        // ids робіт, які зараз голосуються
+let isRunoffActive = false;
+let preRunoffStandings = {}; // { id: votes } — знімок перед 1-м стопом, для 2/3 місця
+let tiedIds = [];
+
+// ────────────────────────────────────────────────────────────
+// УТИЛІТИ
+// ────────────────────────────────────────────────────────────
+function escapeHtml(str) {
+  return String(str || '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+function findWork(id) { return works.find(w => w.id === id); }
+
+// Стискаємо велике фото до розумного розміру, щоб не сажати вкладку
+function downscaleImage(dataUrl, maxDim = 1400, quality = 0.85) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        const scale = maxDim / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
+// ────────────────────────────────────────────────────────────
+// MANAGE SCREEN
+// ────────────────────────────────────────────────────────────
+function renderWorks() {
+  const grid = document.getElementById('works-grid');
+  const empty = document.getElementById('empty-state');
+  const startBtn = document.getElementById('start-voting-btn');
+  const subtitle = document.getElementById('works-subtitle');
+
+  document.getElementById('reset-all-btn').style.display = works.length ? 'inline-flex' : 'none';
+
+  if (works.length === 0) {
+    grid.style.display = 'none';
+    empty.style.display = 'block';
+    startBtn.disabled = true;
+    return;
+  }
+  empty.style.display = 'none';
+  grid.style.display = 'grid';
+
+  startBtn.disabled = works.length < 2;
+  subtitle.textContent = works.length < 2
+    ? `Додано ${works.length} робота — потрібно щонайменше 2, щоб почати голосування`
+    : `${works.length} робіт готово до голосування`;
+
+  grid.innerHTML = works.map(w => `
+    <div class="work-card">
+      <div class="work-thumb" ${w.photos.length ? `onclick="openLightbox(${w.id}, 0)"` : ''}>
+        ${w.photos[0]
+          ? `<img src="${w.photos[0]}" alt="">`
+          : `<div class="no-photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><div>Без фото</div></div>`}
+        ${w.photos.length > 1 ? `<span class="photo-count-badge">+${w.photos.length - 1} фото</span>` : ''}
+      </div>
+      <div class="work-body">
+        <div class="work-name">${escapeHtml(w.name)}</div>
+        ${w.desc ? `<div class="work-desc">${escapeHtml(w.desc)}</div>` : ''}
+      </div>
+      <div class="work-actions">
+        <button class="icon-btn" onclick="openWorkModal(${w.id})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Змінити
+        </button>
+        <button class="icon-btn danger" onclick="deleteWork(${w.id})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          Видалити
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.deleteWork = function (id) {
+  const w = findWork(id);
+  if (!w) return;
+  if (!confirm(`Видалити роботу «${w.name}»?`)) return;
+  works = works.filter(x => x.id !== id);
+  renderWorks();
+};
+
+window.resetAll = function () {
+  if (works.length === 0) return;
+  if (!confirm('Видалити всі роботи та скинути голосування? Цю дію не можна скасувати.')) return;
+  works = [];
+  renderWorks();
+};
+
+// ────────────────────────────────────────────────────────────
+// ЛАЙТБОКС — перегляд фото роботи у збільшеному вигляді
+// ────────────────────────────────────────────────────────────
+let lightboxWorkId = null;
+let lightboxIndex = 0;
+
+window.openLightbox = function (workId, index) {
+  const w = findWork(workId);
+  if (!w || !w.photos.length) return;
+  lightboxWorkId = workId;
+  lightboxIndex = index || 0;
+  renderLightbox();
+  document.getElementById('lightbox-overlay').classList.add('visible');
+};
+
+window.closeLightbox = function () {
+  document.getElementById('lightbox-overlay').classList.remove('visible');
+  lightboxWorkId = null;
+};
+
+window.lightboxStep = function (dir) {
+  const w = findWork(lightboxWorkId);
+  if (!w) return;
+  lightboxIndex = (lightboxIndex + dir + w.photos.length) % w.photos.length;
+  renderLightbox();
+};
+
+function renderLightbox() {
+  const w = findWork(lightboxWorkId);
+  if (!w) return;
+  document.getElementById('lightbox-img').src = w.photos[lightboxIndex];
+  document.getElementById('lightbox-counter').textContent = `${lightboxIndex + 1} / ${w.photos.length}`;
+  const multi = w.photos.length > 1;
+  document.getElementById('lightbox-prev').style.visibility = multi ? 'visible' : 'hidden';
+  document.getElementById('lightbox-next').style.visibility = multi ? 'visible' : 'hidden';
+  document.getElementById('lightbox-counter').style.visibility = multi ? 'visible' : 'hidden';
+}
+
+document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('lightbox-overlay').classList.contains('visible')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lightboxStep(-1);
+  if (e.key === 'ArrowRight') lightboxStep(1);
+});
+
+// ────────────────────────────────────────────────────────────
+// МОДАЛКА ДОДАВАННЯ / РЕДАГУВАННЯ РОБОТИ
+// ────────────────────────────────────────────────────────────
+window.openWorkModal = function (id) {
+  editingWorkId = id || null;
+  document.getElementById('form-error').classList.remove('visible');
+
+  if (editingWorkId) {
+    const w = findWork(editingWorkId);
+    document.getElementById('modal-title').textContent = 'Редагування роботи';
+    document.getElementById('f-name').value = w.name;
+    document.getElementById('f-desc').value = w.desc || '';
+    modalPhotos = [...w.photos];
+  } else {
+    document.getElementById('modal-title').textContent = 'Нова робота';
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-desc').value = '';
+    modalPhotos = [];
+  }
+  renderPhotoThumbs();
+  document.getElementById('modal-overlay').classList.add('visible');
+  setTimeout(() => document.getElementById('f-name').focus(), 50);
+};
+
+window.closeWorkModal = function () {
+  document.getElementById('modal-overlay').classList.remove('visible');
+  editingWorkId = null;
+  modalPhotos = [];
+};
+
+function renderPhotoThumbs() {
+  const wrap = document.getElementById('photo-thumbs');
+  wrap.innerHTML = modalPhotos.map((src, i) => `
+    <div class="photo-thumb">
+      <img src="${src}" alt="">
+      <button type="button" class="rm-photo" onclick="removeModalPhoto(${i})">✕</button>
+    </div>
+  `).join('');
+}
+window.removeModalPhoto = function (i) {
+  modalPhotos.splice(i, 1);
+  renderPhotoThumbs();
+};
+
+async function addPhotoFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const small = await downscaleImage(e.target.result);
+    modalPhotos.push(small);
+    renderPhotoThumbs();
+  };
+  reader.readAsDataURL(file);
+}
+
+window.handleFileInput = function (fileList) {
+  Array.from(fileList).forEach(addPhotoFile);
+  document.getElementById('file-input').value = '';
+};
+
+// drag & drop
+const dropzone = document.getElementById('photo-dropzone');
+['dragover', 'dragenter'].forEach(evt => dropzone.addEventListener(evt, e => {
+  e.preventDefault(); dropzone.classList.add('dragover');
+}));
+['dragleave', 'drop'].forEach(evt => dropzone.addEventListener(evt, e => {
+  e.preventDefault(); dropzone.classList.remove('dragover');
+}));
+dropzone.addEventListener('drop', e => {
+  const files = e.dataTransfer?.files;
+  if (files) Array.from(files).forEach(addPhotoFile);
+});
+
+// вставка з буфера обміну — тільки поки відкрита модалка
+document.addEventListener('paste', (e) => {
+  if (!document.getElementById('modal-overlay').classList.contains('visible')) return;
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      addPhotoFile(item.getAsFile());
+    }
+  }
+});
+
+window.saveWork = function () {
+  const name = document.getElementById('f-name').value.trim();
+  const desc = document.getElementById('f-desc').value.trim();
+  const errEl = document.getElementById('form-error');
+  errEl.classList.remove('visible');
+
+  if (!name) { errEl.textContent = "Вкажи ім'я студента."; errEl.classList.add('visible'); return; }
+  if (modalPhotos.length === 0) { errEl.textContent = 'Додай хоча б одне фото роботи.'; errEl.classList.add('visible'); return; }
+
+  if (editingWorkId) {
+    const w = findWork(editingWorkId);
+    w.name = name; w.desc = desc; w.photos = [...modalPhotos];
+  } else {
+    works.push({ id: nextWorkId++, name, desc, photos: [...modalPhotos], votes: 0 });
+  }
+  closeWorkModal();
+  renderWorks();
+};
+
+// ────────────────────────────────────────────────────────────
+// STAGE HELPERS (спільні для голосування / відліку / результатів)
+// ────────────────────────────────────────────────────────────
+function showStage() { document.getElementById('stage').classList.add('visible'); spawnAmbientParticles(); }
+function hideStage() { document.getElementById('stage').classList.remove('visible'); clearAmbientParticles(); }
+function showStageView(name) {
+  document.getElementById('voting-view').style.display = name === 'voting' ? 'flex' : 'none';
+  document.getElementById('voting-view').style.flexDirection = 'column';
+  document.getElementById('voting-view').style.height = '100%';
+  document.getElementById('countdown-view').style.display = name === 'countdown' ? 'flex' : 'none';
+  document.getElementById('tie-view').style.display = name === 'tie' ? 'flex' : 'none';
+  document.getElementById('results-view').style.display = name === 'results' ? 'flex' : 'none';
+}
+
+let particleTimer = null;
+function spawnAmbientParticles() {
+  const holder = document.getElementById('stage-particles');
+  holder.innerHTML = '';
+  clearInterval(particleTimer);
+  particleTimer = setInterval(() => {
+    if (holder.children.length > 40) return;
+    const p = document.createElement('div');
+    p.className = 'stage-particle';
+    const size = 2 + Math.random() * 4;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+    p.style.animationDuration = (7 + Math.random() * 8) + 's';
+    holder.appendChild(p);
+    setTimeout(() => p.remove(), 16000);
+  }, 450);
+}
+function clearAmbientParticles() {
+  clearInterval(particleTimer);
+  document.getElementById('stage-particles').innerHTML = '';
+}
+
+// ────────────────────────────────────────────────────────────
+// ЗВУК (Web Audio, без файлів)
+// ────────────────────────────────────────────────────────────
+let audioCtx = null;
+function ac() { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+
+function playClick() {
+  try {
+    const ctx = ac();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = 720;
+    g.gain.setValueAtTime(0.14, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.09);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + 0.1);
+  } catch (e) {}
+}
+function playTick() {
+  try {
+    const ctx = ac();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'square'; o.frequency.value = 440;
+    g.gain.setValueAtTime(0.1, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + 0.15);
+  } catch (e) {}
+}
+function playLeadChange() {
+  try {
+    const ctx = ac();
+    [880, 1108.7].forEach((freq, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = freq;
+      const t0 = ctx.currentTime + i * 0.07;
+      g.gain.setValueAtTime(0.001, t0);
+      g.gain.exponentialRampToValueAtTime(0.12, t0 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.22);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t0); o.stop(t0 + 0.25);
+    });
+  } catch (e) {}
+}
+function playFanfare() {
+  try {
+    const ctx = ac();
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+    notes.forEach((freq, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'triangle'; o.frequency.value = freq;
+      const t0 = ctx.currentTime + i * 0.12;
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.18, t0 + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.5);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t0); o.stop(t0 + 0.55);
+    });
+  } catch (e) {}
+}
+
+// ────────────────────────────────────────────────────────────
+// ГОЛОСУВАННЯ
+// ────────────────────────────────────────────────────────────
+window.startVoting = function () {
+  votingScope = works.map(w => w.id);
+  isRunoffActive = false;
+  document.getElementById('vstage-heading').textContent = 'Голосування';
+  document.getElementById('vstage-subheading').textContent = 'Натисни на роботу, щоб додати голос';
+  showStage();
+  showStageView('voting');
+  renderVotingGrid();
+};
+
+function clearCarousels() {
+  carouselTimers.forEach(t => clearInterval(t));
+  carouselTimers = [];
+}
+
+window.exitVoting = function () {
+  clearCarousels();
+  hideStage();
+  showStageView('voting');
+  renderWorks();
+};
+
+let currentLeaderId = null; // для відстеження зміни лідера
+
+function renderVotingGrid() {
+  const grid = document.getElementById('vstage-grid');
+  const scoped = works.filter(w => votingScope.includes(w.id));
+  currentLeaderId = computeLeaderId(scoped);
+
+  grid.innerHTML = scoped.map(w => `
+    <div class="vote-card${w.id === currentLeaderId && w.votes > 0 ? ' leader' : ''}" id="vc-${w.id}" onclick="addVote(${w.id}, event)">
+      <button class="vc-minus" onclick="removeVote(${w.id}, event)" ${w.votes <= 0 ? 'disabled' : ''}>−</button>
+      ${w.id === currentLeaderId && w.votes > 0
+        ? `<span class="leader-badge" id="leader-badge-${w.id}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 6.5L21 9l-5 4.5 1.5 7L12 17l-5.5 3.5L8 13.5 3 9l6.5-.5z"/></svg>Лідер</span>`
+        : `<span class="vc-tap-hint">ТАП = ГОЛОС</span>`}
+      <div class="vc-photo">
+        ${w.photos.length
+          ? `<div class="vc-photo-track" id="vc-track-${w.id}">${w.photos.map(p => `<img src="${p}" alt="">`).join('')}</div>`
+          : `<div class="no-photo">?</div>`}
+        ${w.photos.length > 1 ? `<div class="vc-photo-dots" id="vc-dots-${w.id}">${w.photos.map((_, i) => `<span class="${i === 0 ? 'active' : ''}"></span>`).join('')}</div>` : ''}
+      </div>
+      <div class="vc-body">
+        <span class="vc-name">${escapeHtml(w.name)}</span>
+        <span class="vc-count" id="vc-count-${w.id}">${w.votes}</span>
+      </div>
+    </div>
+  `).join('');
+
+  startPhotoCarousels(scoped);
+  updateVoteTotal();
+}
+
+// автоматична гортання фото на картках з кількома знімками, щоб усі роботи було видно
+let carouselTimers = [];
+function startPhotoCarousels(scopedWorks) {
+  carouselTimers.forEach(t => clearInterval(t));
+  carouselTimers = [];
+  scopedWorks.filter(w => w.photos.length > 1).forEach(w => {
+    let idx = 0;
+    const track = document.getElementById(`vc-track-${w.id}`);
+    const dots = document.getElementById(`vc-dots-${w.id}`);
+    if (!track) return;
+    const timer = setInterval(() => {
+      idx = (idx + 1) % w.photos.length;
+      track.style.transform = `translateX(-${idx * 100}%)`;
+      if (dots) [...dots.children].forEach((d, i) => d.classList.toggle('active', i === idx));
+    }, 3200 + Math.random() * 800); // невеликий розкид, щоб картки не гортались синхронно
+    carouselTimers.push(timer);
+  });
+}
+
+function computeLeaderId(scopedWorks) {
+  const withVotes = scopedWorks.filter(w => w.votes > 0);
+  if (withVotes.length === 0) return null;
+  const max = Math.max(...withVotes.map(w => w.votes));
+  const leaders = withVotes.filter(w => w.votes === max);
+  return leaders.length === 1 ? leaders[0].id : null; // при рівності ніхто не лідер
+}
+
+function updateVoteTotal() {
+  const scoped = works.filter(w => votingScope.includes(w.id));
+  const total = scoped.reduce((sum, w) => sum + w.votes, 0);
+  const el = document.getElementById('vstage-total-count');
+  if (el) el.textContent = total;
+}
+
+function refreshLeaderState() {
+  const scoped = works.filter(w => votingScope.includes(w.id));
+  const newLeaderId = computeLeaderId(scoped);
+  const leaderChanged = newLeaderId && newLeaderId !== currentLeaderId;
+  currentLeaderId = newLeaderId;
+
+  scoped.forEach(w => {
+    const card = document.getElementById(`vc-${w.id}`);
+    if (!card) return;
+    const isLeader = w.id === currentLeaderId && w.votes > 0;
+    card.classList.toggle('leader', isLeader);
+    let badge = document.getElementById(`leader-badge-${w.id}`);
+    let hint = card.querySelector('.vc-tap-hint');
+    if (isLeader && !badge) {
+      if (hint) hint.outerHTML = `<span class="leader-badge" id="leader-badge-${w.id}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 6.5L21 9l-5 4.5 1.5 7L12 17l-5.5 3.5L8 13.5 3 9l6.5-.5z"/></svg>Лідер</span>`;
+    } else if (!isLeader && badge) {
+      badge.outerHTML = `<span class="vc-tap-hint">ТАП = ГОЛОС</span>`;
+    }
+  });
+
+  if (leaderChanged) {
+    const card = document.getElementById(`vc-${newLeaderId}`);
+    if (card) {
+      card.classList.remove('lead-flash'); void card.offsetWidth; card.classList.add('lead-flash');
+    }
+    playLeadChange();
+  }
+}
+
+
+
+window.addVote = function (id, evt) {
+  const w = findWork(id);
+  if (!w) return;
+  w.votes++;
+  document.getElementById(`vc-count-${id}`).textContent = w.votes;
+  const card = document.getElementById(`vc-${id}`);
+  card.classList.remove('bumped'); void card.offsetWidth; card.classList.add('bumped');
+  const minusBtn = card.querySelector('.vc-minus');
+  minusBtn.disabled = false;
+  playClick();
+  updateVoteTotal();
+  refreshLeaderState();
+};
+
+window.removeVote = function (id, evt) {
+  evt.stopPropagation();
+  const w = findWork(id);
+  if (!w || w.votes <= 0) return;
+  w.votes--;
+  document.getElementById(`vc-count-${id}`).textContent = w.votes;
+  if (w.votes <= 0) evt.currentTarget.disabled = true;
+  playClick();
+  updateVoteTotal();
+  refreshLeaderState();
+};
+
+// ────────────────────────────────────────────────────────────
+// ЗУПИНКА ГОЛОСУВАННЯ → ВІДЛІК → (НІЧИЯ | РЕЗУЛЬТАТИ)
+// ────────────────────────────────────────────────────────────
+window.stopVoting = function () {
+  clearCarousels();
+  if (!isRunoffActive) {
+    preRunoffStandings = {};
+    works.forEach(w => { preRunoffStandings[w.id] = w.votes; });
+  }
+  runCountdown(() => evaluateVotingResult());
+};
+
+function runCountdown(onDone) {
+  showStageView('countdown');
+  const el = document.getElementById('countdown-num');
+  let n = 3;
+  el.textContent = n;
+  el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
+  playTick();
+  const timer = setInterval(() => {
+    n--;
+    if (n <= 0) {
+      clearInterval(timer);
+      setTimeout(onDone, 500);
+      return;
+    }
+    el.textContent = n;
+    el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
+    playTick();
+  }, 900);
+}
+
+function evaluateVotingResult() {
+  const scopedWorks = works.filter(w => votingScope.includes(w.id));
+  const maxVotes = Math.max(...scopedWorks.map(w => w.votes));
+  const winners = scopedWorks.filter(w => w.votes === maxVotes);
+
+  if (winners.length > 1) {
+    // нічия за 1 місце — показуємо екран нічиєї, чекаємо на додаткове голосування
+    tiedIds = winners.map(w => w.id);
+    showTieScreen(winners);
+    return;
+  }
+
+  // 1 місце визначене
+  const firstPlace = winners[0];
+  showFinalResults(firstPlace);
+}
+
+function showTieScreen(winners) {
+  showStageView('tie');
+  const list = document.getElementById('tie-list');
+  list.innerHTML = winners.map(w => `
+    <div class="tie-item">
+      <div class="ti-photo">${w.photos[0] ? `<img src="${w.photos[0]}" alt="">` : ''}</div>
+      <div class="ti-body">
+        <div class="ti-name">${escapeHtml(w.name)}</div>
+        <div class="ti-votes">${w.votes} голос${pluralVotes(w.votes)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.startRunoff = function () {
+  // скидаємо голоси лише для тих, хто в нічиї
+  tiedIds.forEach(id => { findWork(id).votes = 0; });
+  votingScope = [...tiedIds];
+  isRunoffActive = true;
+  document.getElementById('vstage-heading').textContent = 'Додаткове голосування';
+  document.getElementById('vstage-subheading').textContent = 'Голосуємо ще раз лише серед тих, хто набрав однаково';
+  showStageView('voting');
+  renderVotingGrid();
+};
+
+function showFinalResults(firstPlaceWork) {
+  // 2 і 3 місце визначаємо з початкового розкладу голосів (до раунду переголосування),
+  // виключаючи переможця 1 місця
+  const remaining = works
+    .filter(w => w.id !== firstPlaceWork.id)
+    .map(w => ({ work: w, votes: preRunoffStandings[w.id] ?? w.votes }))
+    .sort((a, b) => b.votes - a.votes);
+
+  const podiumData = [
+    { place: 1, work: firstPlaceWork, votes: firstPlaceWork.votes }
+  ];
+  if (remaining[0]) podiumData.push({ place: 2, work: remaining[0].work, votes: remaining[0].votes });
+  if (remaining[1]) podiumData.push({ place: 3, work: remaining[1].work, votes: remaining[1].votes });
+
+  renderPodium(podiumData);
+}
+
+function pluralVotes(n) {
+  const mod10 = n % 10, mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return '';
+  if ([2,3,4].includes(mod10) && ![12,13,14].includes(mod100)) return 'и';
+  return 'ів';
+}
+
+// ────────────────────────────────────────────────────────────
+// ПОДІУМ: послідовне розкриття 3 → 2 → 1 з фанфарами й конфеті
+// ────────────────────────────────────────────────────────────
+function renderPodium(podiumData) {
+  showStageView('results');
+  const podium = document.getElementById('podium');
+
+  const order = [2, 1, 3]; // для правильного порядку колонок зліва направо: 2-1-3
+  const byPlace = {}; podiumData.forEach(d => byPlace[d.place] = d);
+
+  podium.innerHTML = order.filter(p => byPlace[p]).map(p => {
+    const d = byPlace[p];
+    const medal = p === 1 ? '🥇' : p === 2 ? '🥈' : '🥉';
+    return `
+      <div class="podium-slot" data-place="${p}" id="podium-slot-${p}">
+        <div class="podium-card">
+          <div class="pc-medal">${medal}</div>
+          <div class="pc-photo">${d.work.photos[0] ? `<img src="${d.work.photos[0]}" alt="">` : ''}</div>
+          <div class="pc-body">
+            <div class="pc-name">${escapeHtml(d.work.name)}</div>
+            <div class="pc-votes">${d.votes} голос${pluralVotes(d.votes)}</div>
+          </div>
+        </div>
+        <div class="podium-base">${p}</div>
+      </div>
+    `;
+  }).join('');
+
+  // послідовне розкриття: 3 місце → 2 місце → 1 місце
+  const reveal = [3, 2, 1].filter(p => byPlace[p]);
+  reveal.forEach((p, i) => {
+    setTimeout(() => {
+      const slot = document.getElementById(`podium-slot-${p}`);
+      if (!slot) return;
+      slot.classList.add('shown');
+      if (p === 1) { playFanfare(); burstConfetti(); }
+      else { playTick(); }
+    }, i * 1400 + 300);
+  });
+}
+
+window.backToManageFromResults = function (rerun) {
+  hideStage();
+  showStageView('voting');
+  if (rerun) {
+    works.forEach(w => { w.votes = 0; });
+  }
+  votingScope = [];
+  isRunoffActive = false;
+  preRunoffStandings = {};
+  tiedIds = [];
+  renderWorks();
+};
+
+// ────────────────────────────────────────────────────────────
+// КОНФЕТІ (легкий canvas без зовнішніх бібліотек)
+// ────────────────────────────────────────────────────────────
+const confettiCanvas = document.getElementById('confetti-canvas');
+const cctx = confettiCanvas.getContext('2d');
+let confettiParticles = [];
+let confettiRAF = null;
+
+function resizeConfettiCanvas() {
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeConfettiCanvas);
+resizeConfettiCanvas();
+
+function burstConfetti() {
+  const colors = ['#4F6BF4', '#f5b942', '#10b981', '#ec4899', '#8b5cf6', '#ffffff'];
+  for (let i = 0; i < 140; i++) {
+    confettiParticles.push({
+      x: confettiCanvas.width / 2 + (Math.random() * 300 - 150),
+      y: confettiCanvas.height * 0.35,
+      vx: (Math.random() - 0.5) * 9,
+      vy: Math.random() * -9 - 4,
+      size: 5 + Math.random() * 5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rot: Math.random() * Math.PI,
+      vrot: (Math.random() - 0.5) * 0.3,
+      life: 0
+    });
+  }
+  if (!confettiRAF) confettiLoop();
+}
+
+function confettiLoop() {
+  cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  confettiParticles.forEach(p => {
+    p.vy += 0.22; // gravity
+    p.x += p.vx; p.y += p.vy; p.rot += p.vrot; p.life++;
+    cctx.save();
+    cctx.translate(p.x, p.y);
+    cctx.rotate(p.rot);
+    cctx.fillStyle = p.color;
+    cctx.globalAlpha = Math.max(0, 1 - p.life / 260);
+    cctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+    cctx.restore();
+  });
+  confettiParticles = confettiParticles.filter(p => p.life < 260 && p.y < confettiCanvas.height + 40);
+  if (confettiParticles.length > 0) {
+    confettiRAF = requestAnimationFrame(confettiLoop);
+  } else {
+    confettiRAF = null;
+    cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  }
+}
+
+// ────────────────────────────────────────────────────────────
+// ЗАХИСТ ВІД ВИПАДКОВОГО ЗАКРИТТЯ ВКЛАДКИ
+// Дані живуть лише в пам'яті — попереджаємо, якщо є що втрачати.
+// ────────────────────────────────────────────────────────────
+window.addEventListener('beforeunload', (e) => {
+  if (works.length === 0) return;
+  e.preventDefault();
+  e.returnValue = '';
+});
+
+// ────────────────────────────────────────────────────────────
+renderWorks();
+</script>
+</body>
+</html>
