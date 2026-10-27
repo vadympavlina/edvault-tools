@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Запис екрану — Edvault</title>
-<meta name="theme-color" content="#4F6BF4">
+<title>Запис екрана — Edvault</title>
+<meta name="theme-color" content="#1c2869">
 <link rel="icon" href="icons/screen-recorder.ico" sizes="32x32">
 <link rel="icon" href="icons/screen-recorder.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/screen-recorder-180.png">
@@ -17,36 +17,38 @@
     } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
   })();
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- шрифти лежать поруч (спільні з текстовим редактором), тож вигляд однаковий і без інтернету -->
+<link rel="stylesheet" href="textcraft/fonts.css">
 <style>
+/* Запис екрана · Edvault — «Пульт»: великий попередній вигляд, усе керування — один пульт під ним */
 :root{
   color-scheme:light;
-  --bg:#f0f2f5;--surface:#ffffff;--surface2:#f7f8fa;--surface3:#eef0f4;
-  --border:#e2e5ea;--border2:#d0d5dd;
-  --text:#1a1d23;--text2:#4b5563;--muted:#8a919e;
-  --accent:#4F6BF4;--accent-hover:#3d57e0;--accent-light:#eef0fe;--accent-border:#c7d0fc;--on-accent:#ffffff;
-  --danger:#ef4444;--danger-hover:#dc2626;--danger-light:#fef2f2;--success:#10b981;--success-light:#ecfdf5;
-  --shadow-sm:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);
-  --shadow-md:0 4px 16px rgba(16,24,40,.10),0 2px 6px rgba(16,24,40,.06);
-  --shadow-lg:0 24px 60px rgba(16,24,40,.16),0 4px 16px rgba(16,24,40,.08);
-  --r:8px;--float-bg:#1f2230;--float-text:#e9ebf2;
-  --stage-bg:#dfe3ea;
+  --bg:#dfe4ea;--surface:#fdfefb;--surface2:#f2f5f7;--surface3:#e8edf1;
+  --border:#d9e0e7;--border2:#bfc9d4;
+  --text:#1d2236;--text2:#454c63;--muted:#5d6478;
+  --accent:#2337a8;--accent-hover:#1a2a8a;--accent-light:#e8ecfb;--accent-border:#b9c3ef;--on-accent:#ffffff;
+  --rec:#d6382c;--rec-hover:#bf2f24;--rec-light:#fbeceb;
+  --danger:#c8352d;--danger-light:#fbeceb;--success:#1a7a50;--success-light:#e6f4ec;
+  --shadow-sm:0 1px 2px rgba(28,40,105,.08);
+  --shadow-md:0 6px 18px rgba(28,40,105,.12),0 1px 3px rgba(28,40,105,.08);
+  --shadow-lg:0 22px 50px rgba(28,40,105,.18),0 4px 12px rgba(28,40,105,.08);
+  --r:8px;--float-bg:#1c2869;--float-text:#eef1ff;
+  --desk:#e9edf2;
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --bg:#0f1117;--surface:#171a22;--surface2:#1d212b;--surface3:#252a35;
-  --border:#2a2f3b;--border2:#394050;
-  --text:#e7e9ef;--text2:#b3b9c6;--muted:#7f8797;
-  --accent:#7189ff;--accent-hover:#8a9dff;--accent-light:rgba(113,137,255,.14);--accent-border:rgba(113,137,255,.38);--on-accent:#0f1117;
-  --danger:#f87171;--danger-hover:#fb8a8a;--danger-light:rgba(248,113,113,.12);--success:#34d399;--success-light:rgba(52,211,153,.12);
-  --shadow-sm:0 1px 3px rgba(0,0,0,.4);--shadow-md:0 6px 20px rgba(0,0,0,.45);--shadow-lg:0 24px 60px rgba(0,0,0,.6);
-  --float-bg:#262a38;--stage-bg:#0b0d12;
+  --bg:#1e1e1e;--surface:#2c2c2c;--surface2:#383838;--surface3:#424242;
+  --border:#3a3a3a;--border2:#4a4a4a;
+  --text:#ededed;--text2:#c2c2c2;--muted:#9a9a9a;
+  --accent:#9aabff;--accent-hover:#b3c0ff;--accent-light:rgba(154,171,255,.14);--accent-border:rgba(154,171,255,.38);--on-accent:#10153a;
+  --rec:#e5483c;--rec-hover:#f05a4f;--rec-light:rgba(229,72,60,.16);
+  --danger:#f08a82;--danger-light:rgba(240,138,130,.12);--success:#5fd39b;--success-light:rgba(95,211,155,.12);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);--shadow-md:0 8px 22px rgba(0,0,0,.45);--shadow-lg:0 24px 60px rgba(0,0,0,.6);
+  --float-bg:#383838;--float-text:#ededed;
 }
 *,*::before,*::after{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:14px;background:var(--bg);color:var(--text);
+body{font-family:'IBM Plex Sans','Commissioner',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:14px;background:var(--bg);color:var(--text);
   display:flex;flex-direction:column;min-height:100vh;-webkit-font-smoothing:antialiased}
 button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
 button:disabled{cursor:default;opacity:.45}
@@ -55,19 +57,18 @@ input,select{font-family:inherit;font-size:inherit;color:inherit}
 [hidden]{display:none !important}
 .ico{width:18px;height:18px;display:block;flex-shrink:0}
 
-/* ── Topbar ── */
-.topbar{height:56px;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 12px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30}
-.sep{width:1px;height:22px;background:var(--border);margin:0 4px;flex-shrink:0}
-.brand{display:flex;align-items:center;gap:9px;flex-shrink:0}
-.brand-mark{width:30px;height:30px;border-radius:9px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(79,107,244,.35)}
-.brand-mark .ico{width:17px;height:17px}
-.brand-name{font-weight:700;font-size:15px;letter-spacing:-.01em;white-space:nowrap}
-.rec-chip{display:none;align-items:center;gap:7px;height:26px;padding:0 10px;border-radius:20px;background:var(--danger-light);color:var(--danger);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;margin-left:6px}
-.rec-chip i{width:7px;height:7px;border-radius:50%;background:var(--danger);animation:blink 1s step-end infinite}
+/* ── Заголовок ── */
+.topbar{height:52px;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.brand-mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center}
+.brand-mark .ico{width:16px;height:16px}
+.brand-name{font-weight:600;font-size:15px;white-space:nowrap}
+.rec-chip{display:none;align-items:center;gap:7px;height:26px;padding:0 10px;border-radius:20px;background:var(--rec-light);color:var(--rec);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;margin-left:6px}
+.rec-chip i{width:7px;height:7px;border-radius:50%;background:var(--rec);animation:blink 1s step-end infinite}
 body.recording .rec-chip{display:inline-flex}
 .grow{flex:1}
 
-/* ── Buttons ── */
+/* ── Кнопки ── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 12px;border-radius:var(--r);border:1px solid transparent;font-size:13px;font-weight:500;white-space:nowrap;color:var(--text2);transition:background .12s,border-color .12s,color .12s,transform .08s;text-decoration:none}
 .btn:hover:not(:disabled){background:var(--surface2);color:var(--text)}
 .btn:active:not(:disabled){transform:scale(.98)}
@@ -75,39 +76,38 @@ body.recording .rec-chip{display:inline-flex}
 .btn-icon{width:34px;padding:0}
 .btn-outline{border-color:var(--border);background:var(--surface)}
 .btn-outline:hover:not(:disabled){border-color:var(--border2)}
-.btn-primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600;box-shadow:0 2px 8px rgba(79,107,244,.28)}
+.btn-primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}
 .btn-primary:hover:not(:disabled){background:var(--accent-hover);border-color:var(--accent-hover);color:var(--on-accent)}
-.btn-stop{background:var(--danger);border-color:var(--danger);color:#fff;font-weight:600;box-shadow:0 2px 10px rgba(239,68,68,.3)}
-.btn-stop:hover:not(:disabled){background:var(--danger-hover);border-color:var(--danger-hover);color:#fff}
-.btn-xl{height:48px;padding:0 22px;font-size:15px;border-radius:12px;width:100%}
+.btn-rec,.btn-stop{background:var(--rec);border-color:var(--rec);color:#fff;font-weight:600;box-shadow:0 8px 20px -8px rgba(214,56,44,.7)}
+.btn-rec:hover:not(:disabled),.btn-stop:hover:not(:disabled){background:var(--rec-hover);border-color:var(--rec-hover);color:#fff}
+.btn-xl{height:46px;padding:0 20px;font-size:15px;border-radius:12px;width:100%}
 .btn-xl .ico{width:18px;height:18px}
 .btn-sm{height:30px;padding:0 10px;font-size:12.5px}
-.btn kbd{font:600 11px 'Inter',sans-serif;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.2);margin-left:4px}
+.btn kbd{font:600 11px 'IBM Plex Sans',sans-serif;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.22);margin-left:2px}
 .btn-outline kbd{background:var(--surface3)}
 .kbd{display:inline-flex;align-items:center;height:22px;padding:0 7px;border-radius:6px;border:1px solid var(--border2);border-bottom-width:2px;background:var(--surface2);font-size:11.5px;font-weight:600;color:var(--text2)}
 
-/* ── Layout ── */
-.main{flex:1;display:flex;justify-content:center;padding:28px 20px 40px}
-.screen{display:none;width:100%;max-width:1100px}
-.screen.on{display:block;animation:fadeUp .22s ease}
+/* ── Розкладка ── */
+.main{flex:1;display:flex;justify-content:center;padding:24px 20px 32px;min-height:0}
+.screen{display:none;width:100%;max-width:1040px}
+.screen.on{display:flex;flex-direction:column;align-items:center;gap:16px;animation:fadeUp .22s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-sm)}
-.hint{font-size:12.5px;color:var(--muted);line-height:1.5;margin:10px 0 0;text-align:center}
+.hint{font-size:12.5px;color:var(--muted);line-height:1.5;margin:0;text-align:center}
 
-/* ── Stage (preview) ── */
-.stage-card{padding:14px}
-.stage{position:relative;aspect-ratio:16/9;border-radius:10px;background:var(--stage-bg);overflow:hidden;border:1px solid var(--border)}
-.mock{position:absolute;inset:7% 6%;border-radius:8px;background:var(--surface);box-shadow:var(--shadow-md);display:flex;flex-direction:column;overflow:hidden}
-.mock-bar{height:9%;min-height:14px;background:var(--surface3);display:flex;align-items:center;gap:5px;padding:0 3%}
-.mock-bar i{width:7px;height:7px;border-radius:50%;background:var(--border2)}
-.mock-body{flex:1;padding:5% 6%;display:flex;flex-direction:column;gap:5%}
-.mock-line{height:7%;border-radius:4px;background:var(--surface3)}
-.mock-line.a{width:46%;background:var(--accent-light)}
-.mock-line.b{width:78%}.mock-line.c{width:64%}.mock-line.d{width:70%}
-.stage-label{position:absolute;left:50%;top:10px;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:600;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 9px}
-.cam-bubble{position:absolute;overflow:hidden;background:#2a2f3b;box-shadow:0 0 0 3px #fff,0 6px 20px rgba(0,0,0,.35);display:none}
+/* ── Сцена: світла робоча поверхня в будь-якій темі ── */
+.stage{position:relative;width:100%;aspect-ratio:16/9;max-height:calc(100vh - 240px);border-radius:14px;background:var(--desk);overflow:hidden;
+  box-shadow:0 20px 50px -20px rgba(28,40,105,.35),0 0 0 1px rgba(28,40,105,.06)}
+:root[data-theme="dark"] .stage{--desk:#e4e8ee;box-shadow:0 20px 50px -18px rgba(0,0,0,.6)}
+.mock{position:absolute;inset:10% 9% 12%;border-radius:8px;background:#fff;box-shadow:0 10px 30px rgba(28,40,105,.16);display:flex;flex-direction:column;overflow:hidden}
+.mock-bar{height:7%;min-height:14px;background:#f2f5f7;border-bottom:1px solid #e3e8ee;display:flex;align-items:center;gap:5px;padding:0 2.4%}
+.mock-bar i{width:7px;height:7px;border-radius:50%;background:#cfd6df}
+.mock-body{flex:1;padding:4% 5%;display:flex;flex-direction:column;gap:4.5%}
+.mock-line{height:5%;border-radius:5px;background:#e8ecf3}
+.mock-line.a{width:34%;background:#dfe5fb}
+.mock-line.b{width:84%}.mock-line.c{width:56%}.mock-line.d{width:44%}
+.stage-label{position:absolute;left:50%;top:14px;transform:translateX(-50%);max-width:calc(100% - 24px);text-align:center;font-size:12.5px;color:#fff;background:rgba(29,34,54,.78);border-radius:20px;padding:5px 12px}
+.cam-bubble{position:absolute;overflow:hidden;background:#cfd8e6;box-shadow:0 0 0 3px #fff,0 8px 20px rgba(28,40,105,.3);display:none}
 .cam-bubble.show{display:block}
 .cam-bubble video{width:100%;height:100%;object-fit:cover;display:block}
 .cam-bubble.mirror video{transform:scaleX(-1)}
@@ -116,22 +116,41 @@ body.recording .rec-chip{display:inline-flex}
 .cam-bubble.rect{aspect-ratio:4/3;border-radius:12%/16%}
 .cam-bubble.tl{left:3%;top:5.3%}.cam-bubble.tr{right:3%;top:5.3%}
 .cam-bubble.bl{left:3%;bottom:5.3%}.cam-bubble.br{right:3%;bottom:5.3%}
-.start-wrap{margin-top:14px}
-.notice{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:12px;background:var(--danger-light);color:var(--text);font-size:13.5px;line-height:1.55;margin-top:14px}
-.notice .ico{color:var(--danger);margin-top:2px}
 
-/* ── Settings panel ── */
-.panel{padding:6px 18px 18px}
-.group{padding:14px 0;border-bottom:1px solid var(--border)}
-.group:last-child{border-bottom:0;padding-bottom:0}
-.group-h{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
-.row{display:flex;align-items:center;gap:12px;min-height:40px}
-.row + .row{margin-top:4px}
-.row-ico{width:34px;height:34px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);flex-shrink:0}
-.row-ico .ico{width:17px;height:17px}
-.row-txt{flex:1;min-width:0}
-.row-txt b{display:block;font-size:13.5px;font-weight:600}
-.row-txt span{display:block;font-size:12px;color:var(--muted);margin-top:1px}
+/* ── Пульт ── */
+.pult{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:7px;box-shadow:0 10px 30px -12px rgba(28,40,105,.3);max-width:100%}
+:root[data-theme="dark"] .pult{box-shadow:0 10px 30px -10px rgba(0,0,0,.55)}
+.pv{width:1px;height:28px;background:var(--border);margin:0 4px;flex-shrink:0}
+.src{display:flex;align-items:center;height:44px;border-radius:12px;border:1px solid transparent;color:var(--muted);flex-shrink:0;position:relative}
+.src:has(input:checked){background:var(--accent-light);border-color:var(--accent-border);color:var(--accent)}
+.src-main{display:flex;align-items:center;gap:8px;height:100%;padding:0 12px;border-radius:11px;cursor:pointer;font-weight:500;position:relative;user-select:none}
+.src-main:hover{color:var(--text)}
+.src:has(input:checked) .src-main:hover{color:var(--accent-hover)}
+.src-main input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.src-main:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.src .lv{width:28px;height:4px;border-radius:2px;background:var(--border2);overflow:hidden;display:none}
+.src:has(input:checked) .lv{display:block;background:rgba(26,122,80,.18)}
+.src .lv i{display:block;height:100%;width:0;background:var(--success);transition:width .06s linear}
+.src .off-x{display:none}
+.src:not(:has(input:checked)) .src-main .ico{opacity:.75}
+.src-more{width:28px;height:100%;display:flex;align-items:center;justify-content:center;border-left:1px solid transparent;border-radius:0 11px 11px 0;color:inherit}
+.src:has(input:checked) .src-more{border-left-color:var(--accent-border)}
+.src:not(:has(input:checked)) .src-more{display:none}
+.src-more .ico{width:14px;height:14px}
+.src-more:hover{background:rgba(35,55,168,.08)}
+.qbtn{display:flex;align-items:center;gap:6px;height:44px;padding:0 10px;border-radius:12px;color:var(--text2);font-size:13px;flex-shrink:0}
+.qbtn b{color:var(--text);font-weight:600}
+.qbtn:hover{background:var(--surface2)}
+.qbtn .ico{width:14px;height:14px}
+.start-wrap{flex-shrink:0}
+.btn-go{height:54px;padding:0 24px 0 18px;border-radius:14px;font-size:16px;gap:12px}
+.btn-go .dot{width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.28)}
+
+/* ── Спливні панелі пульта ── */
+.pop{position:absolute;bottom:calc(100% + 12px);left:0;z-index:60;width:300px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-lg);color:var(--text);display:flex;flex-direction:column;gap:10px;cursor:default}
+.pop[hidden]{display:none}
+.pop-h{font-size:12px;font-weight:600;color:var(--muted)}
+.row{display:flex;align-items:center;gap:12px;min-height:34px}
 .row-label{flex:1;font-size:13px;color:var(--text2);font-weight:500}
 .switch{position:relative;width:38px;height:22px;flex-shrink:0;display:inline-block}
 .switch input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer;z-index:1}
@@ -140,38 +159,38 @@ body.recording .rec-chip{display:inline-flex}
 .switch input:checked + i{background:var(--accent)}
 .switch input:checked + i::after{transform:translateX(16px)}
 .switch input:focus-visible + i{outline:2px solid var(--accent);outline-offset:2px}
-.sub-block{margin:8px 0 6px 46px;display:flex;flex-direction:column;gap:8px}
-.sub-block .row{min-height:34px}
-.sub-block .row + .row{margin-top:0}
+.sub-block{display:flex;flex-direction:column;gap:8px}
 .select{width:100%;height:34px;border-radius:var(--r);border:1px solid var(--border);background:var(--surface2);padding:0 10px;font-size:13px;outline:none}
 .select:focus{border-color:var(--accent)}
 .meter{height:6px;border-radius:6px;background:var(--surface3);overflow:hidden}
-.meter i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--success),#eab308 75%,var(--danger));transition:width .06s linear}
+.meter i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--success),#c98a00 75%,var(--rec));transition:width .06s linear}
 .meter-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
 .meter-row .meter{flex:1}
 .seg{display:flex;gap:2px;padding:2px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;flex-shrink:0}
 .seg button{height:28px;min-width:32px;padding:0 9px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--text2);display:flex;align-items:center;justify-content:center;gap:5px}
 .seg button:hover:not(:disabled){color:var(--text)}
-.seg button.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm)}
+.seg button.on{background:var(--surface);color:var(--text);font-weight:600;box-shadow:var(--shadow-sm)}
+:root[data-theme="dark"] .seg button.on{background:var(--surface3)}
 .seg .ico{width:15px;height:15px}
-.small-note{font-size:12px;color:var(--muted);line-height:1.45;margin-top:6px}
+.small-note{font-size:12px;color:var(--muted);line-height:1.45}
+.notice{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:12px;background:var(--danger-light);color:var(--text);font-size:13.5px;line-height:1.55;max-width:640px}
+.notice .ico{color:var(--danger);margin-top:2px}
 
-/* ── Recording ── */
-.rec-card{max-width:760px;margin:0 auto;padding:22px}
-.rec-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
-.rec-badge{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 11px;border-radius:20px;background:var(--danger-light);color:var(--danger);font-size:12px;font-weight:700;letter-spacing:.06em}
-.rec-badge i{width:8px;height:8px;border-radius:50%;background:var(--danger);animation:blink 1s step-end infinite}
-.timer{font-size:40px;font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1}
-.rec-sources{margin-left:auto;font-size:12.5px;color:var(--muted);text-align:right}
-.rec-video{width:100%;aspect-ratio:16/9;border-radius:10px;background:#000;display:block;object-fit:contain}
-.rec-foot{display:flex;align-items:center;gap:12px;margin:14px 0}
-.rec-foot .meter-row{flex:1}
+/* ── Запис ── */
+.rec-video{width:100%;aspect-ratio:16/9;max-height:calc(100vh - 240px);border-radius:14px;background:#111;display:block;object-fit:contain;box-shadow:0 20px 50px -20px rgba(0,0,0,.5)}
+.rec-badge{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 11px;border-radius:10px;background:var(--rec-light);color:var(--rec);font-size:12px;font-weight:700;letter-spacing:.06em;flex-shrink:0}
+.rec-badge i{width:8px;height:8px;border-radius:50%;background:var(--rec);animation:blink 1s step-end infinite}
+.timer{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1;padding:0 8px;min-width:96px;text-align:center}
+.rec-sources{font-size:12.5px;color:var(--muted);padding:0 6px;white-space:nowrap}
+.pult .meter-row{width:150px;padding:0 6px}
+.pult .btn-stop{height:46px;padding:0 20px;border-radius:12px;font-size:15px;width:auto}
 
-/* ── Review ── */
-.player-card{padding:14px}
-.player{width:100%;aspect-ratio:16/9;border-radius:10px;background:#000;display:block}
-.done-tag{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 11px;border-radius:20px;background:var(--success-light);color:var(--success);font-size:12.5px;font-weight:700;margin:14px 0 4px}
-.meta{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:12px 0 16px;font-size:13px}
+/* ── Перегляд ── */
+.review{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;width:100%;align-items:start}
+.player{width:100%;aspect-ratio:16/9;border-radius:14px;background:#111;display:block;box-shadow:0 20px 50px -20px rgba(0,0,0,.45)}
+.side{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 10px 30px -14px rgba(28,40,105,.25)}
+.done-tag{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 11px;border-radius:20px;background:var(--success-light);color:var(--success);font-size:12.5px;font-weight:600}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:14px 0 16px;font-size:13px}
 .meta dt{color:var(--muted)}
 .meta dd{margin:0;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
 .field-label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin:0 0 6px}
@@ -180,37 +199,48 @@ body.recording .rec-chip{display:inline-flex}
 .name-row input{flex:1;min-width:0;height:100%;border:0;background:transparent;outline:none;padding:0 12px;font-size:14px}
 .name-row span{padding:0 12px 0 4px;color:var(--muted);font-size:13px;font-weight:500}
 .stack{display:flex;flex-direction:column;gap:8px}
-.link{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-size:13px;font-weight:500;text-decoration:none;margin-top:14px}
-.link:hover{text-decoration:underline}
-.link .ico{width:15px;height:15px}
+.side .small-note{margin-top:12px}
 
-/* ── Modal / Toast / Tip ── */
-.overlay{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,18,25,.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+/* ── Модалки, тост ── */
+.overlay{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(14,20,56,.42)}
+:root[data-theme="dark"] .overlay{background:rgba(0,0,0,.55)}
 .overlay.open{display:flex;animation:fadeUp .16s ease}
-.modal{width:100%;max-width:460px;max-height:calc(100vh - 40px);overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);padding:22px}
+.modal{width:100%;max-width:460px;max-height:calc(100vh - 40px);overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-lg);padding:22px}
 .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.modal-head h3{margin:0;font-size:16px;font-weight:700}
+.modal-head h3{margin:0;font-family:'Literata',Georgia,serif;font-size:19px;font-weight:700}
 .modal p.msg{margin:0 0 4px;font-size:13.5px;line-height:1.55;color:var(--text2)}
 .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap}
 .steps{display:flex;flex-direction:column;gap:10px;margin:4px 0 14px}
 .step{display:flex;gap:10px;font-size:13.5px;color:var(--text2);line-height:1.5}
-.step-num{width:22px;height:22px;border-radius:7px;background:var(--accent-light);color:var(--accent);font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-size:11.5px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
 .step b{color:var(--text);font-weight:600}
 .kgrid{display:grid;grid-template-columns:1fr auto;gap:8px 16px;font-size:13px;align-items:center;padding-top:12px;border-top:1px solid var(--border)}
-.toast{position:fixed;left:50%;bottom:28px;z-index:500;transform:translate(-50%,12px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:12px;background:var(--float-bg);color:var(--float-text);font-size:13px;font-weight:500;box-shadow:0 12px 32px rgba(0,0,0,.28);transition:opacity .18s,transform .18s;max-width:calc(100vw - 24px)}
+.toast{position:fixed;left:50%;bottom:28px;z-index:500;transform:translate(-50%,12px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:10px;background:var(--float-bg);color:var(--float-text);font-size:13px;font-weight:500;box-shadow:0 12px 32px rgba(0,0,0,.28);transition:opacity .18s,transform .18s;max-width:calc(100vw - 24px)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
-.toast.ok{background:#0f8a62;color:#fff}
-.toast.err{background:#c73b3b;color:#fff}
+.toast.ok{background:var(--success);color:#fff}
+.toast.err{background:var(--danger);color:#fff}
+:root[data-theme="dark"] .toast.ok,:root[data-theme="dark"] .toast.err{color:#141414}
 
 @media(max-width:900px){
-  .grid{grid-template-columns:1fr}
+  .review{grid-template-columns:1fr}
   .rec-sources{display:none}
 }
-@media(max-width:640px){
+@media(max-width:760px){
   .hide-sm{display:none !important}
-  .topbar{padding:0 6px;gap:2px}
-  .main{padding:16px 12px 32px}
-  .timer{font-size:32px}
+  .topbar{padding:0 8px;gap:2px}
+  .main{padding:14px 12px 28px}
+  .stage,.rec-video{max-height:none}
+  .pult{flex-wrap:wrap;justify-content:center;width:100%;border-radius:16px}
+  .start-wrap{order:-1;width:100%}
+  .btn-go{width:100%}
+  .pv{display:none}
+  .src-main .t{display:none}
+  .pult{position:relative}
+  .src{position:static}
+  .pop{left:0 !important;right:0 !important;top:calc(100% + 8px);bottom:auto;width:auto}
+  .stage-label{display:none}
+  .timer{font-size:22px;min-width:0}
+  .pult .meter-row{width:110px}
 }
 </style>
 <meta name="description" content="Запис екрана з мікрофоном, звуком і веб-камерою в кутку. MP4 або WebM, без встановлення програм.">
@@ -218,13 +248,13 @@ body.recording .rec-chip{display:inline-flex}
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Edvault">
 <meta property="og:locale" content="uk_UA">
-<meta property="og:title" content="Запис екрану · Edvault">
+<meta property="og:title" content="Запис екрана · Edvault">
 <meta property="og:description" content="Запис екрана з мікрофоном, звуком і веб-камерою в кутку. MP4 або WebM, без встановлення програм.">
 <meta property="og:url" content="https://tools.edvault.online/screen-recorder">
 <meta property="og:image" content="https://tools.edvault.online/assets/og/tool-screen-recorder.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Запис екрану — Edvault">
+<meta property="og:image:alt" content="Запис екрана — Edvault">
 <meta name="twitter:card" content="summary_large_image">
 <!-- /og -->
 </head>
@@ -233,7 +263,7 @@ body.recording .rec-chip{display:inline-flex}
 <header class="topbar">
   <div class="brand">
     <div class="brand-mark"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></svg></div>
-    <span class="brand-name">Запис екрану</span>
+    <span class="brand-name">Запис екрана</span>
   </div>
   <span class="rec-chip" id="recChip"><i></i><span id="recChipTime">00:00</span></span>
   <div class="grow"></div>
@@ -247,60 +277,53 @@ body.recording .rec-chip{display:inline-flex}
 
 <main class="main">
 
-  <!-- ═════ НАЛАШТУВАННЯ ═════ -->
+  <!-- ═════ НАЛАШТУВАННЯ: сцена + пульт ═════ -->
   <section class="screen on" id="scrSetup">
-    <div class="grid">
-      <div>
-        <div class="card stage-card">
-          <div class="stage" id="stage">
-            <div class="mock">
-              <div class="mock-bar"><i></i><i></i><i></i></div>
-              <div class="mock-body"><div class="mock-line a"></div><div class="mock-line b"></div><div class="mock-line c"></div><div class="mock-line d"></div></div>
-            </div>
-            <span class="stage-label">Попередній вигляд</span>
-            <div class="cam-bubble" id="camBubble"><video id="camPreview" muted playsinline autoplay></video></div>
-          </div>
-          <div class="start-wrap" id="startWrap">
-            <button class="btn btn-primary btn-xl" id="btnStart">
-              <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="7"/></svg>
-              Почати запис <kbd class="hide-sm">R</kbd>
-            </button>
-            <p class="hint">Браузер запропонує вибрати, що записувати: весь екран, вікно або вкладку.</p>
-          </div>
-          <div class="notice" id="unsupported" hidden>
-            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-            <div><b>Цей браузер не вміє записувати екран.</b><br>Відкрийте сторінку на комп’ютері в Chrome, Edge, Firefox або Safari. На телефонах запис екрана з браузера недоступний.</div>
-          </div>
-        </div>
+    <div class="stage" id="stage">
+      <div class="mock">
+        <div class="mock-bar"><i></i><i></i><i></i></div>
+        <div class="mock-body"><div class="mock-line a"></div><div class="mock-line b"></div><div class="mock-line c"></div><div class="mock-line d"></div></div>
       </div>
+      <span class="stage-label">Тут з’явиться те, що ви оберете: екран, вікно або вкладку</span>
+      <div class="cam-bubble" id="camBubble"><video id="camPreview" muted playsinline autoplay></video></div>
+    </div>
 
-      <aside class="card panel">
-        <div class="group">
-          <div class="group-h">Звук</div>
-          <div class="row">
-            <div class="row-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/></svg></div>
-            <div class="row-txt"><b>Мікрофон</b><span>Ваш голос</span></div>
-            <label class="switch" title="Записувати мікрофон"><input type="checkbox" id="optMic"><i></i></label>
-          </div>
+    <div class="pult" id="setupPult">
+      <!-- Мікрофон -->
+      <div class="src" id="srcMic">
+        <label class="src-main" title="Записувати мікрофон">
+          <input type="checkbox" id="optMic" aria-label="Мікрофон">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/></svg>
+          <span class="t">Мікрофон</span><span class="lv"><i id="micLv"></i></span>
+        </label>
+        <button class="src-more" data-pop="popMic" title="Вибрати мікрофон" aria-haspopup="true" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="pop" id="popMic" hidden>
+          <div class="pop-h">Мікрофон</div>
           <div class="sub-block" id="micBlock">
             <select class="select" id="micSelect" aria-label="Мікрофон"><option value="">Типовий мікрофон</option></select>
             <div class="meter-row"><span>Рівень</span><div class="meter"><i id="micMeter"></i></div></div>
             <button class="btn btn-outline btn-sm" id="btnMicTest" hidden>Перевірити мікрофон</button>
           </div>
-          <div class="row">
-            <div class="row-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></div>
-            <div class="row-txt"><b>Звук екрана</b><span>Відео, музика, звук застосунків</span></div>
-            <label class="switch" title="Записувати звук вкладки або системи"><input type="checkbox" id="optSys"><i></i></label>
-          </div>
         </div>
-
-        <div class="group">
-          <div class="group-h">Камера</div>
-          <div class="row">
-            <div class="row-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></div>
-            <div class="row-txt"><b>Веб-камера</b><span>Ваше обличчя в кутку відео</span></div>
-            <label class="switch" title="Додати веб-камеру"><input type="checkbox" id="optCam"><i></i></label>
-          </div>
+      </div>
+      <!-- Звук екрана -->
+      <div class="src" id="srcSys">
+        <label class="src-main" title="Записувати звук вкладки або системи: відео, музику, звук застосунків">
+          <input type="checkbox" id="optSys" aria-label="Звук екрана">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          <span class="t">Звук екрана</span>
+        </label>
+      </div>
+      <!-- Камера -->
+      <div class="src" id="srcCam">
+        <label class="src-main" title="Додати веб-камеру: ваше обличчя в кутку відео">
+          <input type="checkbox" id="optCam" aria-label="Веб-камера">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+          <span class="t">Камера</span>
+        </label>
+        <button class="src-more" data-pop="popCam" title="Налаштувати камеру" aria-haspopup="true" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="pop" id="popCam" hidden>
+          <div class="pop-h">Веб-камера</div>
           <div class="sub-block" id="camBlock">
             <select class="select" id="camSelect" aria-label="Камера"><option value="">Типова камера</option></select>
             <div class="row"><span class="row-label">Кут</span>
@@ -322,9 +345,19 @@ body.recording .rec-chip{display:inline-flex}
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="group">
-          <div class="group-h">Якість</div>
+      <span class="pv"></span>
+      <div class="start-wrap" id="startWrap">
+        <button class="btn btn-rec btn-go" id="btnStart"><span class="dot"></span>Почати запис <kbd class="hide-sm">R</kbd></button>
+      </div>
+      <span class="pv"></span>
+
+      <!-- Якість -->
+      <div class="src" style="color:inherit">
+        <button class="qbtn" data-pop="popQ" title="Якість і формат" aria-haspopup="true" aria-expanded="false"><span id="qSum"><b>1080p</b> · 30 fps · MP4</span><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="pop" id="popQ" hidden style="left:auto;right:0">
+          <div class="pop-h">Якість і формат</div>
           <div class="row"><span class="row-label">Роздільність</span>
             <div class="seg" id="segQuality"><button data-v="720">720p</button><button data-v="1080">1080p</button><button data-v="orig" title="Як на екрані, без зменшення">Оригінал</button></div>
           </div>
@@ -336,35 +369,39 @@ body.recording .rec-chip{display:inline-flex}
           </div>
           <div class="small-note" id="fmtNote"></div>
         </div>
-      </aside>
+      </div>
+    </div>
+
+    <p class="hint" id="setupHint">Браузер запитає, що записувати: весь екран, вікно або вкладку. Усе лишається на вашому комп’ютері.</p>
+    <div class="notice" id="unsupported" hidden>
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+      <div><b>Цей браузер не вміє записувати екран.</b><br>Відкрийте сторінку на комп’ютері в Chrome, Edge, Firefox або Safari. На телефонах запис екрана з браузера недоступний.</div>
     </div>
   </section>
 
   <!-- ═════ ЗАПИС ═════ -->
   <section class="screen" id="scrRec">
-    <div class="card rec-card">
-      <div class="rec-top">
-        <span class="rec-badge"><i></i>REC</span>
-        <span class="timer" id="timer">00:00</span>
-        <span class="rec-sources" id="recSources"></span>
-      </div>
-      <video class="rec-video" id="recPreview" muted playsinline autoplay></video>
-      <div class="rec-foot">
-        <div class="meter-row" id="recMeterRow"><span>Мікрофон</span><div class="meter"><i id="recMeter"></i></div></div>
-      </div>
-      <button class="btn btn-stop btn-xl" id="btnStop">
+    <video class="rec-video" id="recPreview" muted playsinline autoplay></video>
+    <div class="pult">
+      <span class="rec-badge"><i></i>REC</span>
+      <span class="timer" id="timer">00:00</span>
+      <span class="pv"></span>
+      <div class="meter-row" id="recMeterRow"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/></svg><div class="meter"><i id="recMeter"></i></div></div>
+      <span class="rec-sources" id="recSources"></span>
+      <span class="pv"></span>
+      <button class="btn btn-stop" id="btnStop">
         <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
-        Зупинити запис <kbd class="hide-sm">S</kbd>
+        Зупинити <kbd class="hide-sm">S</kbd>
       </button>
-      <p class="hint">Або натисніть «Припинити доступ» на панелі браузера — запис збережеться так само.</p>
     </div>
+    <p class="hint">Або натисніть «Припинити доступ» на панелі браузера — запис збережеться так само.</p>
   </section>
 
   <!-- ═════ ПЕРЕГЛЯД ═════ -->
   <section class="screen" id="scrReview">
-    <div class="grid">
-      <div class="card player-card"><video class="player" id="player" controls playsinline></video></div>
-      <aside class="card panel">
+    <div class="review">
+      <video class="player" id="player" controls playsinline></video>
+      <aside class="side">
         <div class="done-tag"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M20 6 9 17l-5-5"/></svg>Запис готовий</div>
         <dl class="meta">
           <dt>Тривалість</dt><dd id="mDur">—</dd>
@@ -379,13 +416,13 @@ body.recording .rec-chip{display:inline-flex}
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
             Завантажити
           </button>
-          <button class="btn btn-outline btn-xl" id="btnNew">
-            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
-            Новий запис
-          </button>
           <button class="btn btn-outline btn-xl" id="btnEdit">
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"/></svg>
             Обрізати у відеоредакторі
+          </button>
+          <button class="btn btn-outline btn-xl" id="btnNew">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+            Новий запис
           </button>
         </div>
         <p class="small-note">Запис існує лише в цій вкладці, доки ви його не завантажите.</p>
@@ -401,7 +438,7 @@ body.recording .rec-chip{display:inline-flex}
       <button class="btn btn-icon" data-close title="Закрити (Esc)"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     </div>
     <div class="steps">
-      <div class="step"><div class="step-num">1</div><span>Праворуч увімкніть <b>мікрофон</b>, <b>звук екрана</b> чи <b>веб-камеру</b> й оберіть якість.</span></div>
+      <div class="step"><div class="step-num">1</div><span>На пульті під попереднім виглядом увімкніть <b>мікрофон</b>, <b>звук екрана</b> чи <b>камеру</b>. Стрілка поруч відкриває налаштування, а праворуч — якість.</span></div>
       <div class="step"><div class="step-num">2</div><span>Натисніть <b>«Почати запис»</b> і виберіть екран, вікно або вкладку. Щоб записати звук вкладки, увімкніть у вікні вибору <b>«Поділитися звуком»</b>.</span></div>
       <div class="step"><div class="step-num">3</div><span>Коли закінчите — <b>«Зупинити запис»</b> тут або «Припинити доступ» на панелі браузера.</span></div>
       <div class="step"><div class="step-num">4</div><span>Перегляньте відео й <b>завантажте</b> його. Нічого не надсилається на сервер — усе лишається на вашому комп’ютері.</span></div>
@@ -483,7 +520,7 @@ body.recording .rec-chip{display:inline-flex}
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
     $('btnTheme').innerHTML = dark ? SUN : MOON;
     $('btnTheme').title = dark ? 'Світла тема' : 'Темна тема';
-    document.querySelector('meta[name="theme-color"]').content = dark ? '#171a22' : '#4F6BF4';
+    document.querySelector('meta[name="theme-color"]').content = dark ? '#1e1e1e' : '#1c2869';
   }
   $('btnTheme').addEventListener('click', () => {
     const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -500,7 +537,7 @@ body.recording .rec-chip{display:inline-flex}
     screen = name;
     ['setup', 'rec', 'review'].forEach(n => $('scr' + n[0].toUpperCase() + n.slice(1)).classList.toggle('on', n === name));
     document.body.classList.toggle('recording', name === 'rec');
-    if (name !== 'rec') document.title = 'Запис екрану — Edvault';
+    if (name !== 'rec') document.title = 'Запис екрана — Edvault';
   }
 
   // ═════════ Аудіо (спільний AudioContext: індикатор рівня і змішування) ═════════
@@ -528,6 +565,7 @@ body.recording .rec-chip{display:inline-flex}
       const pct = Math.min(100, Math.round(Math.sqrt(rms) * 170));
       $('micMeter').style.width = pct + '%';
       $('recMeter').style.width = pct + '%';
+      $('micLv').style.width = pct + '%';
       meterRaf = requestAnimationFrame(loop);
     };
     loop();
@@ -538,6 +576,7 @@ body.recording .rec-chip{display:inline-flex}
     meterSrc = meterAnalyser = null;
     $('micMeter').style.width = '0';
     $('recMeter').style.width = '0';
+    $('micLv').style.width = '0';
   }
 
   // ═════════ Мікрофон і камера ═════════
@@ -675,8 +714,38 @@ body.recording .rec-chip{display:inline-flex}
   syncBlocks();
   syncFmtNote();
 
+  // підсумок якості на пульті: «1080p · 30 fps · MP4»
+  function syncQSum() {
+    const q = cfg.quality === 'orig' ? 'Оригінал' : cfg.quality + 'p';
+    $('qSum').innerHTML = '<b>' + q + '</b> · ' + cfg.fps + ' fps · ' + cfg.format.toUpperCase();
+  }
+  ['segQuality', 'segFps', 'segFormat'].forEach(id => $(id).addEventListener('click', syncQSum));
+  syncQSum();
+
+  // спливні панелі пульта (мікрофон, камера, якість)
+  let openPop = null;
+  function setPop(id) {
+    if (openPop) {
+      $(openPop).hidden = true;
+      const b = document.querySelector('[data-pop="' + openPop + '"]'); if (b) b.setAttribute('aria-expanded', 'false');
+    }
+    openPop = id && id !== openPop ? id : null;
+    if (openPop) {
+      $(openPop).hidden = false;
+      document.querySelector('[data-pop="' + openPop + '"]').setAttribute('aria-expanded', 'true');
+    }
+  }
+  document.querySelectorAll('[data-pop]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); setPop(b.dataset.pop); }));
+  document.addEventListener('pointerdown', e => {
+    if (openPop && !$(openPop).contains(e.target) && !e.target.closest('[data-pop]')) setPop(null);
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && openPop) { setPop(null); e.stopPropagation(); } }, true);
+  // вимкнули джерело — його панель зникає разом зі стрілкою
+  ['optMic', 'optCam'].forEach(id => $(id).addEventListener('change', () => { if (openPop && !$(id).checked) setPop(null); }));
+
   if (!SUPPORTED) {
     $('startWrap').hidden = true;
+    $('setupHint').hidden = true;
     $('unsupported').hidden = false;
   }
 
@@ -923,7 +992,7 @@ body.recording .rec-chip{display:inline-flex}
     const t = fmtTime((performance.now() - recStart) / 1000);
     $('timer').textContent = t;
     $('recChipTime').textContent = t;
-    document.title = '● ' + t + ' · Запис екрану';
+    document.title = '● ' + t + ' · Запис екрана';
   }
 
   function stopRecording() {
@@ -977,7 +1046,7 @@ body.recording .rec-chip{display:inline-flex}
   const fmtSize = b => b < 1048576 ? Math.max(1, Math.round(b / 1024)) + ' КБ' : (b / 1048576).toFixed(b < 10485760 ? 1 : 0).replace('.', ',') + ' МБ';
   function defaultName() {
     const d = new Date(), p = n => String(n).padStart(2, '0');
-    return 'запис-екрану-' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
+    return 'запис-екрана-' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
   }
 
   function download() {
