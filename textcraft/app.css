@@ -644,3 +644,7 @@ body.tc-readonly #editor{cursor:default}
 ::highlight(tc-prop){color:#89ddff}
 .topbar .btn.on{background:rgba(255,255,255,.18);color:#fff}
 .topbar :focus-visible{outline-color:var(--marker)}
+
+/* темна тема Edvault: нейтральні затемнення без синього відтінку */
+:root[data-theme="dark"] .drawer-overlay{background:rgba(0,0,0,.5)}
+:root[data-theme="dark"] .overlay{background:rgba(0,0,0,.55)}
