@@ -690,19 +690,9 @@
   .btn-danger:hover:not(:disabled) { background: var(--danger-light); color: var(--danger); }
   .btn-icon-active, .btn-icon-active:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 
-  /* ── верхня панель ── */
-  .topbar { height: var(--topbar-h); justify-content: flex-start; gap: 6px; padding: 0 12px; box-shadow: none; z-index: 30;
-    background: var(--cover); color: var(--on-cover); border-bottom: 0;
-    --text: var(--on-cover); --text2: var(--on-cover-2); --muted: var(--on-cover-2); --surface2: rgba(255,255,255,.09); --surface: rgba(255,255,255,.1); --border: rgba(255,255,255,.18); --border2: rgba(255,255,255,.3); }
-  .topbar :focus-visible { outline: 2px solid var(--marker); outline-offset: 2px; }
-  .topbar .btn-primary { background: var(--on-cover); border-color: var(--on-cover); color: var(--cover); }
-  .topbar .btn-primary:hover:not(:disabled) { background: #fff; border-color: #fff; color: var(--cover); }
-  .topbar .btn-danger:hover:not(:disabled) { background: rgba(240,138,130,.18); color: #ffb4ad; }
+  /* ── верхня панель: тепер це лише два острівці, сама смуга прозора ── */
   .tb-sep { width: 1px; height: 22px; background: var(--border); margin: 0 4px; flex-shrink: 0; }
-  .brand { display: flex; align-items: center; gap: 9px; flex-shrink: 0; margin-right: 2px; }
-  .topbar-logo { width: 30px; height: 30px; border-radius: 5px; background: var(--on-cover) !important; color: var(--cover); box-shadow: none; }
-  .topbar-logo svg { width: 16px; height: 16px; color: var(--cover); }
-  .brand-name { font-weight: 700; font-size: 15px; white-space: nowrap; color: var(--on-cover); }
+  .brand-name { font-weight: 700; font-size: 14.5px; white-space: nowrap; color: var(--text); padding: 0 8px 0 4px; }
   .page-count-chip { font-size: 11.5px; font-weight: 600; padding: 3px 9px 3px 7px; }
   .grow { flex: 1; min-width: 8px; }
 
@@ -814,6 +804,130 @@
     .propbar .size-row input[type="range"] { width: 90px; }
     .page-strip { padding: 0 8px; }
   }
+
+  /* ════════════════════ «ОСТРІВЦІ»: полотно на весь екран, інструменти — маленькі плаваючі панелі ════════════════════
+     Угорі ліворуч — меню й історія, угорі праворуч — зберегти й показати, унизу по центру — інструменти,
+     над ними — властивості активного інструмента, унизу ліворуч — сторінки, праворуч — масштаб. */
+  .app { position: relative; overflow: hidden; display: block; --fit-reserve-y: 230px; --isl-gap: 12px; }
+  .app.presentation-mode { --fit-reserve-y: 130px; }
+  .main { position: absolute; inset: 0; display: block; }
+  .canvas-area { position: absolute; inset: 0; }
+  .canvas-viewport { height: 100%; }
+
+  .isl {
+    display: flex; align-items: center; gap: 2px; height: 46px; padding: 5px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(28,40,105,.10), 0 1px 3px rgba(28,40,105,.08); pointer-events: auto;
+  }
+  :root[data-theme="dark"] .isl { box-shadow: 0 10px 28px rgba(0,0,0,.45); }
+  .isl .btn { height: 34px; border-radius: 9px; }
+  .isl .btn.btn-icon { width: 34px; }
+  .btn-icon.is-open { background: var(--accent-light); color: var(--accent); }
+
+  .topbar {
+    position: absolute; top: var(--isl-gap); left: var(--isl-gap); right: var(--isl-gap); height: auto; z-index: 30;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 0;
+    background: transparent; border: 0; box-shadow: none; pointer-events: none;
+  }
+  .topbar .page-count-chip { margin-right: 2px; }
+
+  /* ── меню дошки ── */
+  .board-menu {
+    position: absolute; top: 54px; left: 0; z-index: 40; min-width: 236px; padding: 6px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow-lg);
+    display: flex; flex-direction: column; pointer-events: auto;
+  }
+  .board-menu[hidden] { display: none; }
+  .mi {
+    display: flex; align-items: center; gap: 12px; height: 38px; padding: 0 12px; border: 0; border-radius: 9px;
+    background: transparent; color: var(--text); font: inherit; font-size: 13.5px; font-weight: 500; text-align: left; cursor: pointer;
+  }
+  .mi svg { width: 17px; height: 17px; color: var(--text2); flex-shrink: 0; }
+  .mi:hover, .mi:focus-visible { background: var(--surface2); outline: none; }
+  .mi.danger, .mi.danger svg { color: var(--danger); }
+  .mi.danger:hover { background: var(--danger-light); }
+  .mi-sep { height: 1px; background: var(--border); margin: 5px 6px; }
+
+  /* ── інструменти: док унизу по центру ── */
+  .tools-panel {
+    position: absolute; left: 50%; bottom: var(--isl-gap); transform: translateX(-50%); z-index: 25;
+    width: auto; height: 50px; max-width: calc(100% - 24px); flex-direction: row; align-items: center; padding: 5px; gap: 0;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow-x: auto; overflow-y: hidden;
+    box-shadow: 0 10px 30px rgba(28,40,105,.14), 0 1px 3px rgba(28,40,105,.08);
+  }
+  :root[data-theme="dark"] .tools-panel { box-shadow: 0 12px 32px rgba(0,0,0,.5); }
+  .tools-panel .tool-grid { flex-direction: row; gap: 2px; }
+  .tools-panel .tool-btn { width: 38px; height: 38px; border-radius: 10px; }
+  .tools-panel .tool-btn svg { width: 19px; height: 19px; }
+  .tools-panel .tool-btn::after { display: none; }
+  .tools-panel .tool-btn.active { background: var(--accent-light); color: var(--accent); }
+  .tools-panel .rail-sep { width: 1px; height: 22px; margin: 0 5px; }
+
+  /* ── властивості активного інструмента: невеликий острівець над доком ── */
+  .tools-options-pop.propbar {
+    position: absolute !important; left: 50% !important; top: auto !important; bottom: 74px; transform: translateX(-50%);
+    height: 42px; max-width: calc(100% - 24px); padding: 0 12px; gap: 10px; z-index: 24;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(28,40,105,.10), 0 1px 3px rgba(28,40,105,.06);
+  }
+  :root[data-theme="dark"] .tools-options-pop.propbar { box-shadow: 0 10px 28px rgba(0,0,0,.45); }
+  .propbar .prop-title { min-width: 0; }
+  .propbar #pbTitle, .propbar .prop-hint, .propbar .tp-label { display: none; }
+  .propbar .tp-section { padding-left: 10px; height: 24px; }
+  .propbar .prop-title + .tp-section { border-left: 0; padding-left: 0; }
+  .propbar .swatch { width: 20px; height: 20px; }
+  .propbar .color-custom-row { width: 20px; height: 20px; }
+  .propbar .size-row input[type="range"] { width: 96px; }
+  .propbar .size-preview { width: 26px; height: 26px; border-radius: 7px; }
+
+  /* ── сторінки: острівець унизу ліворуч ── */
+  .page-strip {
+    position: absolute; left: var(--isl-gap); bottom: var(--isl-gap); z-index: 25; height: 50px;
+    max-width: calc(50% - 330px); padding: 0 6px; gap: 4px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px; scrollbar-width: none;
+    box-shadow: 0 8px 24px rgba(28,40,105,.10), 0 1px 3px rgba(28,40,105,.08);
+  }
+  .page-strip::-webkit-scrollbar { display: none; }
+  :root[data-theme="dark"] .page-strip { box-shadow: 0 10px 28px rgba(0,0,0,.45); }
+  .page-strip .strip-hint { display: none; }
+  .page-pill { padding: 3px 8px 3px 3px; border-radius: 9px; border-color: transparent; gap: 6px; font-size: 12px; }
+  .page-pill:hover { border-color: var(--border); box-shadow: none; }
+  .page-pill.active { background: var(--accent-light); border-color: var(--accent-border); color: var(--accent); }
+  .page-pill-thumb { width: 32px; height: 24px; box-shadow: inset 0 0 0 1px var(--border); }
+  .strip-add { width: 36px; height: 36px; border-radius: 9px; border: 0; flex-shrink: 0; }
+  .strip-add:hover { background: var(--surface2); }
+
+  /* ── масштаб: острівець унизу праворуч ── */
+  .zoom-controls {
+    right: var(--isl-gap); bottom: var(--isl-gap); height: 50px; padding: 5px; border: 1px solid var(--border); border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(28,40,105,.10), 0 1px 3px rgba(28,40,105,.08);
+  }
+  :root[data-theme="dark"] .zoom-controls { box-shadow: 0 10px 28px rgba(0,0,0,.45); }
+  .zc-btn { width: 36px; height: 38px; border-radius: 9px; }
+
+  .toast { bottom: 136px; }
+  .presentation-mode .toast { bottom: 84px; }
+
+  /* вужчі екрани: сторінки й масштаб піднімаються вгору під верхні острівці, щоб не налізати на док */
+  @media (max-width: 1180px) {
+    .page-strip { bottom: auto; top: 70px; max-width: calc(50% - 24px); }
+    .zoom-controls { bottom: auto; top: 70px; }
+    .presentation-mode .zoom-controls { top: auto; bottom: 76px; }
+  }
+  @media (max-width: 640px) {
+    .app { --isl-gap: 8px; --fit-reserve-y: 250px; }
+    .main { display: block; }
+    .topbar { gap: 6px; }
+    .isl { height: 44px; padding: 4px; }
+    .tools-panel { left: var(--isl-gap); right: var(--isl-gap); transform: none; max-width: none; height: 54px; border-radius: 14px; scrollbar-width: none; }
+    .tools-panel::-webkit-scrollbar { display: none; }
+    .tools-panel .tool-btn { width: 42px; height: 42px; }
+    .tools-options-pop.propbar { left: var(--isl-gap) !important; right: var(--isl-gap); transform: none; bottom: 70px; max-width: none; }
+    .page-strip { top: 60px; max-width: calc(100% - 16px); height: 44px; }
+    .page-pill-thumb { width: 26px; height: 20px; }
+    .zoom-controls { display: none; }
+    .toast { bottom: 128px; }
+  }
 </style>
 <meta name="description" content="Дошка для пояснень: олівець, фігури, стікери, нумерація, лазерна указка. Відкриває PDF і має режим презентації.">
 <!-- og -->
@@ -834,58 +948,69 @@
 
 <div class="app">
   <header class="topbar">
-    <div class="brand">
-      <div class="topbar-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg></div>
+    <!-- острівець ліворуч угорі: меню, назва, скасувати / повторити -->
+    <div class="isl isl-left">
+      <button class="btn btn-icon" id="btnMenu" title="Меню дошки" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
       <span class="brand-name">Вайтборд</span>
+      <div class="page-count-chip" id="pageCountChip" title="Кількість сторінок">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <span id="pageCountVal">1</span>
+      </div>
+      <div class="tb-sep"></div>
+      <button class="btn btn-icon" id="btnUndo" title="Скасувати (Ctrl+Z)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M3 13a9 9 0 1 0 3-6.7L3 9"/></svg>
+      </button>
+      <button class="btn btn-icon" id="btnRedo" title="Повторити (Ctrl+Shift+Z)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M21 13a9 9 0 1 1-3-6.7L21 9"/></svg>
+      </button>
     </div>
-    <div class="page-count-chip hide-sm" id="pageCountChip" title="Кількість сторінок">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
-      <span id="pageCountVal">1</span>
+    <!-- острівець праворуч угорі: зберегти й показати -->
+    <div class="isl isl-right">
+      <button class="btn" id="btnExport" title="Зберегти дошку: PNG сторінки або PDF усіх сторінок">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+        <span class="hide-sm">Зберегти</span>
+      </button>
+      <button class="btn btn-primary" id="btnPresent" title="Режим презентації: лише полотно й інструменти">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="18" x2="12" y2="21"/></svg>
+        <span class="hide-sm">Презентація</span>
+      </button>
     </div>
-    <div class="tb-sep"></div>
-    <button class="btn btn-icon" id="btnUndo" title="Скасувати (Ctrl+Z)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M3 13a9 9 0 1 0 3-6.7L3 9"/></svg>
-    </button>
-    <button class="btn btn-icon" id="btnRedo" title="Повторити (Ctrl+Shift+Z)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M21 13a9 9 0 1 1-3-6.7L21 9"/></svg>
-    </button>
-    <div class="tb-sep hide-sm"></div>
-    <button class="btn" id="btnNewBoard" title="Нова дошка: прибрати всі сторінки й PDF і почати з чистого аркуша">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 12v6M9 15h6"/></svg>
-      <span class="hide-md">Нова</span>
-    </button>
-    <input type="file" id="pdfInput" accept="application/pdf" style="display:none;">
-    <button class="btn hide-sm" id="btnOpenPdf" title="Відкрити PDF як сторінки дошки">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
-      <span class="hide-md">Відкрити PDF</span>
-    </button>
-    <button class="btn hide-sm" id="btnAddPage" title="Додати нову порожню сторінку">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <span class="hide-md">Сторінка</span>
-    </button>
-    <div class="grow"></div>
-    <button class="btn btn-icon btn-danger" id="btnClearPage" title="Очистити сторінку">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-    </button>
-    <button class="btn btn-icon hide-sm" id="btnScreenshot" title="Знімок області: виділіть і збережіть як зображення">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v3M6 18v3M3 6h3M18 6h3M3 18h3M18 18h3M9 3h6M9 21h6M21 9v6M3 9v6"/></svg>
-    </button>
-    <div class="tb-sep"></div>
-    <button class="btn btn-icon" id="btnTheme" title="Темна тема">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
-    <button class="btn btn-icon hide-sm" id="btnShortcuts" title="Гарячі клавіші (?)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    </button>
-    <div class="tb-sep"></div>
-    <button class="btn btn-outline" id="btnExport" title="Зберегти дошку: PNG сторінки або PDF усіх сторінок">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
-      <span class="hide-md">Зберегти</span>
-    </button>
-    <button class="btn btn-primary" id="btnPresent" title="Режим презентації: лише полотно й інструменти">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="18" x2="12" y2="21"/></svg>
-      <span class="hide-sm">Презентація</span>
-    </button>
+    <!-- усе, що потрібно рідше, — у меню -->
+    <div class="board-menu" id="boardMenu" role="menu" hidden>
+      <button class="mi" id="btnNewBoard" title="Нова дошка: прибрати всі сторінки й PDF і почати з чистого аркуша">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 12v6M9 15h6"/></svg>
+        <span>Нова дошка</span>
+      </button>
+      <input type="file" id="pdfInput" accept="application/pdf" style="display:none;">
+      <button class="mi" id="btnOpenPdf" title="Відкрити PDF як сторінки дошки">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <span>Відкрити PDF</span>
+      </button>
+      <button class="mi" id="btnAddPage" title="Додати нову порожню сторінку">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Додати сторінку</span>
+      </button>
+      <div class="mi-sep"></div>
+      <button class="mi" id="btnScreenshot" title="Знімок області: виділіть і збережіть як зображення">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v3M6 18v3M3 6h3M18 6h3M3 18h3M18 18h3M9 3h6M9 21h6M21 9v6M3 9v6"/></svg>
+        <span>Знімок області</span>
+      </button>
+      <button class="mi danger" id="btnClearPage" title="Очистити сторінку">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        <span>Очистити сторінку</span>
+      </button>
+      <div class="mi-sep"></div>
+      <button class="mi" id="btnTheme" title="Темна тема">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span>Темна тема</span>
+      </button>
+      <button class="mi" id="btnShortcuts" title="Гарячі клавіші (?)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>Гарячі клавіші</span>
+      </button>
+    </div>
   </header>
 
   <!-- панель властивостей активного інструмента (колір, товщина тощо) -->
@@ -1339,7 +1464,7 @@
       emptyHintEl.className = 'empty-state show';
       emptyHintEl.innerHTML = `
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-        <p>Порожня сторінка — обери інструмент зліва й почни малювати, або вставте зображення (Ctrl+V / перетягніть файл)</p>`;
+        <p>Порожня сторінка — обери інструмент унизу й почни малювати, або вставте зображення (Ctrl+V / перетягніть файл)</p>`;
       stage.appendChild(emptyHintEl);
     }
 
@@ -2140,9 +2265,14 @@
     if (!page) return;
     const vp = document.getElementById('canvasViewport');
     const availW = vp.clientWidth - 64;  // мінус padding в'юпорту (32px з кожного боку)
-    const availH = vp.clientHeight - 64;
+    const availH = vp.clientHeight - 64 - fitReserveY();
     const fit = Math.min(availW / page.w, availH / page.h, ZOOM_MAX);
     setZoom(Math.max(ZOOM_MIN, fit), { resetScroll: true });
+  }
+
+  // місце, яке забирають плаваючі острівці згори й знизу (у режимі презентації — свої панелі)
+  function fitReserveY() {
+    return parseFloat(getComputedStyle(document.querySelector('.app')).getPropertyValue('--fit-reserve-y')) || 0;
   }
 
   // сторінка ширша чи вища за екран — показуємо її цілком (не збільшуємо, якщо вона й так вміщається)
@@ -2150,9 +2280,10 @@
     const page = getActivePage();
     if (!page) return;
     const vp = document.getElementById('canvasViewport');
-    if (page.w * state.zoom > vp.clientWidth - 32 || page.h * state.zoom > vp.clientHeight - 32) {
+    const availH = vp.clientHeight - fitReserveY();
+    if (page.w * state.zoom > vp.clientWidth - 32 || page.h * state.zoom > availH - 32) {
       const pad = vp.clientWidth < 700 ? 16 : 64;
-      setZoom(Math.min(1, (vp.clientWidth - pad) / page.w, (vp.clientHeight - pad) / page.h), { resetScroll: true });
+      setZoom(Math.min(1, (vp.clientWidth - pad) / page.w, (availH - pad) / page.h), { resetScroll: true });
     }
   }
   document.getElementById('btnZoomIn').addEventListener('click', () => setZoom(state.zoom + 0.15));
@@ -3436,13 +3567,28 @@
     document.documentElement.setAttribute('data-theme', theme);
     const metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) metaTheme.setAttribute('content', theme === 'dark' ? '#171a22' : '#4F6BF4');
-    btnThemeEl.innerHTML = theme === 'dark' ? SUN_ICON : MOON_ICON;
     const label = theme === 'dark' ? 'Світла тема' : 'Темна тема';
+    btnThemeEl.innerHTML = (theme === 'dark' ? SUN_ICON : MOON_ICON) + '<span>' + label + '</span>';
     btnThemeEl.setAttribute('title', label);
     btnThemeEl.setAttribute('aria-label', label);
     btnThemeEl.dataset.title = label; // щоб кастомний тултіп теж підхопив нову підказку одразу
     try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* приватний режим браузера — просто не зберігаємо */ }
   }
+  // меню дошки (☰): рідші дії сховані сюди, щоб на екрані лишалося полотно
+  const btnMenuEl = document.getElementById('btnMenu');
+  const boardMenuEl = document.getElementById('boardMenu');
+  function setBoardMenu(open) {
+    boardMenuEl.hidden = !open;
+    btnMenuEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btnMenuEl.classList.toggle('is-open', open);
+  }
+  btnMenuEl.addEventListener('click', (e) => { e.stopPropagation(); setBoardMenu(boardMenuEl.hidden); });
+  boardMenuEl.addEventListener('click', (e) => { if (e.target.closest('.mi')) setBoardMenu(false); }, true);
+  document.addEventListener('pointerdown', (e) => {
+    if (!boardMenuEl.hidden && !boardMenuEl.contains(e.target) && !btnMenuEl.contains(e.target)) setBoardMenu(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !boardMenuEl.hidden) setBoardMenu(false); });
+
   btnThemeEl.addEventListener('click', () => {
     const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
     applyTheme(current === 'dark' ? 'light' : 'dark');
