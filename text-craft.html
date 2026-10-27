@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TextCraft · Edvault</title>
-<meta name="theme-color" content="#1c2869">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" href="icons/text-craft.ico" sizes="32x32">
 <link rel="icon" href="icons/text-craft.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/text-craft-180.png">
@@ -19,7 +19,8 @@
       var v = JSON.parse(localStorage.getItem('textcraft3_view') || '{}');
       root.setAttribute('data-width', v.width || 'normal');
       root.setAttribute('data-font', v.font || 'serif');
-      if (v.toc === false) root.setAttribute('data-toc', 'off');
+      if (v.toc !== true) root.setAttribute('data-toc', 'off');
+      if (v.docs === false) root.setAttribute('data-docs', 'off');
     } catch (e) {
       root.setAttribute('data-theme', 'light');
       root.setAttribute('data-width', 'normal');
@@ -27,11 +28,8 @@
     }
   })();
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400..800&family=Literata:ital,opsz,wght@0,7..72,400..800;1,7..72,400..600&display=swap" rel="stylesheet">
-<!-- шрифт для коду потрібен не одразу — вантажимо його у фоні, щоб не затримувати показ сторінки -->
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<!-- шрифти лежать поруч, тож редактор має той самий вигляд і без інтернету -->
+<link rel="stylesheet" href="textcraft/fonts.css">
 
 <!-- ═══════════ ДИЗАЙН-ТОКЕНИ (спільні з експортом) ═══════════ -->
 <link rel="stylesheet" id="tcTokens" href="textcraft/tokens.css">
@@ -58,65 +56,194 @@
 </head>
 <body>
 
-<!-- ═══════ TOPBAR ═══════ -->
+<!-- ═══════ ЗАГОЛОВОК ДОКУМЕНТА ═══════ -->
 <header class="topbar">
-  <button class="btn btn-icon" data-act="docs" data-tip="Мої документи"><span data-icon="docs"></span></button>
-  <div class="brand hide-md">
-    <div class="brand-mark"><span data-icon="logo"></span></div>
-    <span class="brand-name">TextCraft</span>
-  </div>
+  <button class="btn btn-icon docs-btn" data-act="docs" data-tip="Мої документи"><span data-icon="docs"></span></button>
+  <div class="brand-mark" aria-hidden="true"><span data-icon="edit"></span></div>
   <input type="text" class="doc-title" id="docTitle" placeholder="Без назви" spellcheck="false" autocomplete="off" aria-label="Назва документа">
-  <div class="topbar-right">
-    <span class="save-state" id="saveState" data-tip="Документ автоматично зберігається в цьому браузері"><span class="dot"></span><span class="txt" id="saveText">Збережено</span></span>
-    <button class="btn btn-icon" data-act="toc" data-tip="Зміст" id="tocToggle"><span data-icon="toc"></span></button>
-    <button class="btn btn-icon hide-sm" data-act="header" data-tip="Шапка документа"><span data-icon="banner"></span></button>
-    <button class="btn btn-icon" data-act="view" data-tip="Вигляд: тема, ширина, шрифт"><span data-icon="view"></span></button>
-    <button class="btn btn-icon hide-sm" data-act="clearDoc" data-tip="Очистити весь документ"><span data-icon="trash"></span></button>
-    <button class="btn btn-icon hide-sm" data-act="help" data-tip="Гарячі клавіші та підказки"><span data-icon="help"></span></button>
-    <button class="btn btn-primary" data-act="export" data-tip="Зберегти як HTML, PDF або Markdown"><span data-icon="download"></span><span class="hide-sm">Експорт</span></button>
-  </div>
+  <span class="save-state" id="saveState" data-tip="Документ автоматично зберігається в цьому браузері"><span class="dot"></span><span class="txt" id="saveText">Збережено</span></span>
+  <span class="grow"></span>
+  <button class="btn btn-primary" data-act="export" data-tip="Зберегти як HTML, PDF або Markdown"><span data-icon="download"></span><span class="hide-sm">Зберегти як…</span></button>
 </header>
 
-<!-- ═══════ TOOLBAR ═══════ -->
-<div class="toolbar-wrap">
-  <div class="toolbar" id="toolbar">
-    <button class="tb" data-cmd="undo" data-tip="Скасувати" data-kbd="Ctrl+Z" id="btnUndo"><span data-icon="undo"></span></button>
-    <button class="tb" data-cmd="redo" data-tip="Повторити" data-kbd="Ctrl+Shift+Z" id="btnRedo"><span data-icon="redo"></span></button>
-    <div class="tb-sep"></div>
-    <button class="tb-drop" data-act="blockStyle" id="blockStyleBtn" data-tip="Тип тексту"><span id="blockStyleLabel">Звичайний текст</span><span data-icon="chevron" data-cls="chev"></span></button>
-    <div class="tb-sep"></div>
-    <div class="size-ctrl">
-      <button class="tb" data-cmd="fontDown" data-tip="Зменшити розмір виділеного тексту"><span data-icon="minus"></span></button>
-      <button class="size-val" data-act="fontSize" id="sizeVal" data-tip="Розмір тексту">17</button>
-      <button class="tb" data-cmd="fontUp" data-tip="Збільшити розмір виділеного тексту"><span data-icon="plus"></span></button>
+<!-- ═══════ СТРІЧКА: вкладки й кнопки з підписами ═══════ -->
+<div class="ribbon" id="toolbar">
+  <div class="rb-tabs" role="tablist" aria-label="Розділи панелі">
+    <button class="rb-tab" role="tab" data-rtab="file">Файл</button>
+    <button class="rb-tab on" role="tab" data-rtab="home" aria-selected="true">Головна</button>
+    <button class="rb-tab" role="tab" data-rtab="insert">Вставлення</button>
+    <button class="rb-tab" role="tab" data-rtab="header">Шапка</button>
+    <button class="rb-tab" role="tab" data-rtab="view">Вигляд</button>
+  </div>
+
+  <div class="rb-panel on" data-panel="home" role="tabpanel">
+    <div class="rg">
+      <div class="rg-body">
+        <button class="rb-big" data-cmd="undo" data-tip="Скасувати" data-kbd="Ctrl+Z" id="btnUndo"><span data-icon="undo"></span><span>Скасувати</span></button>
+        <button class="rb-big" data-cmd="redo" data-tip="Повторити" data-kbd="Ctrl+Shift+Z" id="btnRedo"><span data-icon="redo"></span><span>Повторити</span></button>
+      </div>
+      <div class="rg-cap">Дії</div>
     </div>
-    <div class="tb-sep"></div>
-    <button class="tb" data-cmd="bold" data-tip="Жирний" data-kbd="Ctrl+B" id="tb-bold"><span data-icon="bold"></span></button>
-    <button class="tb" data-cmd="italic" data-tip="Курсив" data-kbd="Ctrl+I" id="tb-italic"><span data-icon="italic"></span></button>
-    <button class="tb" data-cmd="underline" data-tip="Підкреслення" data-kbd="Ctrl+U" id="tb-underline"><span data-icon="underline"></span></button>
-    <button class="tb" data-cmd="strike" data-tip="Закреслення" data-kbd="Ctrl+Shift+S" id="tb-strike"><span data-icon="strike"></span></button>
-    <button class="tb" data-cmd="code" data-tip="Код у рядку" data-kbd="Ctrl+E" id="tb-code"><span data-icon="code"></span></button>
-    <button class="tb color-ico" data-act="color" data-tip="Колір тексту та виділення"><span data-icon="color"></span><span class="bar"></span></button>
-    <button class="tb" data-cmd="clear" data-tip="Очистити форматування" data-kbd="Ctrl+\"><span data-icon="eraser"></span></button>
-    <div class="tb-sep"></div>
-    <button class="tb" data-cmd="ul" data-tip="Маркований список" data-kbd="Ctrl+Shift+8" id="tb-ul"><span data-icon="ul"></span></button>
-    <button class="tb" data-cmd="ol" data-tip="Нумерований список" data-kbd="Ctrl+Shift+7" id="tb-ol"><span data-icon="ol"></span></button>
-    <button class="tb" data-cmd="check" data-tip="Чекліст" data-kbd="Ctrl+Shift+9" id="tb-check"><span data-icon="checklist"></span></button>
-    <button class="tb" data-act="align" data-tip="Вирівнювання" id="tb-align"><span data-icon="alignLeft" id="alignIco"></span></button>
-    <div class="tb-sep"></div>
-    <button class="tb" data-cmd="link" data-tip="Посилання" data-kbd="Ctrl+K" id="tb-link"><span data-icon="link"></span></button>
-    <button class="tb" data-cmd="quote" data-tip="Цитата" id="tb-quote"><span data-icon="quote"></span></button>
-    <button class="tb" data-act="callout" data-tip="Виділений блок (порада, увага…)"><span data-icon="bulb"></span></button>
-    <button class="tb" data-cmd="prompt" data-tip="Блок промпту з кнопкою «Копіювати»"><span data-icon="prompt"></span></button>
-    <button class="tb" data-cmd="codeblock" data-tip="Блок коду"><span data-icon="codeblock"></span></button>
-    <button class="tb" data-act="table" data-tip="Таблиця"><span data-icon="table"></span></button>
-    <button class="tb" data-cmd="image" data-tip="Зображення (або Ctrl+V / перетягніть файл)"><span data-icon="image"></span></button>
-    <button class="tb" data-cmd="hr" data-tip="Розділювач"><span data-icon="hr"></span></button>
+    <div class="rg">
+      <div class="rg-body rg-stack">
+        <div class="rg-line">
+          <button class="tb-drop" data-act="blockStyle" id="blockStyleBtn" data-tip="Тип тексту"><span id="blockStyleLabel">Звичайний текст</span><span data-icon="chevron" data-cls="chev"></span></button>
+          <div class="size-ctrl">
+            <button class="tb" data-cmd="fontDown" data-tip="Зменшити розмір виділеного тексту"><span data-icon="minus"></span></button>
+            <button class="size-val" data-act="fontSize" id="sizeVal" data-tip="Розмір тексту">17</button>
+            <button class="tb" data-cmd="fontUp" data-tip="Збільшити розмір виділеного тексту"><span data-icon="plus"></span></button>
+          </div>
+        </div>
+        <div class="rg-line">
+          <button class="tb" data-cmd="bold" data-tip="Жирний" data-kbd="Ctrl+B" id="tb-bold"><span data-icon="bold"></span></button>
+          <button class="tb" data-cmd="italic" data-tip="Курсив" data-kbd="Ctrl+I" id="tb-italic"><span data-icon="italic"></span></button>
+          <button class="tb" data-cmd="underline" data-tip="Підкреслення" data-kbd="Ctrl+U" id="tb-underline"><span data-icon="underline"></span></button>
+          <button class="tb" data-cmd="strike" data-tip="Закреслення" data-kbd="Ctrl+Shift+S" id="tb-strike"><span data-icon="strike"></span></button>
+          <button class="tb" data-cmd="code" data-tip="Код у рядку" data-kbd="Ctrl+E" id="tb-code"><span data-icon="code"></span></button>
+          <button class="tb color-ico" data-act="color" data-tip="Колір тексту та виділення маркером"><span data-icon="color"></span><span class="bar"></span></button>
+          <button class="tb" data-cmd="clear" data-tip="Очистити форматування" data-kbd="Ctrl+\"><span data-icon="eraser"></span></button>
+        </div>
+      </div>
+      <div class="rg-cap">Текст</div>
+    </div>
+    <div class="rg">
+      <div class="rg-body rg-stack">
+        <div class="rg-line">
+          <button class="tb" data-cmd="ul" data-tip="Маркований список" data-kbd="Ctrl+Shift+8" id="tb-ul"><span data-icon="ul"></span></button>
+          <button class="tb" data-cmd="ol" data-tip="Нумерований список" data-kbd="Ctrl+Shift+7" id="tb-ol"><span data-icon="ol"></span></button>
+          <button class="tb" data-cmd="check" data-tip="Чекліст" data-kbd="Ctrl+Shift+9" id="tb-check"><span data-icon="checklist"></span></button>
+        </div>
+        <div class="rg-line">
+          <button class="tb" data-act="align" data-tip="Вирівнювання" id="tb-align"><span data-icon="alignLeft" id="alignIco"></span></button>
+          <button class="tb" data-cmd="quote" data-tip="Цитата" id="tb-quote"><span data-icon="quote"></span></button>
+          <button class="tb" data-cmd="hr" data-tip="Розділювач"><span data-icon="hr"></span></button>
+        </div>
+      </div>
+      <div class="rg-cap">Абзац</div>
+    </div>
+    <div class="rg rg-styles">
+      <div class="rg-body">
+        <button class="rb-style" data-cmd="p" data-tip="Звичайний текст" data-kbd="Ctrl+Alt+0"><b>Текст</b><small>звичайний абзац</small></button>
+        <button class="rb-style s1" data-cmd="h1" data-tip="Заголовок 1" data-kbd="Ctrl+Alt+1"><b>Заголовок</b><small>назва розділу</small></button>
+        <button class="rb-style s2" data-cmd="h2" data-tip="Заголовок 2" data-kbd="Ctrl+Alt+2"><b>Підзаголовок</b><small>частина розділу</small></button>
+        <button class="rb-style s3" data-cmd="h3" data-tip="Заголовок 3" data-kbd="Ctrl+Alt+3"><b>Пункт</b><small>малий заголовок</small></button>
+      </div>
+      <div class="rg-cap">Стилі</div>
+    </div>
+    <div class="rg">
+      <div class="rg-body">
+        <button class="rb-big" data-cmd="link" data-tip="Посилання" data-kbd="Ctrl+K" id="tb-link"><span data-icon="link"></span><span>Посилання</span></button>
+        <button class="rb-big" data-cmd="image" data-tip="Зображення (або Ctrl+V / перетягніть файл)"><span data-icon="image"></span><span>Малюнок</span></button>
+        <button class="rb-big" data-act="table" data-tip="Таблиця"><span data-icon="table"></span><span>Таблиця</span></button>
+        <button class="rb-big" data-act="callout" data-tip="Виділений блок: порада, увага, важливо"><span data-icon="bulb"></span><span>Порада</span></button>
+      </div>
+      <div class="rg-cap">Вставити</div>
+    </div>
+  </div>
+
+  <div class="rb-panel" data-panel="insert" role="tabpanel" hidden>
+    <div class="rg">
+      <div class="rg-body">
+        <button class="rb-big" data-cmd="image" data-tip="Зображення (або Ctrl+V / перетягніть файл)"><span data-icon="image"></span><span>Малюнок</span></button>
+        <button class="rb-big" data-act="table" data-tip="Таблиця"><span data-icon="table"></span><span>Таблиця</span></button>
+        <button class="rb-big" data-cmd="link" data-tip="Посилання" data-kbd="Ctrl+K"><span data-icon="link"></span><span>Посилання</span></button>
+      </div>
+      <div class="rg-cap">Об’єкти</div>
+    </div>
+    <div class="rg">
+      <div class="rg-body">
+        <button class="rb-big" data-act="callout" data-tip="Виділений блок: порада, увага, важливо"><span data-icon="bulb"></span><span>Виділений блок</span></button>
+        <button class="rb-big" data-cmd="quote" data-tip="Цитата"><span data-icon="quote"></span><span>Цитата</span></button>
+        <button class="rb-big" data-cmd="prompt" data-tip="Блок промпту з кнопкою «Копіювати»"><span data-icon="prompt"></span><span>Промпт</span></button>
+        <button class="rb-big" data-cmd="codeblock" data-tip="Блок коду"><span data-icon="codeblock"></span><span>Код</span></button>
+        <button class="rb-big" data-cmd="hr" data-tip="Розділювач"><span data-icon="hr"></span><span>Розділювач</span></button>
+      </div>
+      <div class="rg-cap">Блоки</div>
+    </div>
+    <div class="rg">
+      <div class="rg-body">
+        <button class="rb-big" data-act="header" data-tip="Кольорова шапка з назвою й рядком для учня"><span data-icon="banner"></span><span>Шапка</span></button>
+      </div>
+      <div class="rg-cap">Документ</div>
+    </div>
+    <p class="rb-hint">Порада: у тексті натисніть <kbd>/</kbd>, щоб вставити будь-який блок, не відриваючи рук від клавіатури.</p>
+  </div>
+
+  <div class="rb-panel" data-panel="header" role="tabpanel" hidden>
+    <div class="rg">
+      <div class="rg-body">
+        <button class="rb-big" data-act="header" data-tip="Налаштувати шапку документа"><span data-icon="banner"></span><span>Налаштувати шапку</span></button>
+      </div>
+      <div class="rg-cap">Шапка</div>
+    </div>
+    <p class="rb-hint">Кольорова шапка над текстом: назва, мітка класу чи уроку, підзаголовок, логотип і рядок «Прізвище та ім’я, клас, дата» для роздруківок. Є готові шаблони.</p>
+  </div>
+
+  <div class="rb-panel" data-panel="view" role="tabpanel" hidden>
+    <div class="rg">
+      <div class="rg-body">
+        <button class="rb-big" data-act="toc" data-tip="Зміст документа праворуч" id="tocToggle"><span data-icon="toc"></span><span>Зміст</span></button>
+        <button class="rb-big" data-act="docsPanel" data-tip="Список документів ліворуч" id="docsToggle"><span data-icon="docs"></span><span>Документи</span></button>
+      </div>
+      <div class="rg-cap">Панелі</div>
+    </div>
+    <div class="rg">
+      <div class="rg-body">
+        <button class="rb-big" data-act="view" data-tip="Тема, ширина сторінки, шрифт"><span data-icon="view"></span><span>Тема й ширина</span></button>
+        <button class="rb-big" data-act="help" data-tip="Гарячі клавіші та підказки"><span data-icon="help"></span><span>Гарячі клавіші</span></button>
+      </div>
+      <div class="rg-cap">Сторінка</div>
+    </div>
+  </div>
+
+  <div class="rb-panel" data-panel="file" role="tabpanel" hidden>
+    <div class="rg">
+      <div class="rg-body">
+        <button class="rb-big" data-act="newDoc" data-tip="Створити новий документ"><span data-icon="plus"></span><span>Новий</span></button>
+        <button class="rb-big" data-act="docs" data-tip="Мої документи"><span data-icon="docs"></span><span>Мої документи</span></button>
+        <button class="rb-big" data-act="import" data-tip="Відкрити файл HTML, Markdown або TXT"><span data-icon="upload"></span><span>Відкрити файл</span></button>
+      </div>
+      <div class="rg-cap">Документ</div>
+    </div>
+    <div class="rg">
+      <div class="rg-body">
+        <button class="rb-big" data-act="export" data-tip="Зберегти як HTML, PDF або Markdown"><span data-icon="download"></span><span>Зберегти як…</span></button>
+        <button class="rb-big danger" data-act="clearDoc" data-tip="Очистити весь документ"><span data-icon="trash"></span><span>Очистити</span></button>
+      </div>
+      <div class="rg-cap">Файл</div>
+    </div>
+    <p class="rb-hint">Документи зберігаються лише в цьому браузері. Щоб перенести документ на інший комп’ютер, збережіть його як HTML і відкрийте там.</p>
   </div>
 </div>
 
 <!-- ═══════ BODY ═══════ -->
 <div class="app-body">
+  <!-- список документів: ліворуч на широкому екрані, висувна панель на вузькому -->
+  <aside class="drawer" id="drawer" aria-label="Мої документи">
+    <div class="drawer-head">
+      <h3>Мої документи</h3>
+      <button class="tb" data-act="closeDrawer" data-tip="Закрити"><span data-icon="close"></span></button>
+    </div>
+    <div class="search-box"><span data-icon="search"></span><input type="text" id="docFilter" placeholder="Пошук документів…" autocomplete="off"></div>
+    <div class="drawer-actions">
+      <button class="btn btn-new" data-act="newDoc"><span data-icon="plus"></span>Новий документ</button>
+    </div>
+    <div class="doc-list" id="docList"></div>
+    <div class="drawer-foot">
+      <button class="btn btn-outline" data-act="import"><span data-icon="upload"></span>Відкрити файл</button>
+      Документи зберігаються тільки в цьому браузері.
+    </div>
+  </aside>
+  <!-- список документів: ліворуч на широкому екрані, висувна панель на вузькому -->
+    <main class="scroll-area" id="scrollArea">
+    <div class="page-wrap">
+      <div class="page" id="page">
+        <div id="docHeaderSlot"></div>
+        <div class="editor tc-content" id="editor" contenteditable="true" spellcheck="true" lang="uk" role="textbox" aria-multiline="true" aria-label="Текст документа"></div>
+      </div>
+    </div>
+    <div class="drop-hint" id="dropHint">Відпустіть, щоб вставити зображення</div>
+  </main>
   <aside class="toc" id="toc">
     <div class="toc-head">
       <span class="toc-title">Зміст</span>
@@ -128,15 +255,6 @@
     </div>
     <div class="toc-list" id="tocList"></div>
   </aside>
-  <main class="scroll-area" id="scrollArea">
-    <div class="page-wrap">
-      <div class="page" id="page">
-        <div id="docHeaderSlot"></div>
-        <div class="editor tc-content" id="editor" contenteditable="true" spellcheck="true" lang="uk" role="textbox" aria-multiline="true" aria-label="Текст документа"></div>
-      </div>
-    </div>
-    <div class="drop-hint" id="dropHint">Відпустіть, щоб вставити зображення</div>
-  </main>
   <button class="back-top" id="backTop" data-tip="Догори"><span data-icon="arrowUp"></span></button>
 </div>
 
@@ -165,21 +283,6 @@
 
 <!-- ═══════ DOCS DRAWER ═══════ -->
 <div class="drawer-overlay" id="drawerOverlay"></div>
-<aside class="drawer" id="drawer" aria-label="Мої документи">
-  <div class="drawer-head">
-    <h3>Мої документи</h3>
-    <button class="tb" data-act="closeDrawer" data-tip="Закрити"><span data-icon="close"></span></button>
-  </div>
-  <div class="drawer-actions">
-    <button class="btn btn-primary" data-act="newDoc"><span data-icon="plus"></span>Новий документ</button>
-  </div>
-  <div class="search-box"><span data-icon="search"></span><input type="text" id="docFilter" placeholder="Пошук документів…" autocomplete="off"></div>
-  <div class="doc-list" id="docList"></div>
-  <div class="drawer-foot">
-    <button class="btn btn-outline" data-act="import"><span data-icon="upload"></span>Імпорт HTML / Markdown</button>
-    Документи зберігаються тільки в цьому браузері на цьому пристрої. Щоб перенести документ — зробіть експорт у HTML і імпортуйте його на іншому пристрої.
-  </div>
-</aside>
 
 <!-- ═══════ MODALS ═══════ -->
 <div class="overlay" id="linkModal">

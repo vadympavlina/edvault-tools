@@ -492,6 +492,8 @@ const UI = {
       else if (closestIn(tb, 'blockquote')) label = 'Цитата';
     }
     $('#blockStyleLabel').textContent = label;
+    const styleKey = inPre || !tb ? '' : { P: 'p', H1: 'h1', H2: 'h2', H3: 'h3' }[tb.tagName] || '';
+    $$('.rb-style').forEach(b => b.classList.toggle('on', b.dataset.cmd === styleKey && !closestIn(tb, 'blockquote,li,td,th')));
     $('#sizeVal').textContent = currentFontSize();
     const align = tb ? getComputedStyle(tb).textAlign : 'left';
     const aIco = { center: 'alignCenter', right: 'alignRight', justify: 'alignJustify' }[align] || 'alignLeft';

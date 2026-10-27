@@ -6,6 +6,15 @@
 function bindUi() {
   const tbEl = $('#toolbar');
   tbEl.addEventListener('mousedown', e => { if (e.target.closest('button')) e.preventDefault(); });
+  // вкладки стрічки: Файл · Головна · Вставлення · Шапка · Вигляд
+  const setRibbonTab = name => {
+    if (!$('.rb-panel[data-panel="' + name + '"]')) name = 'home';
+    $$('.rb-tab').forEach(t => { const on = t.dataset.rtab === name; t.classList.toggle('on', on); t.setAttribute('aria-selected', on); });
+    $$('.rb-panel').forEach(p => { p.hidden = p.dataset.panel !== name; });
+  };
+  $$('.rb-tab').forEach(t => t.addEventListener('click', () => { setRibbonTab(t.dataset.rtab); setViewPref('tab', t.dataset.rtab); }));
+  setRibbonTab(viewPrefs().tab || 'home');
+  syncPanelButtons();
   document.addEventListener('click', e => {
     const c = e.target.closest('[data-cmd]');
     if (c && !c.disabled) { run(c.dataset.cmd); return; }
@@ -20,6 +29,7 @@ function bindUi() {
       case 'callout': openCalloutPop(a); break;
       case 'table': openTablePop(a); break;
       case 'docs': openDrawer(); break;
+      case 'docsPanel': toggleDocsPanel(); break;
       case 'closeDrawer': closeDrawer(); break;
       case 'newDoc': newDoc(); break;
       case 'clearDoc': clearDoc(); break;
@@ -51,7 +61,7 @@ function bindUi() {
     $('#backTop').classList.toggle('show', scrollArea.scrollTop > 700);
     if (Slash.open) Slash.close();
   }, { passive: true });
-  window.addEventListener('resize', () => { UI.refreshSoon(); Pop.close(); });
+  window.addEventListener('resize', () => { UI.refreshSoon(); Pop.close(); syncPanelButtons(); });
   $('#backTop').addEventListener('click', () => scrollArea.scrollTo({ top: 0, behavior: 'smooth' }));
   editor.addEventListener('focus', () => { exec('enableObjectResizing', false); exec('enableInlineTableEditing', false); exec('defaultParagraphSeparator', 'p'); }, { once: true });
   window.addEventListener('beforeunload', e => {
@@ -79,6 +89,7 @@ async function init() {
   if (!rec) { const list = await Store.list().catch(() => []); if (list.length) rec = await Store.get(list[0].id).catch(() => null); }
   if (!rec) rec = await createDoc({});
   loadDoc(rec);
+  if (docsDocked()) renderDocList();
   if (migrated) toast('Ваш документ перенесено в нову версію TextCraft. Тепер можна мати кілька документів.', 'ok', { duration: 6000 });
   window.TextCraft = { History, normalize, getRange, wrapSelectionAsBlock, sanitizeHTML, mdToHtml, toMarkdown, saveNow, state, Store, run, exportClone, flushSave };
 }

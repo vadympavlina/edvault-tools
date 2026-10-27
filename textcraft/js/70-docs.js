@@ -23,12 +23,28 @@ function setViewPref(k, v) {
   if (k === 'width') document.documentElement.setAttribute('data-width', v);
   if (k === 'font') document.documentElement.setAttribute('data-font', v);
   if (k === 'toc') { if (v === false) document.documentElement.setAttribute('data-toc', 'off'); else document.documentElement.removeAttribute('data-toc'); }
+  if (k === 'docs') { if (v === false) document.documentElement.setAttribute('data-docs', 'off'); else document.documentElement.removeAttribute('data-docs'); }
   UI.refreshSoon();
 }
 function toggleToc() {
-  if (window.innerWidth <= 900) { $('#toc').classList.toggle('open'); return; }
+  if (window.innerWidth < 1100) { $('#toc').classList.toggle('open'); syncPanelButtons(); return; }
   const off = document.documentElement.getAttribute('data-toc') === 'off';
   setViewPref('toc', off ? true : false);
+  syncPanelButtons();
+}
+// список документів ліворуч: постійна панель на широкому екрані, висувна — на вузькому
+const docsDocked = () => window.innerWidth >= 1100 && document.documentElement.getAttribute('data-docs') !== 'off';
+const drawerShown = () => docsDocked() || $('#drawer').classList.contains('open');
+function toggleDocsPanel() {
+  if (window.innerWidth < 1100) { openDrawer(); return; }
+  setViewPref('docs', !docsDocked());
+  if (docsDocked()) renderDocList();
+  syncPanelButtons();
+}
+function syncPanelButtons() {
+  const t = $('#tocToggle'), d = $('#docsToggle');
+  if (t) t.classList.toggle('on', window.innerWidth < 1100 ? $('#toc').classList.contains('open') : document.documentElement.getAttribute('data-toc') !== 'off');
+  if (d) d.classList.toggle('on', docsDocked());
 }
 document.addEventListener('mousedown', e => {
   const t = $('#toc');
@@ -109,7 +125,7 @@ $('#tocList').addEventListener('click', e => {
     btn._h.scrollIntoView({ behavior: 'smooth', block: 'start' });
     caretEnd(btn._h);
   }
-  if (window.innerWidth <= 900) $('#toc').classList.remove('open');
+  if (window.innerWidth < 1100) $('#toc').classList.remove('open');
 });
 $('#tocFilter').addEventListener('input', e => Toc.filter(e.target.value));
 
@@ -267,7 +283,7 @@ function saveNow() {
     Tabs.saved();
     setSaveState(state.version === ver ? 'saved' : 'dirty');
     if (state.version !== ver) scheduleSave();
-    if ($('#drawer').classList.contains('open')) renderDocList();
+    if (drawerShown()) renderDocList();
   }).catch(err => {
     console.error(err);
     state.error = true;
@@ -319,7 +335,7 @@ function loadDoc(rec) {
   const first = editor.firstElementChild;
   if (first && !coarse.matches) { if (isEmptyBlock(first)) caretStart(first); else { lastRange = null; } }
   History.reset();
-  if ($('#drawer').classList.contains('open')) renderDocList();
+  if (drawerShown()) renderDocList();
   Tabs.claim(rec.id);
 }
 function updateDocTitle() {
@@ -403,7 +419,11 @@ async function renderDocList() {
       '<button class="tb" data-doc-menu="' + esc(d.id) + '" data-tip="Дії з документом">' + icon('more') + '</button>' +
     '</div>').join('') : '<div class="toc-empty">' + (q ? 'Нічого не знайдено' : 'Документів ще немає') + '</div>';
 }
-function openDrawer() { renderDocList(); $('#drawer').classList.add('open'); $('#drawerOverlay').classList.add('open'); UI.hideTransient(); }
+function openDrawer() {
+  renderDocList();
+  if (docsDocked()) { $('#docFilter').focus(); return; }
+  $('#drawer').classList.add('open'); $('#drawerOverlay').classList.add('open'); UI.hideTransient();
+}
 function closeDrawer() { $('#drawer').classList.remove('open'); $('#drawerOverlay').classList.remove('open'); }
 $('#drawerOverlay').addEventListener('click', closeDrawer);
 $('#docFilter').addEventListener('input', renderDocList);
