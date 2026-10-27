@@ -47,3 +47,32 @@
   --icode-bg:#383838;--icode-text:#ff9db0;
   --float-bg:#383838;--float-text:#ededed;
 }
+
+/* Аркуш документа лишається світлим і в темній темі — темна тільки рамка інтерфейсу довкола */
+:root[data-theme="dark"] .page{
+  color-scheme:light;
+  /* парта (тло застосунку) і аркуш */
+  --bg:#dfe4ea;--surface:#fdfefb;--surface2:#f2f5f7;--surface3:#e8edf1;
+  --border:#d9e0e7;--border2:#bfc9d4;
+  --text:#1d2236;--text2:#454c63;--muted:#5d6478;
+  /* синє чорнило — головний колір дій */
+  --accent:#2337a8;--accent-hover:#1a2a8a;--accent-light:#e8ecfb;--accent-border:#b9c3ef;--on-accent:#ffffff;
+  /* обкладинка (верхня панель) і маркер */
+  --cover:#1c2869;--cover-2:#26347f;--on-cover:#eef1ff;--on-cover-2:#b8c1ea;
+  --marker:#ffe34d;--marker-soft:rgba(255,227,77,.55);
+  --danger:#c8352d;--danger-light:#fbeceb;--success:#1a7a50;--warn:#c98a00;
+  --shadow-sm:0 1px 2px rgba(28,40,105,.08);
+  --shadow-md:0 6px 18px rgba(28,40,105,.12),0 1px 3px rgba(28,40,105,.08);
+  --shadow-lg:0 22px 50px rgba(28,40,105,.18),0 4px 12px rgba(28,40,105,.08);
+  --r-sm:4px;--r:6px;--r-lg:10px;
+  /* блоки — кольори пенала: чорнило, зелена ручка, маркер, червона ручка, простий олівець */
+  --tip-bg:#edf0fc;--tip-bd:#c9d1f3;--tip-ac:#2337a8;
+  --ok-bg:#eaf6ef;--ok-bd:#b9e0c9;--ok-ac:#1a7a50;
+  --warn-bg:#fff8d6;--warn-bd:#f3df8a;--warn-ac:#855b00;
+  --err-bg:#fcecea;--err-bd:#f1c3bf;--err-ac:#c8352d;
+  --note-bg:#f1f2f4;--note-bd:#d5d8de;--note-ac:#4f5566;
+  --code-bg:#1b2140;--code-head:#141935;--code-text:#e4e8f8;--code-label:#a3abd0;
+  --icode-bg:#eef1f8;--icode-text:#a1253a;
+  --float-bg:#1c2869;--float-text:#eef1ff;
+
+  color:var(--text);}
