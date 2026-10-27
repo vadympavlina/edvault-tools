@@ -17,9 +17,8 @@
     } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
   })();
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400..800&family=Literata:opsz,wght@7..72,700&display=swap" rel="stylesheet">
+<!-- шрифти лежать поруч (спільні з текстовим редактором), тож вигляд однаковий і без інтернету -->
+<link rel="stylesheet" href="textcraft/fonts.css">
 <style>
 :root{
   color-scheme:light;
@@ -50,7 +49,7 @@
 }
 *,*::before,*::after{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{font-family:'Commissioner',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:14px;background:var(--bg);color:var(--text);
+body{font-family:'IBM Plex Sans','Commissioner',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:14px;background:var(--bg);color:var(--text);
   display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;-webkit-font-smoothing:antialiased}
 button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
 button:disabled{cursor:default;opacity:.4}
@@ -58,24 +57,19 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .ico{width:18px;height:18px;display:block;flex-shrink:0}
 
-/* ── Topbar ── */
-.topbar{height:54px;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 12px;background:var(--cover);color:var(--on-cover);z-index:30;
-  --text:var(--on-cover);--text2:var(--on-cover-2);--muted:var(--on-cover-2);--surface2:rgba(255,255,255,.09);--surface:rgba(255,255,255,.1);--border:rgba(255,255,255,.18);--border2:rgba(255,255,255,.3)}
-.topbar :focus-visible{outline-color:var(--marker)}
-.topbar .btn-primary{background:var(--on-cover);border-color:var(--on-cover);color:var(--cover)}
-.topbar .btn-primary:hover:not(:disabled){background:#fff;border-color:#fff;color:var(--cover)}
-.topbar .split .btn-primary:last-child{border-left:1px solid rgba(28,40,105,.18)}
+/* ── Заголовок ── */
+.topbar{height:52px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--border);z-index:30}
 .sep{width:1px;height:22px;background:var(--border);margin:0 4px;flex-shrink:0}
-.brand{display:flex;align-items:center;gap:9px;flex-shrink:0;margin-right:6px}
-.brand-mark{width:30px;height:30px;border-radius:5px;background:var(--on-cover);color:var(--cover);display:flex;align-items:center;justify-content:center}
-.brand-mark .ico{width:17px;height:17px}
-.brand-name{font-weight:700;font-size:15px;letter-spacing:-.01em}
+.brand-mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:var(--on-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-mark .ico{width:16px;height:16px}
+.doc-name{font-weight:600;font-size:15px;white-space:nowrap}
+.doc-meta{font-size:12.5px;color:var(--muted);white-space:nowrap}
 .grow{flex:1}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:34px;padding:0 12px;border-radius:var(--r);border:1px solid transparent;font-size:13px;font-weight:500;white-space:nowrap;color:var(--text2);transition:background .12s,border-color .12s,color .12s}
 .btn:hover:not(:disabled){background:var(--surface2);color:var(--text)}
 .btn .ico{width:16px;height:16px}
 .btn-icon{width:34px;padding:0}
-.btn-outline{border-color:var(--border);background:var(--surface)}
+.btn-outline{border-color:var(--border);background:var(--surface);font-weight:600;color:var(--text)}
 .btn-outline:hover:not(:disabled){border-color:var(--border2)}
 .btn-primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}
 .btn-primary:hover:not(:disabled){background:var(--accent-hover);border-color:var(--accent-hover);color:var(--on-accent)}
@@ -85,13 +79,30 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 .split{display:flex}
 .split .btn-primary:first-child{border-radius:var(--r) 0 0 var(--r)}
 .split .btn-primary:last-child{border-radius:0 var(--r) var(--r) 0;width:30px;padding:0;border-left:1px solid rgba(255,255,255,.25)}
-.zoom{display:flex;align-items:center;height:34px;border:1px solid var(--border);border-radius:var(--r);background:var(--surface);flex-shrink:0}
-.zoom .btn{height:32px;width:30px;padding:0;border:0}
-.zoom .zval{min-width:52px;height:32px;font-size:12.5px;font-weight:600;color:var(--text);border-radius:6px}
-.zoom .zval:hover{background:var(--surface2)}
+
+/* ── Стрічка: вкладки й підписані кнопки ── */
+.ribbon{flex-shrink:0;background:var(--surface);border-bottom:1px solid var(--border);z-index:25}
+.rb-tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.rb-tabs::-webkit-scrollbar,.rb-panel::-webkit-scrollbar{display:none}
+.rb-tab{height:38px;padding:0 14px;font-size:13.5px;font-weight:500;color:var(--text2);border-bottom:2.5px solid transparent;margin-bottom:-1px;white-space:nowrap;flex-shrink:0}
+.rb-tab:hover{color:var(--text)}
+.rb-tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.rb-panel{display:flex;align-items:stretch;min-height:94px;padding:6px 6px 4px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.rb-panel[hidden]{display:none}
+.rg{display:flex;flex-direction:column;align-items:center;padding:0 8px;border-right:1px solid var(--border);flex-shrink:0}
+.rg-body{display:flex;align-items:center;gap:2px;flex:1}
+.rg-cap{font-size:11.5px;color:var(--muted);padding-top:3px;white-space:nowrap}
+.rb-big{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:60px;height:62px;padding:4px 6px;border-radius:8px;flex-shrink:0;font-size:12.5px;line-height:1.15;color:var(--text);text-align:center;white-space:nowrap;transition:background .1s,color .1s}
+.rb-big .ico{width:22px;height:22px;color:var(--text2)}
+.rb-big:hover:not(:disabled){background:var(--accent-light)}
+.rb-big:hover:not(:disabled) .ico,.rb-big.on .ico{color:var(--accent)}
+.rb-big.on{background:var(--accent-light);color:var(--accent);font-weight:600}
+.zoom-big b{height:22px;display:flex;align-items:center;font-size:15px;font-weight:700;color:var(--text)}
+.rb-hint{align-self:center;max-width:400px;margin:0 14px;font-size:12.5px;line-height:1.55;color:var(--muted)}
+.rb-hint kbd{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;border-radius:5px;border:1px solid var(--border2);border-bottom-width:2px;background:var(--surface2);font:600 11.5px 'IBM Plex Sans',sans-serif;color:var(--text)}
 
 /* ── Props bar ── */
-.propbar{height:50px;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;z-index:20}
+.propbar{height:46px;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;z-index:20}
 .propbar::-webkit-scrollbar{display:none}
 .pb-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text);flex-shrink:0;margin-right:6px}
 .pb-title .ico{width:16px;height:16px;color:var(--accent)}
@@ -120,14 +131,31 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 
 /* ── Main ── */
 .main{flex:1;display:flex;min-height:0;position:relative}
-.rail{width:62px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0;overflow-y:auto;scrollbar-width:none;z-index:20}
-.rail::-webkit-scrollbar{display:none}
+.rail{display:none}
 .tool{width:44px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text2);position:relative;flex-shrink:0;transition:background .1s,color .1s}
 .tool:hover{background:var(--surface2);color:var(--text)}
 .tool.on{background:var(--accent);color:var(--on-accent)}
 .tool .ico{width:20px;height:20px}
 .tool .key{position:absolute;right:4px;bottom:3px;font-size:9px;font-weight:700;opacity:.45}
-.rail-sep{width:28px;height:1px;background:var(--border);margin:5px 0;flex-shrink:0}
+.rail-sep{width:1px;height:26px;background:var(--border);margin:0 4px;flex-shrink:0}
+.tool.rb-big{width:auto;height:62px;border-radius:8px;flex-direction:column;color:var(--text)}
+.tool.rb-big.on{background:var(--accent-light);color:var(--accent)}
+.tool.rb-big:hover{background:var(--accent-light)}
+/* ── Список позначок праворуч ── */
+.objs{width:252px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;min-height:0;z-index:20}
+[data-objs="off"] .objs{display:none}
+.objs-head{padding:14px 16px 8px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.objs-list{flex:1;overflow-y:auto;padding:0 8px 12px}
+.obj{width:100%;display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:8px;text-align:left;font-size:13px;color:var(--text)}
+.obj:hover{background:var(--surface2)}
+.obj.on{background:var(--accent-light);color:var(--accent);font-weight:600}
+.obj .oi{width:28px;height:28px;border-radius:7px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--oc,var(--text2))}
+.obj .oi .ico{width:16px;height:16px}
+.obj .oi.n{background:var(--oc);color:#fff;border-radius:50%;font-weight:700;font-size:12.5px}
+.obj .ot{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.obj .od{font-size:11.5px;color:var(--muted);font-weight:400;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.objs-empty{padding:6px 10px;font-size:12.5px;line-height:1.55;color:var(--muted)}
+@media(max-width:1099px){.objs{display:none}}
 
 #viewport{flex:1;position:relative;overflow:hidden;background-color:var(--canvas-bg);background-image:radial-gradient(circle,var(--canvas-dot) 1px,transparent 1px);background-size:22px 22px;touch-action:none;user-select:none;-webkit-user-select:none}
 #scene{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
@@ -220,12 +248,18 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 @media(max-width:900px){.hide-md{display:none !important}}
 @media(max-width:640px){
   .hide-sm{display:none !important}
-  .topbar{padding:0 6px;gap:2px}
-  .brand-name{display:none}
+  .topbar{padding:0 6px;gap:4px}
+  .brand-mark,.doc-meta{display:none}
   .main{flex-direction:column-reverse}
-  .rail{width:auto;height:58px;flex-direction:row;border-right:0;border-top:1px solid var(--border);padding:0 8px;overflow-x:auto;overflow-y:hidden}
-  .rail-sep{width:1px;height:26px;margin:0 4px}
+  .rail{display:flex;width:auto;height:58px;flex-direction:row;align-items:center;gap:3px;background:var(--surface);border-top:1px solid var(--border);padding:0 8px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+  .rail::-webkit-scrollbar{display:none}
   .tool .key{display:none}
+  .rg-tools{display:none}
+  .rb-panel{min-height:0;padding:4px 2px}
+  .rg{padding:0 4px}
+  .rg-cap,.rb-hint{display:none}
+  .rb-big{min-width:54px;height:50px;font-size:11.5px;gap:3px}
+  .rb-big .ico{width:20px;height:20px}
   .statusbar{display:none}
   .propbar{padding:0 8px}
 }
@@ -247,28 +281,84 @@ input{font-family:inherit;font-size:inherit;color:inherit}
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><div class="brand-mark"><span data-icon="logo"></span></div><span class="brand-name">SnapEdit</span></div>
-  <button class="btn" data-act="open" data-tip="Відкрити зображення" data-kbd="Ctrl+O"><span data-icon="folder"></span><span class="hide-md">Відкрити</span></button>
-  <button class="btn" data-act="new" data-tip="Нове порожнє полотно"><span data-icon="plus"></span><span class="hide-md">Нове</span></button>
+  <div class="brand-mark" aria-hidden="true"><span data-icon="image"></span></div>
+  <span class="doc-name">Редактор фото</span><span class="doc-meta" id="stMeta"></span>
   <div class="grow"></div>
-  <button class="btn btn-icon" data-act="undo" id="btnUndo" data-tip="Скасувати" data-kbd="Ctrl+Z"><span data-icon="undo"></span></button>
-  <button class="btn btn-icon" data-act="redo" id="btnRedo" data-tip="Повторити" data-kbd="Ctrl+Shift+Z"><span data-icon="redo"></span></button>
-  <div class="sep hide-sm"></div>
-  <div class="zoom hide-sm">
-    <button class="btn" data-act="zoomOut" data-tip="Зменшити" data-kbd="Ctrl+−"><span data-icon="minus"></span></button>
-    <button class="zval" data-act="zoomMenu" id="zoomLabel" data-tip="Масштаб">100%</button>
-    <button class="btn" data-act="zoomIn" data-tip="Збільшити" data-kbd="Ctrl++"><span data-icon="plus"></span></button>
-  </div>
-  <button class="btn" data-act="frame" id="btnFrame" data-tip="Рамка: поля, тло, заокруглення й тінь для готового зображення"><span data-icon="frame"></span><span class="hide-md">Рамка</span></button>
-  <button class="btn btn-icon hide-sm" data-act="theme" data-tip="Світла / темна тема"><span data-icon="moon" id="themeIco"></span></button>
-  <button class="btn btn-icon hide-sm" data-act="help" data-tip="Гарячі клавіші"><span data-icon="help"></span></button>
-  <div class="sep hide-sm"></div>
   <button class="btn btn-outline" data-act="copy" id="btnCopy" data-tip="Копіювати зображення в буфер" data-kbd="Ctrl+Shift+C"><span data-icon="copy"></span><span class="hide-md">Копіювати</span></button>
   <div class="split">
     <button class="btn btn-primary" data-act="download" id="btnDownload" data-tip="Завантажити PNG" data-kbd="Ctrl+S"><span data-icon="download"></span><span class="hide-sm">Зберегти</span></button>
     <button class="btn btn-primary" data-act="saveMenu" data-tip="Формат файлу"><span data-icon="chevron"></span></button>
   </div>
 </header>
+
+<!-- ═══════ СТРІЧКА: вкладки й підписані кнопки, як у текстовому редакторі ═══════ -->
+<div class="ribbon" id="ribbon">
+  <div class="rb-tabs" role="tablist" aria-label="Розділи панелі">
+    <button class="rb-tab" role="tab" data-rtab="file">Файл</button>
+    <button class="rb-tab on" role="tab" data-rtab="marks" aria-selected="true">Позначки</button>
+    <button class="rb-tab" role="tab" data-rtab="image">Зображення</button>
+    <button class="rb-tab" role="tab" data-rtab="view">Вигляд</button>
+  </div>
+  <div class="rb-panel on" data-panel="marks" role="tabpanel">
+    <div class="rg rg-hist"><div class="rg-body">
+      <button class="rb-big" data-act="undo" id="btnUndo" data-tip="Скасувати" data-kbd="Ctrl+Z"><span data-icon="undo"></span><span>Скасувати</span></button>
+      <button class="rb-big" data-act="redo" id="btnRedo" data-tip="Повторити" data-kbd="Ctrl+Shift+Z"><span data-icon="redo"></span><span>Повторити</span></button>
+    </div><div class="rg-cap">Дії</div></div>
+    <div class="rg rg-tools"><div class="rg-body">
+      <button class="tool rb-big" data-tool="select" data-tip="Вибрати й перемістити" data-kbd="V"><span data-icon="cursor"></span><span>Вибрати</span></button>
+      <button class="tool rb-big" data-tool="crop" data-tip="Обрізати" data-kbd="C"><span data-icon="crop"></span><span>Обрізати</span></button>
+    </div><div class="rg-cap">Вибір</div></div>
+    <div class="rg rg-tools"><div class="rg-body">
+      <button class="tool rb-big" data-tool="arrow" data-tip="Стрілка" data-kbd="A"><span data-icon="arrow"></span><span>Стрілка</span></button>
+      <button class="tool rb-big" data-tool="rect" data-tip="Прямокутник" data-kbd="R"><span data-icon="rect"></span><span>Рамка</span></button>
+      <button class="tool rb-big" data-tool="ellipse" data-tip="Еліпс" data-kbd="E"><span data-icon="ellipse"></span><span>Овал</span></button>
+      <button class="tool rb-big" data-tool="line" data-tip="Лінія" data-kbd="L"><span data-icon="line"></span><span>Лінія</span></button>
+      <button class="tool rb-big" data-tool="pen" data-tip="Олівець" data-kbd="P"><span data-icon="pen"></span><span>Олівець</span></button>
+      <button class="tool rb-big" data-tool="highlighter" data-tip="Маркер-виділювач" data-kbd="H"><span data-icon="marker"></span><span>Маркер</span></button>
+      <button class="tool rb-big" data-tool="text" data-tip="Текст" data-kbd="T"><span data-icon="text"></span><span>Текст</span></button>
+      <button class="tool rb-big" data-tool="step" data-tip="Нумерація кроків" data-kbd="N"><span data-icon="step"></span><span>Кроки</span></button>
+    </div><div class="rg-cap">Позначки</div></div>
+    <div class="rg rg-tools"><div class="rg-body">
+      <button class="tool rb-big" data-tool="blur" data-tip="Приховати (мозаїка / розмиття)" data-kbd="B"><span data-icon="blur"></span><span>Приховати</span></button>
+      <button class="tool rb-big" data-tool="spot" data-tip="Підсвітити — затемнити все, крім обраної ділянки" data-kbd="F"><span data-icon="spot"></span><span>Підсвітити</span></button>
+      <button class="tool rb-big" data-tool="eraser" data-tip="Гумка — видаляє позначки, не зачіпаючи скріншот" data-kbd="X"><span data-icon="eraser"></span><span>Гумка</span></button>
+    </div><div class="rg-cap">Приховати зайве</div></div>
+    <div class="rg"><div class="rg-body">
+      <button class="rb-big" data-act="frame" id="btnFrame" data-tip="Рамка: поля, тло, заокруглення й тінь для готового зображення"><span data-icon="frame"></span><span>Поля й тінь</span></button>
+    </div><div class="rg-cap">Готове зображення</div></div>
+  </div>
+  <div class="rb-panel" data-panel="file" role="tabpanel" hidden>
+    <div class="rg"><div class="rg-body">
+      <button class="rb-big" data-act="open" data-tip="Відкрити зображення" data-kbd="Ctrl+O"><span data-icon="folder"></span><span>Відкрити</span></button>
+      <button class="rb-big" data-act="new" data-tip="Нове порожнє полотно"><span data-icon="plus"></span><span>Нове полотно</span></button>
+    </div><div class="rg-cap">Зображення</div></div>
+    <div class="rg"><div class="rg-body">
+      <button class="rb-big" data-act="download" data-tip="Завантажити PNG" data-kbd="Ctrl+S"><span data-icon="download"></span><span>Зберегти PNG</span></button>
+      <button class="rb-big" data-act="saveMenu" data-tip="PNG або JPG"><span data-icon="image"></span><span>Інший формат</span></button>
+      <button class="rb-big" data-act="copy" data-tip="Копіювати зображення в буфер" data-kbd="Ctrl+Shift+C"><span data-icon="copy"></span><span>Копіювати</span></button>
+    </div><div class="rg-cap">Результат</div></div>
+    <p class="rb-hint">Скріншот можна просто вставити: <kbd>Ctrl</kbd>+<kbd>V</kbd>. Зробити його у Windows — <kbd>Win</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd>.</p>
+  </div>
+  <div class="rb-panel" data-panel="image" role="tabpanel" hidden>
+    <div class="rg"><div class="rg-body">
+      <button class="rb-big" data-tool="crop" data-tip="Обрізати" data-kbd="C"><span data-icon="crop"></span><span>Обрізати</span></button>
+      <button class="rb-big" data-act="frame" data-tip="Рамка: поля, тло, заокруглення й тінь"><span data-icon="frame"></span><span>Поля й тінь</span></button>
+    </div><div class="rg-cap">Зображення</div></div>
+    <p class="rb-hint">«Поля й тінь» додають навколо скріншота біле чи кольорове поле, заокруглення й тінь — так він має охайний вигляд у презентації чи інструкції.</p>
+  </div>
+  <div class="rb-panel" data-panel="view" role="tabpanel" hidden>
+    <div class="rg"><div class="rg-body">
+      <button class="rb-big" data-act="zoomOut" data-tip="Зменшити" data-kbd="Ctrl+−"><span data-icon="minus"></span><span>Зменшити</span></button>
+      <button class="rb-big zoom-big" data-act="zoomMenu" data-tip="Масштаб"><b id="zoomLabel">100%</b><span>Масштаб</span></button>
+      <button class="rb-big" data-act="zoomIn" data-tip="Збільшити" data-kbd="Ctrl++"><span data-icon="plus"></span><span>Збільшити</span></button>
+    </div><div class="rg-cap">Масштаб</div></div>
+    <div class="rg"><div class="rg-body">
+      <button class="rb-big" data-act="objPanel" id="objToggle" data-tip="Список позначок праворуч"><span data-icon="list"></span><span>Список позначок</span></button>
+      <button class="rb-big" data-act="theme" data-tip="Світла / темна тема"><span data-icon="moon" id="themeIco"></span><span>Тема</span></button>
+      <button class="rb-big" data-act="help" data-tip="Гарячі клавіші"><span data-icon="help"></span><span>Гарячі клавіші</span></button>
+    </div><div class="rg-cap">Вигляд</div></div>
+  </div>
+</div>
 
 <div class="propbar" id="propbar"></div>
 
@@ -313,6 +403,10 @@ input{font-family:inherit;font-size:inherit;color:inherit}
     </div>
     <div class="drop-hint" id="dropHint">Відпустіть, щоб відкрити зображення</div>
   </div>
+  <aside class="objs" id="objs" aria-label="Позначки на зображенні">
+    <div class="objs-head">Позначки на зображенні</div>
+    <div class="objs-list" id="objList"></div>
+</aside>
 </div>
 
 <footer class="statusbar">
@@ -413,6 +507,7 @@ const I = {
   front: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V5a1 1 0 0 1 1-1h11"/>',
   back2: '<rect x="4" y="4" width="12" height="12" rx="2"/><path d="M20 8v11a1 1 0 0 1-1 1H8"/>',
   check: '<path d="M20 6 9 17l-5-5"/>',
+  list: '<path d="M9 6h12M9 12h12M9 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="3"/>',
   fit: '<path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/>',
   spot: '<rect x="2" y="2" width="20" height="20" rx="2" opacity=".35"/><rect x="7" y="7" width="10" height="10" rx="1.5"/>',
   frame: '<rect x="2" y="2" width="20" height="20" rx="4"/><rect x="6.5" y="6.5" width="11" height="11" rx="1"/>',
@@ -952,7 +1047,7 @@ function setTool(t) {
   S.tool = t;
   if (t === 'crop' && S.doc) { S.selId = null; S.crop = { x: 0, y: 0, w: S.doc.w, h: S.doc.h }; }
   if (t !== 'select') { const o = selObj(); if (o && !(o.type === t || (t === 'arrow' && o.type === 'arrow'))) S.selId = null; }
-  $$('#rail .tool').forEach(b => b.classList.toggle('on', b.dataset.tool === t));
+  $$('.tool').forEach(b => b.classList.toggle('on', b.dataset.tool === t));
   updateCursor();
   renderProps();
   render();
@@ -1362,6 +1457,7 @@ function renderProps(onlyCrop) {
     parts.push('<button class="pb-btn danger" data-p="del" data-tip="Видалити" data-kbd="Delete">' + icon('trash') + 'Видалити</button>');
   }
   pb.innerHTML = parts.join('');
+  renderObjList();
 }
 function toolIcon(t) { return { select: 'cursor', crop: 'crop', arrow: 'arrow', rect: 'rect', ellipse: 'ellipse', line: 'line', pen: 'pen', highlighter: 'marker', text: 'text', step: 'step', blur: 'blur', spot: 'spot', eraser: 'eraser' }[t] || 'cursor'; }
 $('#propbar').addEventListener('mousedown', e => { if (!e.target.closest('input')) e.preventDefault(); });
@@ -1654,6 +1750,41 @@ function updateStatus() {
   $('#stSize').innerHTML = 'Розмір: <b>' + S.doc.w + ' × ' + S.doc.h + '</b> px';
   const n = S.objects.length;
   $('#stObjs').innerHTML = 'Позначок: <b>' + n + '</b>';
+  $('#stMeta').textContent = S.doc.w + ' × ' + S.doc.h + ' · ' + plural(n, 'позначка', 'позначки', 'позначок');
+  renderObjList();
+}
+
+/* ═══════════ СПИСОК ПОЗНАЧОК ═══════════ */
+const plural = (n, a, b, c) => n + ' ' + (n % 10 === 1 && n % 100 !== 11 ? a : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? b : c);
+const OBJ_NAMES = { arrow: 'Стрілка', rect: 'Рамка', ellipse: 'Овал', line: 'Лінія', pen: 'Олівець', highlighter: 'Маркер', text: 'Текст', step: 'Крок', blur: 'Приховано', spot: 'Підсвічено' };
+let objListKey = '';
+function renderObjList() {
+  const box = $('#objList');
+  if (!box || !$('#objs').offsetParent) return;
+  // перебудовуємо лише коли змінився склад, вибір або підписи — не на кожен рух мишею
+  const key = S.selId + '|' + S.objects.map(o => o.id + (o.type === 'text' ? ':' + o.text : '') + (o.n ? ':' + o.n : '') + ':' + o.color).join(',');
+  if (key === objListKey) return;
+  objListKey = key;
+  if (!S.doc || !S.objects.length) { box.innerHTML = '<div class="objs-empty">' + (S.doc ? 'Позначок ще немає. Оберіть угорі стрілку, рамку чи текст і клацніть на зображенні.' : 'Тут з’являться стрілки, рамки й підписи, які ви додасте.') + '</div>'; return; }
+  box.innerHTML = S.objects.slice().reverse().map(o => {
+    const c = o.color || 'var(--text2)';
+    const ic = o.type === 'step' ? '<span class="oi n" style="--oc:' + esc(c) + '">' + o.n + '</span>' : '<span class="oi" style="--oc:' + esc(c) + '">' + icon(toolIcon(o.type)) + '</span>';
+    const d = o.type === 'text' ? (o.text || '').trim() : o.type === 'blur' ? (o.mode === 'blur' ? 'розмиття' : 'мозаїка') : (COLOR_NAMES[String(o.color).toLowerCase()] || '').toLowerCase();
+    return '<button class="obj' + (o.id === S.selId ? ' on' : '') + '" data-obj="' + o.id + '">' + ic + '<span class="ot">' + (o.type === 'step' ? 'Крок ' + o.n : OBJ_NAMES[o.type] || o.type) + '</span>' + (d ? '<span class="od">' + esc(d) + '</span>' : '') + '</button>';
+  }).join('');
+}
+$('#objList').addEventListener('click', e => {
+  const b = e.target.closest('[data-obj]');
+  if (!b) return;
+  finishText();
+  if (S.tool === 'crop' || S.tool === 'eraser') setTool('select');
+  S.selId = b.dataset.obj;
+  render(); renderProps();
+});
+function syncObjPanel() {
+  const off = document.documentElement.getAttribute('data-objs') === 'off';
+  $('#objToggle').classList.toggle('on', !off);
+  objListKey = ''; renderObjList();
 }
 
 /* ═══════════ ТЕМА / ДОВІДКА ═══════════ */
@@ -1707,6 +1838,12 @@ function act(a, el) {
       if (!S.doc) { toast('Спочатку відкрийте зображення', 'err'); break; }
       openPop(el, framePopHtml(), () => {});
       break;
+    case 'objPanel': {
+      const off = document.documentElement.getAttribute('data-objs') !== 'off';
+      if (off) document.documentElement.setAttribute('data-objs', 'off'); else document.documentElement.removeAttribute('data-objs');
+      try { localStorage.setItem('snapedit_objs', off ? 'off' : 'on'); } catch (e) { /* ignore */ }
+      syncObjPanel(); break;
+    }
     case 'theme': applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); break;
     case 'help': renderHelp(); openModal('helpModal'); break;
     case 'copy': copyImage(); break;
@@ -1725,6 +1862,17 @@ document.addEventListener('click', e => {
   if (t) { if (!S.doc && t.dataset.tool !== S.tool) toast('Спочатку вставте або відкрийте зображення'); setTool(t.dataset.tool); }
 });
 $('#rail').addEventListener('mousedown', e => e.preventDefault());
+$('#ribbon').addEventListener('mousedown', e => { if (e.target.closest('button')) e.preventDefault(); });
+// вкладки стрічки
+function setRibbonTab(name) {
+  if (!$('.rb-panel[data-panel="' + name + '"]')) name = 'marks';
+  $$('.rb-tab').forEach(t => { const on = t.dataset.rtab === name; t.classList.toggle('on', on); t.setAttribute('aria-selected', on); });
+  $$('.rb-panel').forEach(p => { p.hidden = p.dataset.panel !== name; });
+}
+$$('.rb-tab').forEach(t => t.addEventListener('click', () => { setRibbonTab(t.dataset.rtab); try { localStorage.setItem('snapedit_tab', t.dataset.rtab); } catch (e) { /* ignore */ } }));
+try { setRibbonTab(localStorage.getItem('snapedit_tab') || 'marks'); if (localStorage.getItem('snapedit_objs') === 'off') document.documentElement.setAttribute('data-objs', 'off'); } catch (e) { /* ignore */ }
+syncObjPanel();
+window.addEventListener('resize', () => { objListKey = ''; renderObjList(); });
 function openNewModal() {
   $$('#presets .preset').forEach((b, i) => b.classList.toggle('on', i === 0));
   $('#customW').value = ''; $('#customH').value = '';
