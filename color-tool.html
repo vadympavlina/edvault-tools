@@ -7,38 +7,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Кольори · Edvault</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#1c2869">
+<!-- шрифти лежать поруч (спільні з текстовим редактором), тож вигляд однаковий і без інтернету -->
+<link rel="stylesheet" href="textcraft/fonts.css">
 <script>
   try{
-    var t = localStorage.getItem('edvault-theme') || localStorage.getItem('edvault-color-theme');
-    if(t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    var t = localStorage.getItem('edvault-theme') || localStorage.getItem('edvault-color-theme') || 'auto';
+    if(t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.setAttribute('data-theme', 'dark');
   }catch(e){}
 </script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #f0f2f5; --surface: #ffffff; --surface2: #f7f8fa;
-    --border: #e2e5ea; --border2: #d0d5dd;
-    --accent: #4F6BF4; --accent-light: #eef0fe; --accent-hover: #3d57e0;
-    --danger: #ef4444; --success: #10b981; --warn: #f59e0b;
-    --text: #1a1d23; --text2: #4b5563; --muted: #9ca3af;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
-    --shadow-md: 0 4px 16px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06);
-    --shadow-lg: 0 24px 60px rgba(0,0,0,.14), 0 4px 16px rgba(0,0,0,.08);
+    color-scheme: light;
+    --bg: #dfe4ea; --surface: #fdfefb; --surface2: #f2f5f7; --surface3: #e8edf1;
+    --border: #d9e0e7; --border2: #bfc9d4;
+    --accent: #2337a8; --accent-light: #e8ecfb; --accent-hover: #1a2a8a; --accent-border: #b9c3ef; --on-accent: #ffffff;
+    --danger: #c8352d; --success: #1a7a50; --warn: #c98a00;
+    --text: #1d2236; --text2: #454c63; --muted: #5d6478;
+    --shadow-sm: 0 1px 2px rgba(28,40,105,.08);
+    --shadow-md: 0 6px 18px rgba(28,40,105,.12), 0 1px 3px rgba(28,40,105,.08);
+    --shadow-lg: 0 22px 50px rgba(28,40,105,.18), 0 4px 12px rgba(28,40,105,.08);
     --checker: repeating-conic-gradient(#e6e8ec 0 25%, #fff 0 50%) 0 0 / 14px 14px;
+    --float-bg: #1c2869; --float-text: #eef1ff;
   }
   html[data-theme="dark"] {
-    --bg: #14171c; --surface: #1c212a; --surface2: #232933; --border: #2a313d; --border2: #384152;
-    --accent: #6c85ff; --accent-light: rgba(108,133,255,.16); --accent-hover: #8298ff;
-    --danger: #ff6b6b; --success: #34d399; --warn: #fbbf24;
-    --text: #e8ecf1; --text2: #a8b0bd; --muted: #6b7280;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,.35), 0 1px 2px rgba(0,0,0,.25);
-    --shadow-md: 0 4px 16px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.3);
-    --shadow-lg: 0 24px 60px rgba(0,0,0,.55), 0 4px 16px rgba(0,0,0,.35);
-    --checker: repeating-conic-gradient(#2a303b 0 25%, #222731 0 50%) 0 0 / 14px 14px;
+    color-scheme: dark;
+    --bg: #1e1e1e; --surface: #2c2c2c; --surface2: #383838; --surface3: #424242;
+    --border: #3a3a3a; --border2: #4a4a4a;
+    --accent: #9aabff; --accent-light: rgba(154,171,255,.14); --accent-hover: #b3c0ff; --accent-border: rgba(154,171,255,.38); --on-accent: #10153a;
+    --danger: #f08a82; --success: #5fd39b; --warn: #e8c93a;
+    --text: #ededed; --text2: #c2c2c2; --muted: #9a9a9a;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.4); --shadow-md: 0 8px 22px rgba(0,0,0,.45); --shadow-lg: 0 24px 60px rgba(0,0,0,.6);
+    /* шахівниця під фото лишається світлою: це робоча поверхня, а не інтерфейс */
+    --checker: repeating-conic-gradient(#e6e8ec 0 25%, #fff 0 50%) 0 0 / 14px 14px;
+    --float-bg: #383838; --float-text: #ededed;
   }
   html, body { min-height: 100%; }
-  body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+  body { font-family: 'IBM Plex Sans', 'Commissioner', system-ui, sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 6px; }
@@ -280,7 +286,7 @@
   .loupe-label { position: fixed; pointer-events: none; z-index: 61; font: 700 11px 'JetBrains Mono', monospace; padding: 3px 7px; border-radius: 6px; background: #111; color: #fff; display: none; transform: translateX(-50%); }
   .extracted { display: flex; height: 90px; border-radius: 14px; overflow: hidden; margin-top: 4px; }
   .extracted button { flex: 1; border: none; cursor: pointer; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px; font: 700 11px 'JetBrains Mono', monospace; }
-  .extracted button small { font-size: 9.5px; opacity: .8; font-family: 'Inter', sans-serif; font-weight: 600; }
+  .extracted button small { font-size: 9.5px; opacity: .8; font-family: 'IBM Plex Sans', sans-serif; font-weight: 600; }
   .picked-list { display: flex; gap: 6px; flex-wrap: wrap; }
   .picked-list button { width: 34px; height: 34px; border-radius: 9px; border: 1px solid rgba(0,0,0,.15); cursor: pointer; }
 
@@ -298,7 +304,126 @@
   .toast i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; box-shadow: 0 0 0 1px rgba(255,255,255,.4); }
   html[data-theme="dark"] .toast { background: #e8ecf1; color: #14171c; }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
-  @media (max-width: 760px) { .hide-sm { display: none !important; } .tab span { display: none; } .tab { padding: 8px 11px; } }
+  @media (max-width: 760px) { .hide-sm { display: none !important; } .tab svg { display: none; } }
+
+  /* ════════════ «Майстерня»: розділи пігулками вгорі, колір праворуч, «Моя палітра» завжди внизу ════════════ */
+  :root { --dock-h: 64px; }
+  body { padding-bottom: var(--dock-h); }
+  .topbar { height: 60px; flex-wrap: nowrap; gap: 12px; padding: 0 16px; }
+  .brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+  .brand-mark { width: 30px; height: 30px; border-radius: 8px; display: block; flex-shrink: 0; }
+  .brand-name { font-weight: 600; font-size: 15px; white-space: nowrap; }
+  .top-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 8px; min-width: 0; }
+  .tabs { margin: 0; gap: 4px; padding: 4px; border-radius: 12px; background: var(--surface2); border: 1px solid var(--border); flex-shrink: 0; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 7px 14px; border-radius: 9px; font-size: 13.5px; font-weight: 500; gap: 7px; }
+  .tab svg { width: 16px; height: 16px; }
+  .tab.active { background: var(--accent); color: var(--on-accent); font-weight: 600; box-shadow: 0 4px 12px -4px rgba(35,55,168,.5); }
+  html[data-theme="dark"] .tab.active { box-shadow: none; }
+  .view-btn { border-radius: 8px; border: 1px solid transparent; background: transparent; }
+  .view-btn svg { width: 17px; height: 17px; }
+
+  .btn { border-radius: 8px; border-width: 1px; font-size: 13px; font-weight: 500; padding: 7px 12px; }
+  .btn.primary { color: var(--on-accent); font-weight: 600; }
+  .btn.sm { font-size: 12.5px; }
+  .seg button { font-weight: 500; }
+  .seg button.active { color: var(--text); font-weight: 600; }
+  html[data-theme="dark"] .seg button.active { background: var(--surface3); }
+  .input, .select, .native-color { border-width: 1px; border-radius: 8px; }
+  .input { background: var(--surface2); font-weight: 500; }
+  .input:focus { background: var(--surface); box-shadow: 0 0 0 3px var(--accent-light); }
+  .card { border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: none; }
+  .card-title { font-size: 14.5px; font-weight: 600; letter-spacing: 0; }
+  .card-title svg { color: var(--accent); }
+  .label { font-weight: 600; letter-spacing: .04em; }
+  .main { max-width: none; padding: 0; }
+  .main > section:not(.picker-layout) { max-width: 1240px; margin: 0 auto; padding: 24px 22px 32px; }
+  .page-h { font: 700 22px/1.2 'Literata', Georgia, serif; letter-spacing: -.01em; }
+
+  /* ── «Колір»: робоче поле + бічна панель кольору ── */
+  .picker-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; min-height: calc(100vh - 60px - var(--dock-h)); }
+  .picker-main { padding: 22px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .picker-main .card + .card { margin-top: 0; }
+  .sv-box { height: min(46vh, 420px); border-radius: 12px; }
+  .hue-bar { height: 14px; border-radius: 7px; }
+  .picker-side { background: var(--surface); border-left: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; gap: 14px;
+    position: sticky; top: 60px; align-self: start; height: calc(100vh - 60px - var(--dock-h)); overflow-y: auto; }
+  .big-preview { height: 150px; border-radius: 12px; border: 0; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 4px; padding: 14px; flex-shrink: 0; }
+  .big-preview .name { font: 700 21px/1.15 'Literata', Georgia, serif; }
+  .big-preview .ratio { font: 500 12px 'IBM Plex Sans', sans-serif; opacity: .85; text-align: left; }
+  .formats { margin-top: 0; gap: 8px; }
+  .fmt { grid-template-columns: 50px minmax(0, 1fr) auto; }
+  .fmt label { font-weight: 600; letter-spacing: .04em; }
+  .icon-btn { border-radius: 8px; }
+  .side-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .side-acts .btn { justify-content: center; }
+  .sw { border-radius: 8px; height: 58px; }
+  .sw b { font-weight: 600; }
+
+  /* ── розділи ── */
+  .pal { border-radius: 14px; box-shadow: var(--shadow-md); }
+  html[data-theme="dark"] .pal, html[data-theme="dark"] .grad-preview { box-shadow: 0 20px 50px -20px rgba(0,0,0,.6); }
+  .pal-col .hex { font-weight: 600; }
+  .lib-item { border-width: 1px; border-radius: 12px; }
+  .lib-name { font-weight: 600; }
+  .cb-row .cb-name { font-weight: 600; }
+  .preview-box { border-radius: 12px; }
+  .preview-box h3 { font-family: 'Literata', Georgia, serif; font-weight: 700; }
+  .score .num { font-weight: 700; }
+  .score .verdict { font-weight: 600; }
+  .badge { border-width: 1px; font-weight: 600; }
+  .badge.pass { background: rgba(26,122,80,.1); border-color: rgba(26,122,80,.35); }
+  .badge.fail { background: rgba(200,53,45,.08); border-color: rgba(200,53,45,.3); }
+  html[data-theme="dark"] .badge.pass { background: rgba(95,211,155,.1); border-color: rgba(95,211,155,.3); }
+  html[data-theme="dark"] .badge.fail { background: rgba(240,138,130,.1); border-color: rgba(240,138,130,.3); }
+  .grad-preview { border-radius: 14px; }
+  .drop { border-radius: 14px; }
+  .modal-overlay { background: rgba(14,20,56,.42); }
+  html[data-theme="dark"] .modal-overlay { background: rgba(0,0,0,.55); }
+  .modal { border-width: 1px; border-radius: 14px; }
+  .modal h3 { font-family: 'Literata', Georgia, serif; font-weight: 700; }
+  .toast { background: var(--float-bg); color: var(--float-text); border-radius: 10px; font-weight: 500; bottom: calc(var(--dock-h) + 16px); }
+  html[data-theme="dark"] .toast { background: var(--float-bg); color: var(--float-text); }
+
+  /* ── «Моя палітра» ── */
+  .dock { position: fixed; left: 0; right: 0; bottom: 0; height: var(--dock-h); z-index: 40; display: flex; align-items: center; gap: 12px; padding: 0 16px;
+    background: var(--surface); border-top: 1px solid var(--border); }
+  .dock-label { font-size: 12.5px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+  .dock-pal { display: flex; height: 40px; flex: 0 1 600px; min-width: 0; border-radius: 9px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); }
+  .dock-sw { flex: 1; min-width: 0; border: 0; cursor: pointer; font: 600 11px 'JetBrains Mono', monospace; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5px; transition: flex .15s ease; }
+  .dock-sw:hover { flex: 1.35; }
+  .dock-add { width: 40px; height: 40px; border-radius: 9px; border: 1px dashed var(--border2); background: none; color: var(--muted); cursor: pointer; display: grid; place-items: center; flex-shrink: 0; }
+  .dock-add:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .dock-add:disabled { opacity: .4; cursor: default; }
+  .dock-add svg { width: 16px; height: 16px; }
+  .dock-grow { flex: 1; }
+  /* у розділі «Палітра» вона й так на весь екран — нижня смуга не потрібна */
+  body[data-tab="palette"] { padding-bottom: 0; }
+  body[data-tab="palette"] .dock { display: none; }
+  body[data-tab="palette"] .toast { bottom: 24px; }
+  .grid2 + .card { margin-top: 18px; }
+
+  @media (max-width: 1080px) { .tab { padding: 7px 10px; } }
+  @media (max-width: 960px) {
+    .picker-layout { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+    .picker-side { position: static; height: auto; border-left: 0; border-top: 1px solid var(--border); }
+  }
+  @media (max-width: 760px) {
+    :root { --dock-h: 110px; }
+    .topbar { height: auto; flex-wrap: wrap; padding: 10px 12px; gap: 8px; }
+    .brand { flex: 1; }
+    .top-right { flex: 0; }
+    .tabs { order: 9; width: 100%; overflow-x: auto; }
+    .tab { flex: 1; justify-content: center; }
+    .picker-main { padding: 14px; }
+    .main > section:not(.picker-layout) { padding: 14px 12px 24px; }
+    .picker-side { position: static; }
+    .sv-box { height: 220px; }
+    .big-preview { height: 96px; }
+    .dock { height: auto; min-height: var(--dock-h); flex-wrap: wrap; padding: 10px 12px; gap: 8px; }
+    .dock-label { display: none; }
+    .dock-pal { flex: 1 1 100%; order: -1; }
+  }
 </style>
 <meta name="description" content="Палітри, гармонії й перевірка контрасту тексту. Фіксуйте вдалі кольори й копіюйте коди одним клацанням.">
 <!-- og -->
@@ -316,43 +441,28 @@
 <!-- /og -->
 </head>
 <body>
-<div class="topbar">
-  <div class="topbar-left">
-    <div class="topbar-logo hide-sm">
-      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" fill="white"/><path d="M12 4a8 8 0 0 0 0 16 4 4 0 0 1 0-8 4 4 0 0 0 0-8Z" fill="#4F6BF4"/></svg>
-    </div>
-    <div class="topbar-text hide-sm">
-      <h1>Кольори</h1>
-      <p>Палітри, контраст і градієнти</p>
-    </div>
+<header class="topbar">
+  <div class="brand">
+    <img class="brand-mark" src="icons/color-tool.svg" alt="" width="30" height="30">
+    <span class="brand-name">Кольори</span>
   </div>
-  <nav class="tabs" id="tabs"></nav>
-  <button class="view-btn" id="theme-btn" title="Світла / темна тема"></button>
-</div>
+  <nav class="tabs" id="tabs" aria-label="Розділи"></nav>
+  <div class="top-right">
+    <button class="btn" id="top-save" title="Зберегти поточну палітру в «Мої палітри»"></button>
+    <button class="view-btn" id="theme-btn" title="Світла / темна тема"></button>
+  </div>
+</header>
 
 <div class="main">
 
   <!-- ============ PICKER ============ -->
-  <section data-tab="picker">
-    <div class="card">
-      <div class="picker-wrap">
-        <div>
-          <div class="sv-box" id="sv-box"><canvas id="sv-canvas"></canvas><div class="knob" id="sv-knob"></div></div>
+  <section data-tab="picker" class="picker-layout">
+    <div class="picker-main">
+      <h2 class="page-h">Оберіть колір</h2>
+      <div class="card">
+        <div class="sv-box" id="sv-box"><canvas id="sv-canvas"></canvas><div class="knob" id="sv-knob"></div></div>
           <div class="hue-bar" id="hue-bar"><div class="knob" id="hue-knob"></div></div>
-          <div class="row" style="margin-top:14px">
-            <button class="btn" id="eyedrop-btn"></button>
-            <button class="btn" id="random-btn"></button>
-            <span class="grow" style="flex:1"></span>
-            <button class="btn" id="to-palette-btn"></button>
-            <button class="btn" id="to-contrast-btn"></button>
-          </div>
-        </div>
-        <div>
-          <div class="big-preview" id="big-preview"><div class="name" id="color-name"></div><div class="ratio" id="color-ratio"></div></div>
-          <div class="formats" id="formats"></div>
-        </div>
       </div>
-    </div>
 
     <div class="card">
       <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18"/></svg>Шкала відтінків <span class="sub">— клацни, щоб скопіювати. Крапка — твій колір</span><span class="grow"></span><button class="btn sm" id="copy-shades-btn"></button></div>
@@ -370,6 +480,17 @@
         </div>
       </div>
     </div>
+    </div>
+    <aside class="picker-side">
+      <div class="big-preview" id="big-preview"><div class="name" id="color-name"></div><div class="ratio" id="color-ratio"></div></div>
+      <div class="formats" id="formats"></div>
+      <div class="side-acts">
+        <button class="btn" id="eyedrop-btn"></button>
+        <button class="btn" id="random-btn"></button>
+        <button class="btn primary" id="to-palette-btn"></button>
+        <button class="btn" id="to-contrast-btn"></button>
+      </div>
+    </aside>
   </section>
 
   <!-- ============ PALETTE ============ -->
@@ -480,6 +601,15 @@
     </div>
   </section>
 </div>
+
+<!-- «Моя палітра»: спільна для всіх розділів, завжди внизу -->
+<footer class="dock" id="dock">
+  <span class="dock-label">Моя палітра</span>
+  <div class="dock-pal" id="dock-pal"></div>
+  <button class="dock-add" id="dock-add" title="Додати поточний колір у палітру"></button>
+  <span class="dock-grow"></span>
+  <button class="btn" id="dock-export"></button>
+</footer>
 
 <div class="loupe" id="loupe"><canvas id="loupe-canvas" width="11" height="11"></canvas></div>
 <div class="loupe-label" id="loupe-label"></div>
@@ -719,7 +849,9 @@
     state.tab = id;
     tabsEl.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
     document.querySelectorAll('section[data-tab]').forEach(s => s.classList.toggle('hidden', s.dataset.tab !== id));
+    document.body.dataset.tab = id;
     if(onShow[id]) onShow[id]();
+    if(state.palette) renderDock();
     persist();
   }
 
@@ -728,6 +860,7 @@
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
     try{ localStorage.setItem('edvault-theme', dark ? 'dark' : 'light'); }catch(e){}
     $('theme-btn').innerHTML = svg(dark ? I.sun : I.moon);
+    const mt = document.querySelector('meta[name="theme-color"]'); if(mt) mt.content = dark ? '#1e1e1e' : '#1c2869';
   }
   $('theme-btn').onclick = () => applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
   applyTheme(document.documentElement.getAttribute('data-theme') === 'dark');
@@ -795,8 +928,8 @@
     if(!fromDrag) hsv = rgbToHsv(...hexToRgb(h));
     drawSV();
     const bp = $('big-preview'); bp.style.background = h; bp.style.color = textOn(h);
-    $('color-name').textContent = '≈ ' + colorName(h);
-    $('color-ratio').innerHTML = `з білим ${contrast(h, '#ffffff').toFixed(2)}<br>з чорним ${contrast(h, '#000000').toFixed(2)}`;
+    $('color-name').textContent = colorName(h);
+    $('color-ratio').textContent = `з білим ${contrast(h, '#ffffff').toFixed(2)} · з чорним ${contrast(h, '#000000').toFixed(2)}`;
     FORMATS.forEach(f => { const inp = fmtEl.querySelector(`[data-f="${f.id}"]`); if(document.activeElement !== inp) inp.value = f.get(h); });
     renderShades(); renderHarmony();
   }
@@ -881,7 +1014,7 @@
   $('harmony-to-palette').innerHTML = svg(I.palette) + 'У палітру';
   $('harmony-to-palette').onclick = () => { setPalette(harmonyColors(state.base, state.harmony).slice(0, 8)); showTab('palette'); toast('Гармонію перенесено в палітру'); };
 
-  $('eyedrop-btn').innerHTML = svg(I.picker) + 'Піпетка з екрана';
+  $('eyedrop-btn').innerHTML = svg(I.picker) + 'Піпетка';
   if(!('EyeDropper' in window)){ $('eyedrop-btn').title = 'Твій браузер не підтримує піпетку з екрана (є в Chrome та Edge)'; }
   $('eyedrop-btn').onclick = async () => {
     if(!('EyeDropper' in window)){ toast('Піпетка з екрана працює в Chrome та Edge. Можна взяти колір з фото на вкладці «З фото»', null, 3500); return; }
@@ -896,7 +1029,7 @@
     pushHistory(); state.palette.push({ hex: state.base, locked: true }); persist(); renderPalette();
     toast('Додано в палітру', state.base);
   };
-  $('to-contrast-btn').innerHTML = svg(I.contrast) + 'Перевірити контраст';
+  $('to-contrast-btn').innerHTML = svg(I.contrast) + 'Контраст';
   $('to-contrast-btn').onclick = () => { state.fg = state.base; showTab('contrast'); };
   onShow.picker = () => renderPicker();
 
@@ -1016,7 +1149,7 @@
       });
       palEl.appendChild(col);
     });
-    renderCB(); updateUndo();
+    renderCB(); updateUndo(); renderDock();
     if(state.tab === 'contrast') renderMatrix();
   }
   function renderCB(){
@@ -1103,6 +1236,31 @@
     draw();
   };
   onShow.palette = () => { renderPalette(); renderLibrary(); };
+
+  // ---------- «Моя палітра» внизу: та сама палітра, що й у розділі «Палітра» ----------
+  // Клацання по кольору: у «Колір» — зробити його поточним, у «Контраст» — узяти як колір тексту, деінде — скопіювати.
+  function renderDock(){
+    const el = $('dock-pal'); el.innerHTML = '';
+    (state.palette || []).forEach(p => {
+      const b = document.createElement('button');
+      b.className = 'dock-sw'; b.style.background = p.hex; b.style.color = textOn(p.hex);
+      b.textContent = p.hex.toUpperCase().slice(1);
+      b.title = colorName(p.hex) + ' — ' + (state.tab === 'picker' ? 'зробити поточним' : state.tab === 'contrast' ? 'узяти як колір тексту' : 'скопіювати');
+      b.onclick = () => {
+        if(state.tab === 'picker') setBase(p.hex);
+        else if(state.tab === 'contrast') setPair(p.hex, null);
+        else copy(p.hex.toUpperCase(), null, p.hex);
+      };
+      el.appendChild(b);
+    });
+    $('dock-add').disabled = (state.palette || []).length >= 10;
+  }
+  $('dock-add').innerHTML = svg(I.plus, 2.2);
+  $('dock-add').onclick = () => $('to-palette-btn').click();
+  $('dock-export').innerHTML = svg(I.download) + 'Експорт';
+  $('dock-export').onclick = () => $('pal-export').click();
+  $('top-save').innerHTML = svg(I.save) + '<span class="hide-sm">Зберегти палітру</span>';
+  $('top-save').onclick = () => $('pal-save').click();
 
   // =====================================================================
   // CONTRAST TAB
