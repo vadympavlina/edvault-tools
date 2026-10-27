@@ -24,9 +24,9 @@ export async function packProject(P, extras = {}) {
   meta.savedAt = new Date().toISOString();
   meta.ref = extras.ref ? { show: !!extras.refShow, opacity: extras.refOpacity ?? 0.4 } : null;
   meta.integrity = checksum(JSON.stringify({ frames: meta.frames, layers: meta.layers, title: meta.title, author: meta.author }));
-  meta.about = 'Мультфільм із «Аніматора» Edvault (edvault.online/tools/animator). Відкрийте файл в Аніматорі кнопкою «Відкрити».';
+  meta.about = 'Мультфільм із «Аніматора» Edvault (tools.edvault.online/animator). Відкрийте файл в Аніматорі кнопкою «Відкрити».';
   entries.unshift({ name: 'project.json', data: JSON.stringify(meta, null, 1) });
-  entries.push({ name: 'README.txt', data: `Мультфільм «${meta.title}»${meta.author ? ', автор: ' + meta.author : ''}.\nКадрів: ${meta.frames.length}, шарів: ${meta.layers.length}, частота ${meta.fps} кадр/с.\nВідкрийте цей файл в Аніматорі на edvault.online/tools/animator.\n` });
+  entries.push({ name: 'README.txt', data: `Мультфільм «${meta.title}»${meta.author ? ', автор: ' + meta.author : ''}.\nКадрів: ${meta.frames.length}, шарів: ${meta.layers.length}, частота ${meta.fps} кадр/с.\nВідкрийте цей файл в Аніматорі на tools.edvault.online/animator.\n` });
   return new Blob([await makeZip(entries)], { type: 'application/zip' });
 }
 
