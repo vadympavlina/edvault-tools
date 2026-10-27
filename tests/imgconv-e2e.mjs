@@ -9,7 +9,7 @@ const browser = await launch();
 const errors = [];
 const ctx = await browser.newContext({ viewport: { width: 1300, height: 860 }, acceptDownloads: true });
 const page = await newPage(ctx, errors);
-await page.goto(server.url + '/tools/image-convert.html');
+await page.goto(server.url + '/image-convert.html');
 await page.waitForFunction(() => window.ImgConv);
 
 // тестові файли малюємо в самому браузері: «фото» з шумом, PNG з прозорістю

@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { startServer, launch, newPage, step } from './_harness.mjs';
 
 const server = await startServer();
-const URL_TC = server.url + '/tools/text-craft.html';
+const URL_TC = server.url + '/text-craft.html';
 const browser = await launch();
 const tmp = await mkdtemp(join(tmpdir(), 'tc-'));
 const errors = [];

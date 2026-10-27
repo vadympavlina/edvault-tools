@@ -10,7 +10,7 @@ const errors = [];
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, acceptDownloads: true });
 const p = await newPage(ctx, errors);
 p.setDefaultTimeout(10000);
-await p.goto(server.url + '/tools/snap-editor');
+await p.goto(server.url + '/snap-editor');
 await p.evaluate(() => { localStorage.clear(); indexedDB.deleteDatabase('edvault-snapedit'); });
 await p.reload();
 const S = () => p.evaluate(() => JSON.parse(JSON.stringify({ objects: window.SnapEdit.S.objects, doc: window.SnapEdit.S.doc, frame: window.SnapEdit.S.frame, tool: window.SnapEdit.S.tool })));
@@ -132,7 +132,7 @@ await step('обрізання зсуває позначки', async () => {
 
 await step('телефон: без горизонтальної прокрутки, інструменти внизу', async () => {
   const q = await newPage(await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }), errors);
-  await q.goto(server.url + '/tools/snap-editor');
+  await q.goto(server.url + '/snap-editor');
   await q.waitForSelector('#rail');
   assert.equal(await q.evaluate(() => document.documentElement.scrollWidth - innerWidth), 0);
   const r = await q.locator('#rail').boundingBox();

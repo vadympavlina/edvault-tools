@@ -1,9 +1,9 @@
 // Аніматор: модель проєкту, історія, уроки й кодер GIF — без браузера.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Project, History, okMeta, projectFromMeta, MAX_LAYERS } from '../tools/animator-app/js/model.js';
-import { encodeGif, inspectGif, decodeFirstFrameIndices, buildPalette } from '../tools/animator-app/js/gif.js';
-import { LESSONS } from '../tools/animator-app/js/lessons.js';
+import { Project, History, okMeta, projectFromMeta, MAX_LAYERS } from '../animator-app/js/model.js';
+import { encodeGif, inspectGif, decodeFirstFrameIndices, buildPalette } from '../animator-app/js/gif.js';
+import { LESSONS } from '../animator-app/js/lessons.js';
 
 // склад клітинок-заглушок: клітинка — об'єкт із «малюнком»-рядком
 let n = 0;

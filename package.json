@@ -1,0 +1,10 @@
+{
+  "name": "edvault-tools",
+  "private": true,
+  "description": "Інструменти для вчителя й учнів: вайтборд, голосування, запис екрана, відеоредактор, аніматор, редактори тексту, коду й пікселів (статичні сторінки, без збирання)",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "node tests/run-browser-tests.mjs"
+  }
+}

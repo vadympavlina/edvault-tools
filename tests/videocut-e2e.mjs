@@ -27,7 +27,7 @@ const page = await browser.newPage({ viewport: { width: 1300, height: 760 } });
 const errors = [];
 page.on('pageerror', e => errors.push(e.message));
 await page.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
-await page.goto(`http://localhost:${port}/tools/videocut.html`);
+await page.goto(`http://localhost:${port}/videocut.html`);
 const VC = fn => page.evaluate(fn);
 let n = 0;
 const step = async (name, fn) => { try { await fn(); console.log('ok  ', ++n, name); } catch (e) { console.log('FAIL', ++n, name, '\n   ', e.message); process.exitCode = 1; } };

@@ -2,8 +2,8 @@
 //   node --test tests/*.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as c from '../tools/imgconv/js/core.js';
-import { encodePng8, buildPalette } from '../tools/imgconv/js/png8.js';
+import * as c from '../imgconv/js/core.js';
+import { encodePng8, buildPalette } from '../imgconv/js/png8.js';
 import { inflateSync } from 'node:zlib';
 
 test('розміри: вписати, обрізати, відсотки, не збільшувати', () => {

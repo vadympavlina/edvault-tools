@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { startServer, launch, newPage, step } from './_harness.mjs';
-import { inspectGif } from '../tools/animator-app/js/gif.js';
+import { inspectGif } from '../animator-app/js/gif.js';
 
 const server = await startServer();
 const browser = await launch();
@@ -13,7 +13,7 @@ const errors = [];
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, acceptDownloads: true });
 const p = await newPage(ctx, errors);
 p.setDefaultTimeout(15000);
-await p.goto(server.url + '/tools/animator');
+await p.goto(server.url + '/animator');
 await p.evaluate(() => { localStorage.clear(); indexedDB.deleteDatabase('edvault-animator'); });
 await p.reload();
 await p.waitForFunction(() => window.Animator && window.Animator.P);
@@ -371,7 +371,7 @@ await step('довгий мультфільм: 120 кадрів не розго�
   });
   await p.keyboard.press('n'); await p.keyboard.press('Control+z'); // плівка перебудовує мініатюри
   await p.waitForFunction(() => document.querySelectorAll('.fr canvas').length >= 120, null, { timeout: 30000 });
-  const live = await p.evaluate(async () => (await import('/tools/animator-app/js/cells.js')).liveCount());
+  const live = await p.evaluate(async () => (await import('/animator-app/js/cells.js')).liveCount());
   assert.ok(live <= 60, 'розгорнуто клітинок: ' + live);
   await p.click('[data-act="export"]'); await p.click('[data-set="gifScale"][data-v="0.5"]');
   await Promise.all([p.waitForEvent('download', { timeout: 120000 }), p.click('[data-ex="gif"]')]);
@@ -381,7 +381,7 @@ await step('довгий мультфільм: 120 кадрів не розго�
 
 await step('телефон: без горизонтальної прокрутки, аркуш видно, панель шарів висувається', async () => {
   const q = await newPage(await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }), errors);
-  await q.goto(server.url + '/tools/animator');
+  await q.goto(server.url + '/animator');
   await q.waitForFunction(() => window.Animator && window.Animator.P);
   await q.click('[data-go]');
   assert.equal(await q.evaluate(() => document.documentElement.scrollWidth - innerWidth), 0);

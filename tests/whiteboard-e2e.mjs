@@ -13,7 +13,7 @@ const p = await newPage(ctx, errors);
 p.setDefaultTimeout(10000);
 // pdf.js вантажиться з CDN: у тестовому середовищі мережі немає — такі помилки не про дошку
 const ownErrors = () => errors.filter(e => !/cdnjs|pdf\.js|pdfjs|ERR_TUNNEL|Failed to load resource/i.test(e));
-await p.goto(server.url + '/tools/whiteboard');
+await p.goto(server.url + '/whiteboard');
 await p.evaluate(() => { localStorage.clear(); indexedDB.deleteDatabase('edvault-whiteboard'); });
 await p.reload();
 await p.waitForFunction(() => window.Whiteboard && window.Whiteboard.getActivePage());
@@ -119,7 +119,7 @@ await step('презентація: вхід і вихід Esc', async () => {
 
 await step('телефон: без горизонтальної прокрутки сторінки, аркуш видно цілком', async () => {
   const q = await newPage(await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }), errors);
-  await q.goto(server.url + '/tools/whiteboard');
+  await q.goto(server.url + '/whiteboard');
   await q.evaluate(() => { localStorage.clear(); indexedDB.deleteDatabase('edvault-whiteboard'); });
   await q.reload();
   await q.waitForFunction(() => window.Whiteboard && window.Whiteboard.getActivePage());
