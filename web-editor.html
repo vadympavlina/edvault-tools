@@ -7,19 +7,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Редактор коду · Edvault</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#1c2869">
+<!-- шрифти лежать поруч (спільні з текстовим редактором), тож вигляд однаковий і без інтернету -->
+<link rel="stylesheet" href="textcraft/fonts.css">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/idea.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/dialog/dialog.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css">
 <script>
   // Apply saved theme before first paint to avoid a light-mode flash
   try{
-    var t = localStorage.getItem('edvault-theme');
-    if(t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    var t = localStorage.getItem('edvault-theme') || 'auto';
+    if(t === 'dark' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.setAttribute('data-theme', 'dark');
   }catch(e){}
 </script>
 
@@ -27,27 +27,23 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #f0f2f5;
-    --surface: #ffffff;
-    --surface2: #f7f8fa;
-    --border: #e2e5ea;
-    --border2: #d0d5dd;
-    --accent: #4F6BF4;
-    --accent-light: #eef0fe;
-    --accent-hover: #3d57e0;
-    --danger: #ef4444;
-    --success: #10b981;
-    --warn: #f59e0b;
-    --text: #1a1d23;
-    --text2: #4b5563;
-    --muted: #9ca3af;
-    --lang-html: #e34c26;
-    --lang-css: #2965f1;
-    --lang-js: #d4a017;
+    color-scheme: light;
+    --bg: #dfe4ea; --surface: #fdfefb; --surface2: #f2f5f7; --surface3: #e8edf1;
+    --border: #d9e0e7; --border2: #bfc9d4;
+    --accent: #2337a8; --accent-light: #e8ecfb; --accent-hover: #1a2a8a; --accent-border: #b9c3ef; --on-accent: #ffffff;
+    --danger: #c8352d; --success: #1a7a50; --warn: #c98a00;
+    --text: #1d2236; --text2: #454c63; --muted: #5d6478;
+    --lang-html: #e5484d; --lang-css: #3b82f6; --lang-js: #d4a017;
     --cm-font-size: 13px;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
-    --shadow-md: 0 4px 16px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06);
-    --shadow-lg: 0 24px 60px rgba(0,0,0,.14), 0 4px 16px rgba(0,0,0,.08);
+    --shadow-sm: 0 1px 2px rgba(28,40,105,.08);
+    --shadow-md: 0 6px 18px rgba(28,40,105,.12), 0 1px 3px rgba(28,40,105,.08);
+    --shadow-lg: 0 22px 50px rgba(28,40,105,.18), 0 4px 12px rgba(28,40,105,.08);
+    --float-bg: #1c2869; --float-text: #eef1ff;
+    --overlay: rgba(29,34,54,.45);
+    /* підсвітка коду */
+    --code-bg: #fdfefb; --code-gutter: #f2f5f7; --code-ln: #9aa1b2; --code-active: #f2f5f7;
+    --c-tag: #2337a8; --c-attr: #a1253a; --c-str: #1a7a50; --c-kw: #7c3aed; --c-com: #8a90a0;
+    --c-num: #c2410c; --c-prop: #0f6c8a; --c-def: #1d2236; --c-var2: #0f6c8a; --c-meta: #5d6478; --c-bracket: #5d6478;
   }
 
   .CodeMirror-hints{
@@ -88,30 +84,26 @@
   }
 
   html[data-theme="dark"] {
-    --bg: #14171c;
-    --surface: #1c212a;
-    --surface2: #232933;
-    --border: #2a313d;
-    --border2: #384152;
-    --accent: #6c85ff;
-    --accent-light: rgba(108,133,255,.16);
-    --accent-hover: #8298ff;
-    --danger: #ff6b6b;
-    --success: #34d399;
-    --warn: #fbbf24;
-    --text: #e8ecf1;
-    --text2: #a8b0bd;
-    --muted: #6b7280;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,.35), 0 1px 2px rgba(0,0,0,.25);
-    --shadow-md: 0 4px 16px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.3);
-    --shadow-lg: 0 24px 60px rgba(0,0,0,.55), 0 4px 16px rgba(0,0,0,.35);
+    color-scheme: dark;
+    --bg: #1e1e1e; --surface: #2c2c2c; --surface2: #383838; --surface3: #424242;
+    --border: #3a3a3a; --border2: #4a4a4a;
+    --accent: #9aabff; --accent-light: rgba(154,171,255,.14); --accent-hover: #b3c0ff; --accent-border: rgba(154,171,255,.38); --on-accent: #10153a;
+    --danger: #f08a82; --success: #5fd39b; --warn: #e8c93a;
+    --text: #ededed; --text2: #c2c2c2; --muted: #9a9a9a;
+    --lang-html: #f07a7e; --lang-css: #74a8ff; --lang-js: #e8c93a;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.4); --shadow-md: 0 8px 22px rgba(0,0,0,.45); --shadow-lg: 0 24px 60px rgba(0,0,0,.6);
+    --float-bg: #383838; --float-text: #ededed;
+    --overlay: rgba(0,0,0,.55);
+    --code-bg: #232323; --code-gutter: #262626; --code-ln: #6e6e6e; --code-active: #2a2a2a;
+    --c-tag: #9aabff; --c-attr: #f0a35e; --c-str: #7fd1a0; --c-kw: #d4a6ff; --c-com: #7d7d7d;
+    --c-num: #f2a66b; --c-prop: #8fd0ff; --c-def: #ffd27a; --c-var2: #8fd0ff; --c-meta: #a8a8a8; --c-bracket: #a8a8a8;
   }
   html[data-theme="dark"] body{ background: var(--bg); }
   html[data-theme="dark"] #preview-frame{ background: #fff; } /* preview stays a real page, not app chrome */
 
   html, body { height: 100%; }
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'IBM Plex Sans', 'Commissioner', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
@@ -529,7 +521,7 @@
 
   /* modal */
   .modal-overlay{
-    position:fixed; inset:0; z-index:150; background:rgba(15,18,25,.5);
+    position:fixed; inset:0; z-index:150; background:var(--overlay);
     display:flex; align-items:center; justify-content:center; padding:16px;
     animation:fade-in .15s ease;
   }
@@ -581,7 +573,7 @@
     background:#1a1d23; color:#fff; padding:10px 16px; border-radius:11px; font-size:13px; font-weight:500;
     box-shadow:var(--shadow-lg); opacity:0; pointer-events:none; transition:all .2s ease; max-width:calc(100vw - 32px);
   }
-  html[data-theme="dark"] .toast{ background:#e8ecf1; color:#14171c; }
+  html[data-theme="dark"] .toast{ background:#ededed; color:#1e1e1e; }
   .toast.show{ opacity:1; transform:translate(-50%, 0); }
 
   /* =========== EDITOR EXTRAS =========== */
@@ -648,6 +640,176 @@
     .search-input{ width:150px; }
     .hide-sm{ display:none; }
   }
+
+  /* ════════════ «Вкладки й результат поруч»: код по одному файлу ліворуч, результат і консоль праворуч ════════════ */
+  button, input{ font-family: inherit; }
+  .topbar{ min-height: 56px; padding-top: max(8px, env(safe-area-inset-top, 0px)); padding-bottom: 8px; }
+  img.topbar-logo{ width: 32px; height: 32px; border-radius: 9px; display: block; background: none; box-shadow: none; }
+  .topbar-text h1{ font-weight: 600; font-size: 15.5px; letter-spacing: 0; }
+  .back-btn, .ghost-btn{ border-width: 1px; border-radius: 8px; font-weight: 500; padding: 7px 12px; }
+  .retry-btn{ border-radius: 8px; font-weight: 600; padding: 8px 14px; color: var(--on-accent); }
+  .retry-btn.danger{ color: #fff; }
+  .view-btn{ border: 1px solid transparent; background: transparent; border-radius: 8px; color: var(--text2); }
+  .view-btn:hover{ background: var(--surface2); border-color: var(--border); color: var(--text); }
+  .view-btn.active{ background: var(--accent-light); border-color: var(--accent-border); color: var(--accent); }
+  .view-btn svg{ width: 17px; height: 17px; }
+  .name-input{ border-width: 1px; border-color: transparent; background: transparent; border-radius: 8px; font-weight: 600; font-size: 14.5px; padding: 7px 10px; }
+  .name-input:hover{ border-color: var(--border); }
+  .name-input:focus{ border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 3px var(--accent-light); }
+  .save-status{ font-weight: 500; }
+  .search-input{ border-width: 1px; border-radius: 8px; }
+  .search-input:focus, .modal-input:focus{ box-shadow: 0 0 0 3px var(--accent-light); }
+  .modal-input{ border-width: 1px; }
+  .settings-panel, .pop-menu{ border-width: 1px; border-radius: 12px; }
+  .settings-label{ font-weight: 600; letter-spacing: .04em; }
+  .settings-opt-btn{ border-width: 1px; border-radius: 8px; font-weight: 500; font-size: 11.5px; }
+  .settings-opt-btn.active{ background: var(--accent-light); border-color: var(--accent-border); color: var(--accent); }
+  .settings-opt-btn.active .dot{ background: var(--accent) !important; }
+  .settings-opt-btn.settings-opt-full{ justify-content: flex-start; padding: 9px 12px; font-size: 12.5px; }
+  .settings-toggle{ font-weight: 500; }
+  .font-size-control{ border-width: 1px; border-radius: 8px; }
+  .font-btn:hover{ color: var(--on-accent); }
+  li.CodeMirror-hint-active{ color: var(--on-accent) !important; }
+
+  /* каталог */
+  .main{ max-width: 1240px; }
+  .stats-bar-left{ font-size: 13.5px; }
+  .tools-grid{ grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .tool-card{ border-width: 1px; border-radius: 14px; }
+  .tool-card::before{ display: none; }
+  .tool-card:hover{ transform: translateY(-2px); border-color: var(--accent-border); }
+  .tool-card.has-thumb{ padding: 10px 10px 14px; }
+  .tool-thumb{ border-radius: 9px; border-color: var(--border); }
+  .tool-name{ font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 16.5px; letter-spacing: 0; }
+  .tool-tag{ border-radius: 6px; font-weight: 600; background: var(--surface2); color: var(--text2); }
+  .tool-icon{ border-width: 1px; border-color: var(--accent-border); }
+  .tool-open-btn{ border-width: 1px; border-color: var(--accent-border); border-radius: 8px; font-weight: 600; }
+  .tool-card:hover .tool-open-btn{ color: var(--on-accent); }
+  .empty-state h3{ font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 20px; }
+
+  /* модальні вікна й шаблони */
+  .modal{ border-width: 1px; border-radius: 16px; }
+  .modal-title{ font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 19px; letter-spacing: 0; }
+  .tpl-card{ border-width: 1px; border-radius: 12px; }
+  .tpl-card:hover{ border-color: var(--accent-border); transform: translateY(-1px); }
+  .tpl-name{ font-weight: 600; font-size: 14.5px; }
+  .tpl-level{ font-weight: 600; }
+  .tpl-emoji{ width: 40px; height: 40px; border-radius: 10px; align-items: center; justify-content: center; background: var(--accent-light); }
+  .tpl-emoji svg{ width: 21px; height: 21px; }
+  kbd{ font-weight: 600; }
+
+  /* робоча область */
+  #editor-body{ background: var(--border); gap: 0; }
+  .code-zone, .preview-zone{ background: var(--surface); }
+  .resizer{ background: var(--border); }
+  #editor-body[data-layout="split"] .resizer,
+  #editor-body[data-layout="split-rev"] .resizer{ width: 5px; }
+  #editor-body[data-layout="grid"] .resizer{ height: 5px; }
+  .pane-resizer{ width: 5px; }
+  .code-zone{ position: relative; }
+
+  .pane-head{
+    height: 40px; padding: 0 8px 0 14px; gap: 6px; background: var(--surface);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 12.5px; font-weight: 600;
+    letter-spacing: 0; text-transform: none; color: var(--text2);
+  }
+  .pane-head .icon-btn{ width: 30px; height: 30px; border-radius: 7px; padding: 0; }
+  .pane-head .icon-btn:hover{ background: var(--surface2); }
+  .pane-head .icon-btn svg{ width: 16px; height: 16px; }
+  .pane-head .icon-btn.pending{ color: var(--on-accent); }
+  /* у «Знизу» кожна мова має свій стовпчик із підписом-назвою файлу */
+  .code-pane .pane-head{ font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: var(--text); }
+
+  /* вкладки файлів */
+  .lang-tabs{ height: 40px; align-items: flex-end; gap: 2px; padding: 0 76px 0 8px; background: var(--surface); }
+  .lang-tab-btn{
+    height: 34px; display: inline-flex; align-items: center; gap: 7px; padding: 0 14px; border-radius: 8px 8px 0 0;
+    font-size: 12.5px; font-weight: 500; color: var(--muted);
+  }
+  .lang-tab-btn i{ width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .lang-tab-btn:hover:not(.active){ color: var(--text); background: var(--surface2); }
+  .lang-tab-btn.active{ background: var(--code-bg); color: var(--text); font-weight: 600; box-shadow: inset 0 2px 0 var(--accent), 1px 0 0 var(--border), -1px 0 0 var(--border); }
+  /* дії з файлом стоять у рядку вкладок, праворуч */
+  #editor-body:not([data-layout="grid"]) .code-pane .pane-head{
+    position: absolute; top: 0; right: 0; height: 40px; padding: 0 6px; background: transparent; border: 0;
+    font-size: 0; gap: 2px; z-index: 2;
+  }
+  #editor-body:not([data-layout="grid"]) .code-pane .pane-head .dot{ display: none; }
+
+  /* редактор коду */
+  .CodeMirror{ background: var(--code-bg); color: var(--text); line-height: 1.6; }
+  .CodeMirror-gutters{ background: var(--code-bg); border-right: 1px solid var(--border); }
+  .CodeMirror-linenumber{ color: var(--code-ln); padding: 0 8px 0 6px; }
+  .CodeMirror-lines{ padding: 8px 0; }
+  .CodeMirror-activeline-background{ background: var(--code-active) !important; }
+  .CodeMirror-activeline-gutter{ background: var(--code-active); }
+  .CodeMirror-selected{ background: var(--accent-light) !important; }
+  .CodeMirror-focused .CodeMirror-selected{ background: rgba(35,55,168,.16) !important; }
+  html[data-theme="dark"] .CodeMirror-focused .CodeMirror-selected{ background: rgba(154,171,255,.24) !important; }
+  .CodeMirror-matchingbracket{ color: inherit !important; background: var(--accent-light); outline: 1px solid var(--accent-border); }
+  .cm-s-edv .cm-tag{ color: var(--c-tag); }
+  .cm-s-edv .cm-attribute{ color: var(--c-attr); }
+  .cm-s-edv .cm-string, .cm-s-edv .cm-string-2{ color: var(--c-str); }
+  .cm-s-edv .cm-keyword{ color: var(--c-kw); }
+  .cm-s-edv .cm-comment{ color: var(--c-com); font-style: italic; }
+  .cm-s-edv .cm-number, .cm-s-edv .cm-atom{ color: var(--c-num); }
+  .cm-s-edv .cm-property{ color: var(--c-prop); }
+  .cm-s-edv .cm-def, .cm-s-edv .cm-qualifier{ color: var(--c-def); }
+  .cm-s-edv .cm-variable-2, .cm-s-edv .cm-variable-3, .cm-s-edv .cm-type, .cm-s-edv .cm-builtin{ color: var(--c-var2); }
+  .cm-s-edv .cm-meta, .cm-s-edv .cm-bracket, .cm-s-edv .cm-operator{ color: var(--c-meta); }
+  .cm-s-edv .cm-variable{ color: var(--text); }
+  .cm-s-edv .cm-error{ color: var(--danger); }
+  html[data-theme="dark"] .cm-s-edv .cm-def{ font-weight: 500; }
+
+  /* результат */
+  .preview-zone .pane-head{ padding: 0 8px; }
+  .url-pill{
+    flex: 1; min-width: 0; height: 28px; border-radius: 14px; background: var(--surface2); border: 1px solid var(--border);
+    display: block; line-height: 26px; padding: 0 12px; font-size: 12.5px; font-weight: 400; color: var(--muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .url-pill span{ color: var(--text2); font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
+  #run-btn{ order: -1; }
+  .device-label{ font-size: 12px; font-weight: 500; }
+  .device-seg{ background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 2px; gap: 2px; margin: 0 2px; }
+  .device-seg button{ background: transparent; border-radius: 6px !important; width: 30px; height: 24px; padding: 0; color: var(--text2); }
+  .device-seg button.active{ background: var(--surface); color: var(--accent); box-shadow: var(--shadow-sm); }
+  html[data-theme="dark"] .device-seg button.active{ background: var(--surface3); }
+  #console-toggle-btn.active{ color: var(--accent); background: var(--accent-light); }
+  /* сама сторінка лишається світлою й у темній темі */
+  .preview-stage{ background: #fff; }
+  .preview-stage.device{ background-color: var(--surface2); }
+
+  /* консоль під результатом */
+  .console-panel{ border-top: 1px solid var(--border); background: var(--surface); }
+  .console-toolbar{ height: 34px; padding: 0 12px; font-size: 12px; font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--text2); }
+  .console-clear-btn{ font-size: 12px; font-weight: 500; padding: 4px 8px; border-radius: 6px; }
+  .console-clear-btn:hover{ background: var(--surface2); }
+  .console-line{ border-bottom-color: var(--surface2); }
+  .console-line.console-error{ background: color-mix(in srgb, var(--danger) 8%, transparent); }
+  .console-line.console-warn{ background: color-mix(in srgb, var(--warn) 10%, transparent); }
+  .console-input-row{ height: 34px; }
+
+  @media (max-width: 900px){
+    .lang-tabs{ padding-right: 70px; overflow-x: auto; scrollbar-width: none; }
+    .lang-tab-btn{ padding: 0 10px; }
+    .url-pill{ display: none; }
+    .preview-zone .pane-head{ justify-content: flex-end; }
+    .topbar{ gap: 8px; }
+  }
+  @media (max-width: 640px){
+    #view-editor .topbar{ flex-wrap: nowrap; padding-left: 10px; padding-right: 10px; }
+    #view-editor .topbar-left{ flex: 1; gap: 6px; }
+    #view-editor .name-input{ min-width: 0; max-width: none; width: 100%; }
+    #view-editor .topbar-actions{ flex-wrap: nowrap; gap: 4px; }
+    #view-editor .back-btn, #view-editor .ghost-btn{ padding: 7px 9px; }
+    #view-editor .retry-btn{ padding: 8px 10px; }
+    .save-label{ display: none; }
+  }
+  @media (max-width: 520px){
+    .lang-tab-btn i{ display: none; }
+    .save-status{ display: none; }
+  }
 </style>
 <meta name="description" content="HTML, CSS і JavaScript з живим переглядом, консоллю й режимами телефона та планшета. Проєкти зберігаються й діляться посиланням.">
 <!-- og -->
@@ -670,9 +832,7 @@
 <div id="view-catalog">
   <div class="topbar">
     <div class="topbar-left">
-      <div class="topbar-logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 8-4 4 4 4M15 8l4 4-4 4"/></svg>
-      </div>
+      <img class="topbar-logo" src="icons/web-editor.svg" alt="">
       <div class="topbar-text">
         <h1>Редактор коду</h1>
         <p>HTML, CSS і JavaScript з живим переглядом</p>
@@ -842,13 +1002,13 @@
     </div>
   </div>
 
-  <div id="editor-body" data-layout="grid">
+  <div id="editor-body" data-layout="split">
     <div class="code-zone">
       <div class="lang-tabs" id="lang-tabs"></div>
       <div class="code-panes">
         <div class="code-pane pane-html" data-lang="html">
           <div class="pane-head">
-            <span class="dot"></span>HTML<span class="spacer"></span>
+            <span class="dot"></span>index.html<span class="spacer"></span>
             <button class="icon-btn" data-format="html" title="Упорядкувати код (Shift+Alt+F)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h14M7 18h10"/></svg>
             </button>
@@ -860,7 +1020,7 @@
         </div>
         <div class="code-pane pane-css" data-lang="css">
           <div class="pane-head">
-            <span class="dot"></span>CSS<span class="spacer"></span>
+            <span class="dot"></span>style.css<span class="spacer"></span>
             <button class="icon-btn" data-format="css" title="Упорядкувати код (Shift+Alt+F)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h14M7 18h10"/></svg>
             </button>
@@ -872,7 +1032,7 @@
         </div>
         <div class="code-pane pane-js" data-lang="js">
           <div class="pane-head">
-            <span class="dot"></span>JS<span class="spacer"></span>
+            <span class="dot"></span>script.js<span class="spacer"></span>
             <button class="icon-btn" data-format="js" title="Упорядкувати код (Shift+Alt+F)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h14M7 18h10"/></svg>
             </button>
@@ -889,7 +1049,7 @@
 
     <div class="preview-zone pane-preview">
       <div class="pane-head">
-        <span class="dot"></span>Перегляд<span class="spacer"></span>
+        <span class="url-pill" id="url-pill" title="Так буде видно сторінку"><span id="url-name">мій-проєкт</span> / index.html</span>
         <span class="device-label" id="device-label"></span>
         <div class="device-seg" id="device-seg">
           <button data-device="full" class="active" title="На всю ширину">
@@ -1939,7 +2099,7 @@
   function runNow(){ updatePreview(); }
   function initEditors(){
     const cmOptions = {
-      theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'dracula' : 'idea',
+      theme: 'edv',
       lineNumbers:true,
       lineWrapping: wrapToggle.checked,
       matchBrackets:true,
@@ -2230,11 +2390,12 @@
     updateCodeLayout();
   }
 
+  const FILE_NAMES = { html:'index.html', css:'style.css', js:'script.js' };
   function renderLangTabs(){
     const langs = ['html','css','js'].filter(l => visible[l]);
     if(!langs.includes(activeTab)) activeTab = langs[0] || 'html';
     langTabsEl.innerHTML = langs.map(l =>
-      `<button class="lang-tab-btn ${l===activeTab?'active':''}" data-lang="${l}">${l.toUpperCase()}</button>`
+      `<button class="lang-tab-btn ${l===activeTab?'active':''}" data-lang="${l}"><i style="background:var(--lang-${l})"></i>${FILE_NAMES[l]}</button>`
     ).join('');
     langTabsEl.querySelectorAll('.lang-tab-btn').forEach(btn => {
       btn.addEventListener('click', () => { activeTab = btn.dataset.lang; renderLangTabs(); updateCodeLayout(); });
@@ -2350,8 +2511,9 @@
     try{ localStorage.setItem('edvault-theme', dark ? 'dark' : 'light'); }catch(e){}
     themeToggle.checked = dark;
     catalogThemeBtn.innerHTML = svg(dark ? ICONS.sun : ICONS.moon);
+    const mt = document.querySelector('meta[name="theme-color"]'); if(mt) mt.content = dark ? '#1e1e1e' : '#1c2869';
     if(cmByLang){
-      const cmTheme = dark ? 'dracula' : 'idea';
+      const cmTheme = 'edv';
       [cmHtml, cmCss, cmJs].forEach(cm => cm.setOption('theme', cmTheme));
       requestAnimationFrame(refreshAll);
     }
@@ -2478,7 +2640,7 @@
       if(!opts.silent || !existing) nameInput.value = name;
     }
 
-    const data = { ...currentData(), name, ui:{ layout: editorBody.dataset.layout, visible:{ ...visible } }, updated: Date.now() };
+    const data = { ...currentData(), name, ui:{ v:2, layout: editorBody.dataset.layout, visible:{ ...visible } }, updated: Date.now() };
 
     if(currentEditId && projects.some(p => p.id === currentEditId)){
       const idx = projects.findIndex(p => p.id === currentEditId);
@@ -2513,6 +2675,11 @@
 
   saveBtn.addEventListener('click', () => saveProject());
   nameInput.addEventListener('input', markDirty);
+  nameInput.addEventListener('input', syncUrlPill);
+  function syncUrlPill(){
+    const n = nameInput.value.trim().toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '') || 'мій-проєкт';
+    document.getElementById('url-name').textContent = n;
+  }
   nameInput.addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); nameInput.blur(); } });
 
   // ---------- Editor open/close ----------
@@ -2546,7 +2713,9 @@
     clearConsole();
     setFullscreen(false);
     applyVisibility();
-    setLayout(['grid','split','split-rev'].includes(ui.layout) ? ui.layout : 'grid');
+    // до нового вигляду всі проєкти мали «знизу» за замовчуванням, тож старі відкриваємо з результатом праворуч
+    setLayout(ui.v >= 2 && ['grid','split','split-rev'].includes(ui.layout) ? ui.layout : 'split');
+    syncUrlPill();
 
     viewCatalog.classList.add('hidden');
     viewEditor.classList.remove('hidden');
