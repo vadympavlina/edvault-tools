@@ -258,6 +258,7 @@ function renderTop() {
   const t = $('#title'); if (document.activeElement !== t) t.value = P.title;
   $('#bUndo').disabled = !hist.canUndo; $('#bRedo').disabled = !hist.canRedo;
   $('#themeIco').innerHTML = icon(document.documentElement.dataset.theme === 'dark' ? 'sun' : 'moon');
+  const mt = document.querySelector('meta[name="theme-color"]'); if (mt) mt.content = document.documentElement.dataset.theme === 'dark' ? '#1e1e1e' : '#1c2869';
 }
 function renderRail() {
   $('#rail').innerHTML = TOOLS.map(t => t ? `<button class="tool ${S.tool === t[0] ? 'on' : ''}" data-tool="${t[0]}" data-tip="${esc(t[1])}" data-kbd="${t[3]}" aria-label="${esc(t[1])}" aria-pressed="${S.tool === t[0]}">${icon(t[2], 20)}<span class="key">${t[3]}</span></button>` : '<span class="rail-sep"></span>').join('');
@@ -317,12 +318,15 @@ function renderProp() {
 }
 
 /* ═════════ бокова панель ═════════ */
+// розділи бокової панелі згортаються; які розгорнуті — пам'ятаємо між перемальовуваннями
+const openSecs = new Set(['layers']);
+const sec = (id, title, ico, extra, body) => `<details class="sec" data-sec="${id}" ${openSecs.has(id) ? 'open' : ''}><summary><h3>${icon(ico, 16)}${title}<span class="grow"></span>${extra}</h3></summary>${body}</details>`;
 function renderSide() {
   if (!P) return;
   const lay = P.layers.map((l, i) => ({ l, i })).reverse();
   const L = P.layers[S.li];
   $('#side').innerHTML = `
-  <section class="sec"><h3>${icon('layers', 16)}Шари<span class="grow"></span><span class="muted" style="font-size:12px;font-weight:500">${P.layers.length} з 8</span></h3>
+  ${sec('layers', 'Шари', 'layers', `<span class="muted" style="font-size:12px;font-weight:500">${P.layers.length} з 8</span>`, `
     <div class="layers">${lay.map(({ l, i }) => `<div class="lr ${i === S.li ? 'on' : ''} ${l.visible ? '' : 'hidden-l'}" data-layer="${i}">
       <button class="ib ${l.visible ? '' : 'off'}" data-lvis="${i}" aria-label="${l.visible ? 'Сховати' : 'Показати'} шар" data-tip="${l.visible ? 'Сховати шар' : 'Показати шар'}">${icon(l.visible ? 'eye' : 'eyeOff', 16)}</button>
       <canvas class="lt" data-lthumb="${i}" width="112" height="64"></canvas>
@@ -337,28 +341,23 @@ function renderSide() {
       <span class="grow"></span>
       <button class="ib" data-act="layerDel" data-tip="Видалити шар" aria-label="Видалити шар">${icon('trash', 16)}</button>
     </div>
-    ${L ? `<label class="field"><span>Прозорість шару «${esc(L.name)}»</span>${range('layerOpacity', 0.1, 1, 0.05, L.opacity, v => Math.round(v * 100) + '%')}</label>` : ''}
-  </section>
-  <section class="sec"><h3>${icon('onion', 16)}Калька<span class="grow"></span><button class="tg ${S.onion ? 'on' : ''}" data-toggle="onion" data-kbd="K">${S.onion ? 'Увімкнено' : 'Вимкнено'}</button></h3>
+    ${L ? `<label class="field"><span>Прозорість шару «${esc(L.name)}»</span>${range('layerOpacity', 0.1, 1, 0.05, L.opacity, v => Math.round(v * 100) + '%')}</label>` : ''}`)}
+  ${sec('onion', 'Калька', 'onion', `<button class="tg ${S.onion ? 'on' : ''}" data-toggle="onion" data-kbd="K">${S.onion ? 'Увімкнено' : 'Вимкнено'}</button>`, `
     <div class="field"><span>Скільки кадрів показувати</span>${seg('onionN', [[1, '1'], [2, '2'], [3, '3']], S.onionN)}</div>
     <label class="field"><span>Яскравість</span>${range('onionAlpha', 0.15, 0.8, 0.05, S.onionAlpha, v => Math.round(v * 100) + '%')}</label>
-    <p class="sm">Попередній кадр — червонуватий, наступний — зеленуватий. Так видно, куди рухається малюнок.</p>
-  </section>
-  <section class="sec"><h3>${icon('image', 16)}Аркуш</h3>
+    <p class="sm">Попередній кадр — червонуватий, наступний — зеленуватий. Так видно, куди рухається малюнок.</p>`)}
+  ${sec('sheet', 'Аркуш', 'image', '', `
     <div class="field"><span>Колір тла</span><div class="bgs">${BGS.map(([c, n]) => `<button class="${P.bg === c ? 'on' : ''}" data-bg="${c}" style="background:${c}" aria-label="${n}" data-tip="${n}"></button>`).join('')}<label class="sw sw-custom" style="border-radius:5px" data-tip="Свій колір тла"><input type="color" data-bgcustom value="${P.bg}" aria-label="Свій колір тла"></label></div></div>
     <div class="field"><span>Картинка-зразок</span>${app.refImg ? `<div class="row"><button class="tg ${S.refShow ? 'on' : ''}" data-toggle="refShow">${S.refShow ? 'Видно' : 'Сховано'}</button>${range('refOpacity', 0.1, 1, 0.05, S.refOpacity, v => Math.round(v * 100) + '%')}<button class="ib" data-act="refDel" aria-label="Прибрати зразок" data-tip="Прибрати зразок">${icon('trash', 15)}</button></div>` : `<button class="btn outline" data-act="refAdd" style="width:100%">${icon('image', 16)}Додати картинку</button>`}
-      <p class="sm">Зразок видно лише під час малювання — у мультфільм він не потрапляє. Зручно обводити фото чи ескіз.</p></div>
-  </section>
-  <section class="sec"><h3>${icon('music', 16)}Звук</h3>
+      <p class="sm">Зразок видно лише під час малювання — у мультфільм він не потрапляє. Зручно обводити фото чи ескіз.</p></div>`)}
+  ${sec('sound', 'Звук', 'music', '', `
     ${audio.blob ? `<div class="audio-box">${icon('music', 16)}<b>${esc(P.audio?.name || 'Звук')}</b><span>${fmtTime(audio.duration)}</span><button class="ib" data-act="audioDel" aria-label="Прибрати звук" data-tip="Прибрати звук">${icon('trash', 15)}</button></div>
       ${audio.duration > P.duration + 0.05 ? `<p class="sm">Звук довший за мультфільм (${fmtTime(P.duration)}). У відео потрапить лише частина — або додайте кадрів.</p>` : ''}`
     : `<div class="btns"><button class="btn outline" data-act="audioAdd">${icon('music', 16)}Музика з файлу</button><button class="btn outline" data-act="audioRec">${icon('mic', 16)}Записати голос</button></div>
-       <p class="sm">Звук грає під час перегляду й потрапляє у відео.</p>`}
-  </section>
-  <section class="sec"><h3>${icon('film', 16)}Про мультфільм</h3>
-    <p class="sm">Аркуш ${P.w} × ${P.h}. ${P.frames.length} ${plural(P.frames.length, 'кадр', 'кадри', 'кадрів')}, тривалість ${fmtTime(P.duration)}.</p>
-  </section>`;
-  renderLayerThumbs();
+       <p class="sm">Звук грає під час перегляду й потрапляє у відео.</p>`}`)}
+  ${sec('about', 'Про мультфільм', 'film', '', `
+    <p class="sm">Аркуш ${P.w} × ${P.h}. ${P.frames.length} ${plural(P.frames.length, 'кадр', 'кадри', 'кадрів')}, тривалість ${fmtTime(P.duration)}.</p>`)}`;
+  renderLayerThumbs(); markLayers();
 }
 function renderLayerThumbs() {
   if (!P) return;
@@ -389,22 +388,53 @@ function renderTransport() {
     <button class="tg ${S.onion ? 'on' : ''}" data-toggle="onion" data-tip="Калька: бачити сусідні кадри" data-kbd="K">${icon('onion', 15)}<span class="hide-sm">Калька</span></button>
     ${app.guides ? `<button class="tg ${S.guides ? 'on' : ''}" data-toggle="guides" data-tip="Напрямні уроку">${icon('lesson', 15)}<span class="hide-sm">Напрямні</span></button>` : ''}`;
 }
+// часова шкала: угорі мініатюри кадрів, під ними — рядок на кожен шар (верхній шар зверху),
+// заповнена клітинка означає, що на цьому шарі в цьому кадрі щось намальовано
+const CELL_W = 84, CELL_GAP = 4;
 function renderFilm() {
   if (!P) return;
   const film = $('#film');
-  const left = film.scrollLeft;
-  film.innerHTML = `<div class="frames">${P.frames.map((f, i) => `<div class="fr ${i === S.fi ? 'on' : ''}" data-frame="${i}" role="button" tabindex="0" aria-label="Кадр ${i + 1}${f.hold > 1 ? ', триває ×' + f.hold : ''}"><span class="no">${i + 1}</span>${f.hold > 1 ? `<span class="hold">×${f.hold}</span>` : ''}</div>`).join('')}
-    <button class="fadd" data-act="addFrame" data-tip="Новий порожній кадр після поточного" data-kbd="N">${icon('plus', 20)}Новий</button>
-    <button class="fadd" data-act="dupFrame" data-tip="Копія поточного кадру — далі змініть трохи" data-kbd="D">${icon('dup', 20)}Копія</button></div>
-    ${audio.buf ? '<canvas class="wave" id="wave"></canvas>' : ''}`;
+  const left = film.scrollLeft, top = film.scrollTop;
+  const lay = P.layers.map((l, i) => ({ l, i })).reverse();
+  film.innerHTML = `<div class="tl">
+    <div class="tl-names">
+      <div class="tl-hd">Кадри</div>
+      ${lay.map(({ l, i }) => `<div class="tl-name ${i === S.li ? 'on' : ''} ${l.visible ? '' : 'hidden-l'}" data-layer="${i}">
+        <button class="ib" data-lvis="${i}" aria-label="${l.visible ? 'Сховати' : 'Показати'} шар" data-tip="${l.visible ? 'Сховати шар' : 'Показати шар'}">${icon(l.visible ? 'eye' : 'eyeOff', 15)}</button>
+        <span data-lname="${i}" title="Двічі клацніть, щоб перейменувати">${esc(l.name)}</span>${l.locked ? icon('lock', 13) : ''}</div>`).join('')}
+      <button class="tl-add" data-act="layerAdd" data-tip="Новий шар над вибраним">${icon('plus', 14)}Шар</button>
+    </div>
+    <div class="tl-body">
+      <div class="frames">${P.frames.map((f, i) => `<div class="fr ${i === S.fi ? 'on' : ''}" data-frame="${i}" role="button" tabindex="0" aria-label="Кадр ${i + 1}${f.hold > 1 ? ', триває ×' + f.hold : ''}"><span class="no">${i + 1}</span>${f.hold > 1 ? `<span class="hold">×${f.hold}</span>` : ''}</div>`).join('')}
+        <button class="fadd" data-act="addFrame" data-tip="Новий порожній кадр після поточного" data-kbd="N">${icon('plus', 16)}Новий</button>
+        <button class="fadd" data-act="dupFrame" data-tip="Копія поточного кадру — далі змініть трохи" data-kbd="D">${icon('dup', 16)}Копія</button></div>
+      ${lay.map(({ l, i }) => `<div class="tl-row ${i === S.li ? 'on' : ''}" data-row="${i}">${P.frames.map((f, fi) => {
+        const full = !store.isEmpty(l.cells.get(f.id));
+        return `<button class="tl-c ${full ? 'full' : ''} ${fi === S.fi ? 'cur' : ''}" data-cell="${i}:${fi}" aria-label="${esc(l.name)}, кадр ${fi + 1}${full ? '' : ' — порожньо'}"></button>`;
+      }).join('')}</div>`).join('')}
+    </div>
+  </div>
+  ${audio.buf ? '<canvas class="wave" id="wave"></canvas>' : ''}`;
   $$('.fr', film).forEach(el => { const f = P.frames[+el.dataset.frame], t = thumbs.get(f.id); if (t) el.prepend(t); });
-  film.scrollLeft = left;
+  film.scrollLeft = left; film.scrollTop = top;
   drawWave();
   markFilm();
+  syncTimelineSize();
+}
+// висота нижньої панелі — для бокових острівців і для вписування аркуша
+function syncTimelineSize() {
+  const fh = $('#film').offsetHeight, h = $('#transport').offsetHeight + fh;
+  document.documentElement.style.setProperty('--film-h', fh + 'px');
+  document.documentElement.style.setProperty('--tl-h', h + 'px');
+  if (P) fitInset();
+}
+function markLayers() {
+  $$('#film [data-layer]').forEach(el => el.classList.toggle('on', +el.dataset.layer === S.li));
+  $$('#film [data-row]').forEach(el => el.classList.toggle('on', +el.dataset.row === S.li));
 }
 function drawWave() {
   const cv = $('#wave'); if (!cv || !audio.buf) return;
-  const frames = $('.frames'), w = frames.scrollWidth, unitW = 138, pxPerSec = unitW * P.fps;
+  const frames = $('.frames'), w = frames.scrollWidth, unitW = CELL_W + CELL_GAP, pxPerSec = unitW * P.fps;
   const width = Math.min(w, Math.round(audio.duration * pxPerSec)); cv.width = Math.max(1, width); cv.height = 12; cv.style.width = width + 'px';
   const g = cv.getContext('2d'), pk = audio.peaks(Math.max(1, Math.floor(width / 3)));
   g.fillStyle = '#ffe34d';
@@ -412,8 +442,12 @@ function drawWave() {
 }
 function markFilm(playing) {
   $$('.fr').forEach(el => { const i = +el.dataset.frame; el.classList.toggle('on', playing == null && i === S.fi); el.classList.toggle('play', playing != null && i === playing); });
+  const at = playing ?? S.fi;
+  $$('.tl-c').forEach(el => el.classList.toggle('cur', +el.dataset.cell.split(':')[1] === at));
   const cur = $(`.fr[data-frame="${playing ?? S.fi}"]`), film = $('#film');
-  if (cur) { const r = cur.offsetLeft, w = cur.offsetWidth; if (r < film.scrollLeft + 20 || r + w > film.scrollLeft + film.clientWidth - 20) film.scrollLeft = r - film.clientWidth / 2 + w / 2; }
+  // ліворуч у шкалі — закріплений стовпчик назв шарів, тож рахуємо видиму частину без нього
+  const names = $('.tl-names', film), nw = names ? names.offsetWidth : 0;
+  if (cur) { const r = cur.offsetLeft + nw, w = cur.offsetWidth; if (r < film.scrollLeft + nw + 20 || r + w > film.scrollLeft + film.clientWidth - 20) film.scrollLeft = r - nw - (film.clientWidth - nw) / 2 + w / 2; }
 }
 function renderLesson() {
   const card = $('#lessonCard'), L = P && P.lesson && LESSONS[P.lesson];
@@ -428,19 +462,33 @@ function renderLessonInner() {
   card.innerHTML = `<h3>${esc(L.title)}</h3><p class="goal">${esc(L.goal)}</p><ol>${L.steps.map((s, i) => `<li class="${i === step ? 'now' : ''}">${esc(s)}</li>`).join('')}</ol>
     <div class="row"><button class="tg" data-act="lessonMin">${card.classList.contains('mini') ? 'Показати кроки' : 'Згорнути'}</button><button class="tg" data-act="lessonEnd" data-tip="Сховати напрямні й картку уроку">Завершити урок</button></div>`;
 }
+// місце, яке займають плаваючі панелі поверх аркуша (на вузькому екрані панелі не накладаються)
+function chromeInset() {
+  if (innerWidth <= 980) return { l: 0, r: 0, t: 0, b: 0 };
+  const w = $('#stageWrap').getBoundingClientRect();
+  const box = el => el && el.offsetParent !== null ? el.getBoundingClientRect() : null;
+  const rail = box($('#rail')), prop = box($('#prop')), side = box($('#side')), tr = box($('#transport'));
+  return { l: rail ? Math.max(0, rail.right - w.left) : 0, t: prop ? Math.max(0, prop.bottom - w.top) : 0,
+    r: side ? Math.max(0, w.right - side.left) : 0, b: tr ? Math.max(0, w.bottom - tr.top) : 0 };
+}
 // картка уроку не повинна затуляти аркуш: на широкому екрані — місце ліворуч, на вузькому — знизу
 function fitInset() {
-  const card = $('#lessonCard');
-  let inset = { l: 0, b: 0, t: 0 };
+  const card = $('#lessonCard'), base = chromeInset();
+  let inset = { ...base };
+  const wide = innerWidth > 980;
+  card.style.left = wide ? (base.l + 12) + 'px' : ''; card.style.top = wide ? (base.t + 12) + 'px' : '';
+  card.style.maxHeight = wide ? `calc(100% - ${base.t + base.b + 24}px)` : '';
   if (!card.hidden) {
     const bottom = innerWidth <= 640; // на телефоні картка внизу
     // збоку — лише якщо аркушу лишається досить місця; інакше картка згортається над аркушем
-    if (!bottom && !card.dataset.user && !card.classList.contains('mini') && stage.W - card.offsetWidth - 14 < 460) { card.classList.add('mini'); renderLessonInner(); }
+    if (!bottom && !card.dataset.user && !card.classList.contains('mini') && stage.W - base.l - base.r - card.offsetWidth - 14 < 460) { card.classList.add('mini'); renderLessonInner(); }
     const mini = card.classList.contains('mini');
-    inset = bottom ? { l: 0, b: card.offsetHeight + 10, t: 0 } : mini ? { l: 0, b: 0, t: card.offsetHeight + 14 } : { l: card.offsetWidth + 14, b: 0, t: 0 };
+    if (bottom) inset.b = card.offsetHeight + 10;
+    else if (mini) inset.t = base.t + 12 + card.offsetHeight + 14;
+    else inset.l = base.l + 12 + card.offsetWidth + 14;
   }
-  const old = stage.inset || { l: 0, b: 0, t: 0 };
-  if (old.l === inset.l && old.b === inset.b && old.t === inset.t) return;
+  const old = stage.inset || { l: 0, b: 0, t: 0, r: 0 };
+  if (old.l === inset.l && old.b === inset.b && old.t === inset.t && (old.r || 0) === inset.r) return;
   stage.inset = inset; stage.fit();
 }
 function renderAll() { renderTop(); renderRail(); renderProp(); renderSide(); renderTransport(); renderFilm(); renderLesson(); }
@@ -632,7 +680,7 @@ function startDialog(first = false) {
       api.close();
       const [w, h] = SIZES[st.size];
       begin(newProject({ w, h, fps: st.fps, title: st.title.trim() || 'Мій мультфільм' }));
-      toast('Малюйте на першому кадрі. Потім «Копія» на плівці — і змінюйте малюнок трохи', '', { ms: 5000 });
+      toast('Малюйте на першому кадрі. Потім «Копія» на шкалі внизу — і змінюйте малюнок трохи', '', { ms: 5000 });
     }
   });
 }
@@ -653,7 +701,7 @@ function helpDialog() {
   const k = s => s.split(' ').map(x => `<span class="kbd">${esc(x)}</span>`).join('');
   modal({ title: 'Як зробити мультфільм', wide: true, html: `<ol class="steps">
     <li>Намалюйте першу картинку. Фон краще малювати на шарі «Фон», героя — на окремому шарі.</li>
-    <li>На плівці внизу натисніть «Копія» — з’явиться такий самий кадр. Трохи змініть героя: посуньте руку, крок ногою.</li>
+    <li>На шкалі кадрів унизу натисніть «Копія» — з’явиться такий самий кадр. Трохи змініть героя: посуньте руку, крок ногою.</li>
     <li>Калька показує попередній кадр червонуватим — так легко зробити рух плавним.</li>
     <li>Натисніть «Грати» (пробіл). Хочете, щоб кадр показувався довше, — клацніть на ньому правою кнопкою й виберіть тривалість.</li>
     <li>Готово? «Експорт» — GIF чи відео. «Файл → Зберегти у файл» — щоб продовжити пізніше або здати вчителю.</li></ol>
@@ -834,6 +882,15 @@ $('#film').addEventListener('pointerup', () => {
   if (to !== d.i) struct(() => { P.moveFrame(d.i, to); S.fi = to; });
 });
 $('#film').addEventListener('contextmenu', e => { const fr = e.target.closest('.fr'); if (!fr) return; e.preventDefault(); if (fdrag) { clearTimeout(fdrag.timer); fdrag = null; } frameMenu(+fr.dataset.frame, { left: e.clientX, top: e.clientY, bottom: e.clientY, x: e.clientX, y: e.clientY }); });
+// розгорнуті розділи бокової панелі лишаються розгорнутими після перемальовування
+$('#side').addEventListener('toggle', e => { const d = e.target.closest('[data-sec]'); if (d) { if (d.open) openSecs.add(d.dataset.sec); else openSecs.delete(d.dataset.sec); } }, true);
+$('#film').addEventListener('click', e => {
+  const c = e.target.closest('[data-cell]'); if (!c) return;
+  const [li, fi] = c.dataset.cell.split(':').map(Number);
+  if (S.playing) stop();
+  if (li !== S.li) selectLayer(li);
+  goFrame(fi);
+});
 $('#film').addEventListener('keydown', e => { const fr = e.target.closest('.fr'); if (fr && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); goFrame(+fr.dataset.frame); } });
 
 /* клавіатура */

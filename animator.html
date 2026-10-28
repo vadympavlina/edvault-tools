@@ -17,9 +17,8 @@
     } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
   })();
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@400..800&family=Literata:opsz,wght@7..72,700&display=swap" rel="stylesheet">
+<!-- шрифти лежать поруч (спільні з текстовим редактором), тож вигляд однаковий і без інтернету -->
+<link rel="stylesheet" href="textcraft/fonts.css">
 <link rel="stylesheet" href="animator-app/app.css">
 <meta name="description" content="Покадрова анімація в браузері: шари, калька, пензлі з натиском, звук, уроки для початківців. Збереження в GIF, відео й файл проєкту.">
 <!-- og -->
@@ -38,6 +37,7 @@
 </head>
 <body>
 <header class="top">
+ <div class="top-l">
   <div class="brand"><span class="mark" data-icon="logo"></span><span class="hide-sm">Аніматор</span></div>
   <input class="title-in" id="title" maxlength="60" aria-label="Назва мультфільму" spellcheck="false">
   <span class="save-dot" id="saveDot" data-tip="Мультфільм зберігається в цьому браузері автоматично"></span>
@@ -48,11 +48,14 @@
   <span class="sep hide-sm"></span>
   <button class="btn" data-act="fileMenu" aria-haspopup="menu"><span data-icon="file"></span><span class="hide-md">Файл</span></button>
   <button class="btn" data-act="lessons"><span data-icon="lesson"></span><span class="hide-md">Уроки</span></button>
+ </div>
   <span class="grow"></span>
+ <div class="top-r">
   <button class="btn ib hide-sm" data-act="theme" data-tip="Світла чи темна тема" aria-label="Тема"><span data-icon="moon" id="themeIco"></span></button>
   <button class="btn ib hide-sm" data-act="help" data-tip="Як користуватися і гарячі клавіші" aria-label="Довідка"><span data-icon="help"></span></button>
   <button class="btn ib show-sm" data-act="side" aria-label="Шари й налаштування"><span data-icon="layers"></span></button>
   <button class="btn primary" data-act="export"><span data-icon="download"></span><span class="hide-sm">Експорт</span></button>
+ </div>
 </header>
 
 <div class="prop" id="prop" role="toolbar" aria-label="Налаштування інструмента"></div>
@@ -72,7 +75,7 @@
 </div>
 
 <div class="transport" id="transport"></div>
-<div class="film" id="film" aria-label="Кадри мультфільму"></div>
+<div class="film" id="film" aria-label="Часова шкала: кадри й шари"></div>
 
 <div class="pop" id="pop" role="menu"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

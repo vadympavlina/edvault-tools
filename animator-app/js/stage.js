@@ -34,9 +34,9 @@ export class Stage {
     this.render();
   }
   fit() {
-    // inset — місце під картку уроку, щоб вона не затуляла аркуш
-    const pad = this.W < 640 ? 16 : 48, { w, h } = this.P, l = this.inset?.l || 0, b = this.inset?.b || 0, t = this.inset?.t || 0;
-    const W = Math.max(80, this.W - l), H = Math.max(80, this.H - b - t);
+    // inset — місце під плаваючі панелі й картку уроку, щоб вони не затуляли аркуш
+    const pad = this.W < 640 ? 16 : 32, { w, h } = this.P, l = this.inset?.l || 0, r = this.inset?.r || 0, b = this.inset?.b || 0, t = this.inset?.t || 0;
+    const W = Math.max(80, this.W - l - r), H = Math.max(80, this.H - b - t);
     this.view.z = Math.max(0.05, Math.min((W - pad * 2) / w, (H - pad * 2) / h, 2));
     this.view.x = l + (W - w * this.view.z) / 2; this.view.y = t + (H - h * this.view.z) / 2;
     this.render(); this.app.changed('zoom');
