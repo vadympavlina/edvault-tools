@@ -292,6 +292,7 @@ export function initTheme(btn) {
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
     btn.innerHTML = icon(dark ? 'sun' : 'moon');
     btn.dataset.tip = dark ? 'Світла тема' : 'Темна тема';
+    const mt = document.querySelector('meta[name="theme-color"]'); if (mt) mt.content = dark ? '#1e1e1e' : '#1c2869';
   };
   btn.addEventListener('click', () => {
     const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';

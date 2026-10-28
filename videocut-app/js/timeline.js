@@ -387,7 +387,7 @@ function drawRuler() {
   const major = steps.find(s => s * pps >= 70) || 3600;
   const minor = steps.slice().reverse().find(s => s < major && major / s <= 10 && s * pps >= 7) || major;
   g.fillStyle = muted; g.strokeStyle = muted;
-  g.font = '10.5px Inter, system-ui, sans-serif';
+  g.font = "10.5px 'IBM Plex Sans', system-ui, sans-serif";
   g.globalAlpha = 0.5;
   for (let t = Math.floor(sl / pps / minor) * minor; t * pps - sl < w; t += minor) {
     const x = Math.round(t * pps - sl) + 0.5;

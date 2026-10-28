@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Відеоредактор — Edvault</title>
-<meta name="theme-color" content="#4F6BF4">
+<title>Відеоредактор · Edvault</title>
+<meta name="theme-color" content="#1c2869">
 <link rel="icon" href="icons/videocut.ico" sizes="32x32">
 <link rel="icon" href="icons/videocut.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/videocut-180.png">
@@ -23,6 +23,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- шрифти інтерфейсу лежать поруч; Inter лишається для тексту на самому відео -->
+<link rel="stylesheet" href="textcraft/fonts.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- шрифти для субтитрів потрібні не одразу — вантажимо їх у фоні, щоб не гальмувати перший показ -->
 <link rel="stylesheet" media="print" id="ccFontsCss" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;900&family=Rubik:wght@500;800&family=Oswald:wght@500;700&family=Roboto+Slab:wght@500;800&family=Comfortaa:wght@600;700&family=Caveat:wght@600;700&display=swap">
@@ -73,6 +75,7 @@
 <body>
 
 <header class="topbar">
+  <img class="vc-logo" src="icons/videocut.svg" alt="">
   <nav class="menubar" id="menubar" aria-label="Меню"></nav>
   <div class="grow"></div>
   <button type="button" class="proj" id="btnProj" data-tip="Параметри проєкту: назва, формат кадру"><span class="brand-proj" id="projName">Новий проєкт</span><span class="save-state" id="saveState"></span></button>
