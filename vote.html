@@ -7,36 +7,35 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Голосування · Edvault</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-<script>try{if(localStorage.getItem('edvault-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+<meta name="theme-color" content="#1c2869">
+<!-- шрифти лежать поруч (спільні з текстовим редактором), тож вигляд однаковий і без інтернету -->
+<link rel="stylesheet" href="textcraft/fonts.css">
+<script>try{var t=localStorage.getItem('edvault-theme')||'auto';if(t==='dark'||(t==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #f0f2f5;
-    --surface: #ffffff;
-    --surface2: #f7f8fa;
-    --border: #e2e5ea;
-    --border2: #d0d5dd;
-    --accent: #4F6BF4;
-    --accent-light: #eef0fe;
-    --accent-hover: #3d57e0;
-    --danger: #ef4444;
-    --danger-light: #fef2f2;
-    --gold: #f5b942;
-    --silver: #b6bfcc;
-    --bronze: #d08a52;
-    --text: #1a1d23;
-    --text2: #4b5563;
-    --muted: #9ca3af;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
-    --shadow-md: 0 4px 16px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06);
-    --shadow-lg: 0 24px 60px rgba(0,0,0,.14), 0 4px 16px rgba(0,0,0,.08);
+    color-scheme: light;
+    --bg: #dfe4ea; --surface: #fdfefb; --surface2: #f2f5f7; --surface3: #e8edf1;
+    --border: #d9e0e7; --border2: #bfc9d4;
+    --accent: #2337a8; --accent-light: #e8ecfb; --accent-hover: #1a2a8a; --accent-border: #b9c3ef; --on-accent: #ffffff;
+    --danger: #c8352d; --danger-light: #fbeceb; --warn: #c98a00;
+    --gold: #f5b942; --silver: #b6bfcc; --bronze: #d08a52; --gold-t: #a86f00;
+    --text: #1d2236; --text2: #454c63; --muted: #5d6478;
+    --shadow-sm: 0 1px 2px rgba(28,40,105,.08);
+    --shadow-md: 0 6px 18px rgba(28,40,105,.12), 0 1px 3px rgba(28,40,105,.08);
+    --shadow-lg: 0 22px 50px rgba(28,40,105,.18), 0 4px 12px rgba(28,40,105,.08);
+    --overlay: rgba(29,34,54,.45);
+    --stage-bg: #fdfefb;
+    /* кольори варіантів: насичені на світлому, світліші на темному */
+    --k1: #2337a8; --k2: #1a7a50; --k3: #c98a00; --k4: #b4366b; --k5: #6d4bc4; --k6: #0f7f91;
+    --k7: #c8352d; --k8: #5f8a14; --k9: #d0661c; --k10: #14857a; --k11: #9a3fbf; --k12: #a88a00;
+    --k-yes: #1a7a50; --k-no: #c8352d; --k-maybe: #7c8496; --on-k: #ffffff;
   }
 
   html, body { height: 100%; }
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'IBM Plex Sans', 'Commissioner', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
@@ -423,13 +422,18 @@
 
   /* =========== THEME / TOPBAR (new) =========== */
   html[data-theme="dark"] {
-    --bg: #14171c; --surface: #1c212a; --surface2: #232933; --border: #2a313d; --border2: #384152;
-    --accent: #6c85ff; --accent-light: rgba(108,133,255,.16); --accent-hover: #8298ff;
-    --danger: #ff6b6b; --danger-light: rgba(255,107,107,.12);
-    --text: #e8ecf1; --text2: #a8b0bd; --muted: #6b7280;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,.35), 0 1px 2px rgba(0,0,0,.25);
-    --shadow-md: 0 4px 16px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.3);
-    --shadow-lg: 0 24px 60px rgba(0,0,0,.55), 0 4px 16px rgba(0,0,0,.35);
+    color-scheme: dark;
+    --bg: #1e1e1e; --surface: #2c2c2c; --surface2: #383838; --surface3: #424242;
+    --border: #3a3a3a; --border2: #4a4a4a;
+    --accent: #9aabff; --accent-light: rgba(154,171,255,.14); --accent-hover: #b3c0ff; --accent-border: rgba(154,171,255,.38); --on-accent: #10153a;
+    --danger: #f08a82; --danger-light: rgba(240,138,130,.12); --warn: #e8c93a; --gold-t: #e8c93a;
+    --text: #ededed; --text2: #c2c2c2; --muted: #9a9a9a;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.4); --shadow-md: 0 8px 22px rgba(0,0,0,.45); --shadow-lg: 0 24px 60px rgba(0,0,0,.6);
+    --overlay: rgba(0,0,0,.55);
+    --stage-bg: #1e1e1e;
+    --k1: #9aabff; --k2: #5fd39b; --k3: #e8c93a; --k4: #f08ab4; --k5: #c3a6ff; --k6: #6fd0e0;
+    --k7: #f08a82; --k8: #a8d86a; --k9: #f2a66b; --k10: #5fcfbf; --k11: #d9a0f0; --k12: #e0cf6a;
+    --k-yes: #5fd39b; --k-no: #f08a82; --k-maybe: #a8a8a8; --on-k: #1e1e1e;
   }
   .hidden { display: none !important; }
   .topbar { height: auto; min-height: 64px; padding: 10px clamp(12px, 3vw, 28px); gap: 12px; flex-wrap: wrap; }
@@ -640,6 +644,204 @@
   .tile .vc-minus:disabled { opacity: .25; cursor: default; }
   .tiles.yesno .key-badge, .tiles.rating .key-badge { right: auto; left: 12px; }
   @media (max-width: 640px) { .types { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .type-card { padding: 12px; } .type-card span { display: none; } .main { padding: 20px 14px 80px; } }
+
+  /* ════════════ «Стовпчики»: типи списком ліворуч, одна колонка налаштувань; на сцені стовпчики на весь екран ════════════ */
+  input, textarea, button { font-family: inherit; }
+  .topbar { min-height: 56px; }
+  img.topbar-logo { width: 32px; height: 32px; border-radius: 9px; display: block; background: none; box-shadow: none; }
+  .topbar-text h1 { font-weight: 600; font-size: 15.5px; letter-spacing: 0; }
+  .view-btn { border: 1px solid transparent; background: transparent; border-radius: 8px; }
+  .view-btn:hover { border-color: var(--border); }
+
+  .btn { border-radius: 8px; font-weight: 600; padding: 9px 16px; }
+  .btn-primary { color: var(--on-accent); box-shadow: none; }
+  .btn-primary:disabled { background: var(--surface3); color: var(--muted); }
+  .btn-ghost { border-width: 1px; border-color: var(--border); }
+  .btn-danger-ghost { border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent); }
+  .btn-lg { padding: 12px 22px; border-radius: 10px; font-size: 15px; }
+
+  /* налаштування: список типів ліворуч, усе інше в колонці праворуч */
+  .main { max-width: 1160px; display: grid; grid-template-columns: 250px minmax(0, 1fr); column-gap: 24px; align-items: start; padding: 26px 24px 0; }
+  .main > * { grid-column: 2; }
+  #types { grid-column: 1; grid-row: 1 / span 20; position: sticky; top: 80px; display: flex; flex-direction: column; gap: 4px; margin: 0; }
+  #types .type-card {
+    display: grid; grid-template-columns: 22px minmax(0, 1fr); column-gap: 12px; row-gap: 1px; align-items: center;
+    padding: 10px 12px; border-radius: 10px; border: 1px solid transparent; background: transparent; box-shadow: none; transform: none;
+  }
+  #types .type-card .te { grid-row: 1 / 3; font-size: 20px; color: var(--muted); }
+  #types .type-card b { font-size: 14px; font-weight: 600; }
+  #types .type-card span:not(.te) { font-size: 12.5px; color: var(--muted); }
+  #types .type-card:hover { background: var(--surface); }
+  #types .type-card.active { background: var(--surface); border-color: var(--accent-border); box-shadow: inset 3px 0 0 var(--accent); }
+  #types .type-card.active .te { color: var(--accent); }
+  .page-header { margin-bottom: 16px; }
+  .page-header h2 { font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 23px; letter-spacing: 0; }
+  .page-header p { color: var(--muted); }
+  .panel { border-width: 1px; border-radius: 14px; box-shadow: none; padding: 20px 22px; margin-bottom: 14px; }
+  .panel h3 { font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 17px; }
+  .q-input { border-width: 1px; border-radius: 10px; font-weight: 500; font-size: 17px; }
+  .opt-row input, .field input, .field textarea { border-width: 1px; border-radius: 9px; }
+  .field input:focus, .field textarea:focus { box-shadow: 0 0 0 3px var(--accent-light); }
+  .opt-row .dot { width: 28px; height: 28px; border-radius: 8px; color: var(--on-k); font-weight: 600; }
+  .preview-row span { color: var(--on-k); font-weight: 600; border-radius: 10px; }
+  .seg button { font-weight: 500; }
+  .seg button.active { font-weight: 600; }
+  .toggle { font-weight: 500; }
+  .chip { font-weight: 600; border-width: 1px; }
+  .chip-suggest { border-width: 1px; font-weight: 500; }
+  .work-card { border-width: 1px; border-radius: 14px; box-shadow: none; }
+  .work-name { font-weight: 600; }
+  .work-actions .icon-btn { border-width: 1px; font-weight: 500; }
+  .empty-state { padding: 60px 20px; }
+  .empty-state h3 { font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 19px; }
+  .start-bar { padding: 14px 0 20px; }
+  .modal-overlay { background: var(--overlay); backdrop-filter: none; }
+  .modal { border: 1px solid var(--border); border-radius: 16px; }
+  .modal-head h3 { font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 18px; }
+  .photo-dropzone { border-width: 1px; }
+  .toast { background: var(--text); color: var(--surface); }
+  @media (max-width: 760px) {
+    .main { grid-template-columns: minmax(0, 1fr); padding: 16px 14px 0; }
+    .main > *, #types { grid-column: 1; }
+    #types { grid-row: auto; position: static; flex-direction: row; overflow-x: auto; scrollbar-width: none; margin: 0 -14px 14px; padding: 0 14px; }
+    #types .type-card { flex: none; grid-template-columns: 18px auto; column-gap: 8px; padding: 8px 12px; white-space: nowrap; border-color: var(--border); background: var(--surface); }
+    #types .type-card span:not(.te) { display: none; }
+    #types .type-card .te { grid-row: auto; font-size: 17px; }
+    #types .type-card.active { box-shadow: inset 0 -3px 0 var(--accent); }
+    #types .type-card { min-width: max-content; overflow: visible; }
+    #types .type-card .te { display: block; }
+    .works-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .work-actions { padding: 0 10px 10px; gap: 6px; }
+    .work-actions .icon-btn { font-size: 0; gap: 0; }
+    .work-actions .icon-btn svg { width: 15px; height: 15px; }
+  }
+
+  /* сцена: світла чи темно-сіра, як вибрана тема */
+  .stage { background: var(--stage-bg); color: var(--text); }
+  .stage-particles { display: none; }
+  .vstage-head { padding: 16px 24px; }
+  .vstage-title h2 { font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: clamp(22px, 3vw, 40px); letter-spacing: 0; max-width: 64vw; line-height: 1.2; }
+  .vstage-title p { color: var(--muted); font-weight: 500; font-size: 13px; }
+  .nom-progress { color: var(--gold-t); font-weight: 600; }
+  .vstage-back { background: var(--surface); border: 1px solid var(--border); color: var(--text2); border-radius: 8px; font-weight: 500; padding: 8px 14px; }
+  .vstage-back:hover { background: var(--surface2); color: var(--text); }
+  .vstage-icon { background: transparent; border: 1px solid transparent; color: var(--text2); border-radius: 8px; }
+  .vstage-icon:hover { background: var(--surface2); border-color: var(--border); }
+  .vstage-icon.on { background: var(--accent-light); border-color: var(--accent-border); color: var(--accent); }
+  .vstage-stop { color: var(--on-accent); box-shadow: none; border-radius: 9px; font-weight: 600; }
+  .vstage-stop:hover { transform: none; }
+  .vstage-total { background: transparent; border: 0; padding: 0; }
+  .vstage-total svg { color: var(--muted); }
+  .vstage-total b { font-family: inherit; font-weight: 600; font-size: 20px; }
+  .vstage-total span, .blind-note { color: var(--muted); font-weight: 500; font-size: 14px; }
+  .key-badge { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); font: 600 12px 'IBM Plex Sans', sans-serif; }
+  .count-edit { background: var(--surface); color: var(--text); border: 1px solid var(--accent); font-family: inherit; font-weight: 600; }
+
+  /* роботи учнів */
+  .vote-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
+  .vote-card:hover { background: var(--surface); border-color: var(--border2); }
+  .vote-card.leader { border-color: var(--gold); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 35%, transparent); }
+  .vote-card .vc-photo, .vote-card .vc-photo .no-photo { background: var(--surface2); color: var(--muted); }
+  .vote-card .vc-name { font-weight: 600; font-size: 15px; }
+  .vote-card .vc-count { color: var(--accent); font-family: inherit; font-weight: 600; font-size: 26px; }
+  .vote-card .key-badge { top: 46px; }
+  #vstage-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 300px)); justify-content: center; align-content: center; gap: 22px; padding: 10px clamp(14px, 4vw, 48px) 32px; }
+  .vote-card .vc-body { padding: 14px 16px 16px; }
+  .vote-card .vc-minus { background: var(--surface); border-color: var(--border); color: var(--text2); }
+  @media (max-width: 760px) { #vstage-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-content: start; } }
+
+  /* опитування, так/ні, оцінка: стовпчики, що ростуть від спільної лінії */
+  #tiles {
+    display: flex; align-items: stretch; gap: clamp(8px, 2.4vw, 32px); max-width: none; width: 100%; margin: 0;
+    padding: 6px clamp(14px, 5vw, 80px) 10px; overflow: hidden;
+  }
+  #tiles .tile {
+    --lab: 104px; --top: 104px;
+    flex: 1 1 0; min-width: 0; min-height: 0; padding: 0; border: 0; border-radius: 14px; background: transparent;
+    display: block; position: relative; text-align: center;
+  }
+  #tiles .tile:hover { background: color-mix(in srgb, var(--c) 7%, transparent); }
+  #tiles .tile:active { transform: none; }
+  #tiles .tile.bumped { animation: none; }
+  #tiles .tile.bumped .tile-fill { animation: col-bump .3s ease; }
+  @keyframes col-bump { 40% { filter: brightness(1.18); } }
+  #tiles .tile::after { content: ''; position: absolute; left: -6px; right: -6px; bottom: var(--lab); border-top: 2px solid var(--border); }
+  #tiles .tile-fill {
+    top: auto; left: 7%; right: 7%; width: auto !important; bottom: var(--lab);
+    height: max(4px, calc((100% - var(--lab) - var(--top)) * var(--h, 0)));
+    background: var(--c); border-radius: 12px 12px 0 0; transition: height .4s cubic-bezier(.16,1,.3,1);
+  }
+  #tiles .tile > .tile-foot {
+    position: absolute; left: 0; right: 0; z-index: 1;
+    bottom: calc(var(--lab) + (100% - var(--lab) - var(--top)) * var(--h, 0) + 6px);
+    display: flex; flex-direction: column; align-items: center; gap: 0; transition: bottom .4s cubic-bezier(.16,1,.3,1);
+  }
+  #tiles .tile-count { font: 600 clamp(30px, 5vw, 64px) 'IBM Plex Sans', sans-serif; color: var(--text); line-height: 1.05; }
+  #tiles .tile-pct { order: -1; font: 500 clamp(12px, 1.2vw, 15px) 'IBM Plex Sans', sans-serif; color: var(--muted); }
+  #tiles .tile > .tile-label {
+    position: absolute; left: 2px; right: 2px; bottom: 0; height: var(--lab); z-index: 1;
+    display: flex; align-items: center; justify-content: center; padding: 0 4px;
+    font-size: clamp(14px, 1.9vw, 24px); font-weight: 600; color: var(--text); line-height: 1.2; overflow: hidden;
+  }
+  #tiles .tile:has(.tile-emoji) > .tile-label { align-items: flex-end; padding-bottom: 14px; font-size: clamp(13px, 1.5vw, 19px); color: var(--text2); }
+  #tiles .tile > .tile-emoji {
+    position: absolute; left: 0; right: 0; bottom: calc(var(--lab) - 58px); height: 44px; z-index: 1;
+    display: flex; align-items: center; justify-content: center; font-size: clamp(22px, 3vw, 38px); color: var(--c); font-weight: 600;
+  }
+  #tiles .tile:not(:has(.tile-label)) > .tile-emoji { bottom: calc(var(--lab) / 2 - 22px); color: var(--text); }
+  #tiles.rating .tile-emoji .ic-row { color: var(--gold-t); font-size: .62em; }
+  #tiles .tile .vc-minus {
+    top: 6px; right: 6px; width: 32px; height: 32px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border);
+    color: var(--text2); opacity: 0; transition: opacity .15s;
+  }
+  #tiles .tile:hover .vc-minus:not(:disabled) { opacity: 1; }
+  #tiles .tile .vc-minus:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+  #tiles .tile .key-badge { top: 8px; left: 8px; right: auto; bottom: auto; }
+  .live-stat { color: var(--text2); font-weight: 500; }
+  .live-stat b { color: var(--gold-t); font-family: inherit; font-weight: 600; }
+  @media (hover: none) { #tiles .tile .vc-minus:not(:disabled) { opacity: .8; } }
+  @media (max-width: 760px) {
+    #tiles .tile { --lab: 76px; --top: 104px; }
+    #tiles .tile:has(.tile-emoji) > .tile-label { padding-bottom: 8px; }
+    #tiles .tile > .tile-emoji { bottom: calc(var(--lab) - 44px); height: 32px; }
+  }
+
+  /* хмара слів */
+  .cloud .w { font-weight: 600; }
+  .cloud-empty, .word-hint { color: var(--muted); }
+  .word-input { font: 500 20px 'IBM Plex Sans', sans-serif; background: var(--surface); border: 1px solid var(--border2); color: var(--text); border-radius: 12px; }
+  .word-input:focus { border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 3px var(--accent-light); }
+  .word-input::placeholder { color: var(--muted); }
+
+  /* відлік, нічия, п'єдестал, результати */
+  .countdown-num { background: none; color: var(--accent); -webkit-text-fill-color: currentColor; text-shadow: none; font-weight: 600; }
+  .tie-badge { background: color-mix(in srgb, var(--warn) 14%, transparent); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); color: var(--gold-t); font-weight: 600; }
+  .tie-stage h2, .results-title h2, .res-title h2 { font-family: 'Literata', Georgia, serif; font-weight: 600; letter-spacing: 0; }
+  .tie-stage > p, .results-title p, .res-title p { color: var(--muted); font-weight: 500; }
+  .tie-item, .podium-card, .sum-card { background: var(--surface); border: 1px solid var(--border); }
+  .tie-item .ti-photo, .podium-card .pc-photo, .sum-card .sc-photo { background: var(--surface2); }
+  .tie-item .ti-votes, .podium-card .pc-votes, .sum-card .sc-votes { color: var(--muted); font-family: inherit; }
+  .podium-card .pc-name, .sum-card .sc-name, .tie-item .ti-name { font-weight: 600; }
+  .podium-slot[data-place="1"] .podium-card { border-color: var(--gold); box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 30%, transparent), var(--shadow-md); }
+  .podium-base { background: var(--surface2); border: 1px solid var(--border); border-bottom: none; color: var(--muted); font-weight: 600; }
+  .podium-slot[data-place="1"] .podium-base { color: var(--gold-t); background: color-mix(in srgb, var(--gold) 16%, var(--surface2)); }
+  .results-actions .btn-ghost { background: var(--surface); border-color: var(--border); color: var(--text2); }
+  .results-actions .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+  .res-stage { justify-content: center; }
+  .bars { gap: 16px; }
+  .bar-head { font-weight: 600; font-size: 19px; }
+  .bar-head span:last-child { font-family: inherit; font-weight: 600; color: var(--text2); }
+  .bar-track { height: 30px; background: var(--surface3); }
+  .bar-row.win .bar-track { box-shadow: none; outline: 2px solid color-mix(in srgb, var(--c) 45%, transparent); outline-offset: 2px; }
+  .yn-split { box-shadow: none; border: 1px solid var(--border); }
+  .yn-split div { color: var(--on-k); font-family: inherit; font-weight: 600; }
+  .yn-legend { color: var(--text2); font-weight: 500; }
+  .big-avg .num { background: none; color: var(--gold-t); -webkit-text-fill-color: currentColor; font-family: inherit; font-weight: 600; }
+  .big-avg .stars, .ic-win { color: var(--gold-t); }
+  .big-avg .meta { color: var(--muted); font-weight: 500; }
+  .sum-card { border-color: color-mix(in srgb, var(--gold) 55%, var(--border)); }
+  .sum-card .sc-nom { color: var(--gold-t); background: color-mix(in srgb, var(--gold) 12%, transparent); font-weight: 600; }
+  .top-words span { background: var(--surface2); border: 1px solid var(--border); font-weight: 600; }
 </style>
 <meta name="description" content="Голосування за кращу роботу: картки команд, підрахунок у реальному часі й феєрверки на фіналі.">
 <!-- og -->
@@ -661,9 +863,7 @@
 <!-- ═══ SETUP SCREEN ═══ -->
 <div class="topbar">
   <div class="topbar-left">
-    <div class="topbar-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.5 6.5L21 9l-5 4.5 1.5 7L12 17l-5.5 3.5L8 13.5 3 9l6.5-.5z"/></svg>
-    </div>
+    <img class="topbar-logo" src="icons/vote.svg" alt="">
     <div class="topbar-text">
       <h1>Голосування</h1>
       <p>Конкурси, опитування й оцінки для класу</p>
@@ -929,7 +1129,8 @@
 //  Firebase: голосування — разовий сеанс на уроці.
 // ═══════════════════════════════════════════════════════════
 const $ = id => document.getElementById(id);
-const COLORS = ['#4F6BF4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#ef4444', '#84cc16', '#f97316', '#14b8a6', '#a855f7', '#eab308'];
+// кольори — змінні теми: на світлій сцені насичені, на темній світліші
+const COLORS = Array.from({ length: 12 }, (_, i) => `var(--k${i + 1})`);
 const IC = {
   eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   eyeOff: '<path d="M9.9 4.2A10 10 0 0 1 12 4c6.5 0 10 8 10 8a17 17 0 0 1-2.2 3.2M6.6 6.6A17 17 0 0 0 2 12s3.5 8 10 8a9.7 9.7 0 0 0 5.4-1.6"/><path d="m2 2 20 20"/>',
@@ -949,6 +1150,12 @@ const STAR = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 6.
 function escapeHtml(str) {
   return String(str ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
+function worksWord(n) {
+  const a = n % 10, b = n % 100;
+  if (a === 1 && b !== 11) return 'робота';
+  if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return 'роботи';
+  return 'робіт';
+}
 function pluralVotes(n) {
   const a = n % 10, b = n % 100;
   if (a === 1 && b !== 11) return 'голос';
@@ -963,11 +1170,11 @@ function toast(msg, ms = 2000) {
 // ────────────────────────────────────────────────────────────
 // ТЕМА
 // ────────────────────────────────────────────────────────────
-try { if (localStorage.getItem('edvault-theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
 function applyTheme(dark) {
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   try { localStorage.setItem('edvault-theme', dark ? 'dark' : 'light'); } catch (e) {}
   $('theme-btn').innerHTML = svg(dark ? IC.sun : IC.moon);
+  const mt = document.querySelector('meta[name="theme-color"]'); if (mt) mt.content = dark ? '#1e1e1e' : '#1c2869';
 }
 $('theme-btn').onclick = () => applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
 applyTheme(document.documentElement.getAttribute('data-theme') === 'dark');
@@ -1052,7 +1259,7 @@ function updateStart() {
   $('start-voting-btn').disabled = !!issue;
   let hint = issue;
   if (!issue) {
-    if (S.type === 'works') { const n = S.noms.filter(x => x.name.trim()).length; hint = `${S.works.length} робіт · ${n} ${n === 1 ? 'номінація' : n < 5 ? 'номінації' : 'номінацій'}`; }
+    if (S.type === 'works') { const n = S.noms.filter(x => x.name.trim()).length; hint = `${S.works.length} ${worksWord(S.works.length)} · ${n} ${n === 1 ? 'номінація' : n < 5 ? 'номінації' : 'номінацій'}`; }
     else hint = 'Під час голосування: клік або клавіші 1–9 — голос, Shift — мінус голос';
   }
   $('start-hint').textContent = hint;
@@ -1066,7 +1273,7 @@ function renderWorks() {
   grid.style.display = S.works.length ? 'grid' : 'none';
   $('works-subtitle').textContent = S.works.length < 2
     ? (S.works.length ? 'Додано 1 роботу — потрібно щонайменше 2' : 'Додай роботи з фото — потім натисни «Почати»')
-    : `${S.works.length} робіт готово до голосування`;
+    : `${S.works.length} ${worksWord(S.works.length)} — можна починати`;
   grid.innerHTML = S.works.map(w => `
     <div class="work-card">
       <div class="work-thumb" ${w.photos.length ? `onclick="openLightbox('${w.id}', 0)"` : ''}>
@@ -1167,9 +1374,9 @@ $('poll-q').oninput = e => { S.poll.q = e.target.value; };
 
 // ── так/ні ──
 const YN_ITEMS = () => [
-  { id: 'yes', label: 'Так', emoji: ic('thumbUp'), color: '#10b981' },
-  { id: 'no', label: 'Ні', emoji: ic('thumbDown'), color: '#ef4444' },
-  ...(S.yesno.maybe ? [{ id: 'maybe', label: 'Не знаю', emoji: ic('maybe'), color: '#94a3b8' }] : [])
+  { id: 'yes', label: 'Так', emoji: ic('thumbUp'), color: 'var(--k-yes)' },
+  { id: 'no', label: 'Ні', emoji: ic('thumbDown'), color: 'var(--k-no)' },
+  ...(S.yesno.maybe ? [{ id: 'maybe', label: 'Не знаю', emoji: ic('maybe'), color: 'var(--k-maybe)' }] : [])
 ];
 function renderYnPreview() {
   $('yn-q').value = S.yesno.q; $('yn-maybe').checked = S.yesno.maybe;
@@ -1368,7 +1575,7 @@ function buildItems(type) {
   if (type === 'yesno') return YN_ITEMS();
   if (type === 'rating') {
     const st = RATING_STYLES[S.rating.style];
-    return st.items.map((e, i) => ({ id: 'r' + (i + 1), value: i + 1, emoji: e, label: S.rating.style === 'grade' ? '' : st.labels[i], color: ['#ef4444', '#f97316', '#eab308', '#84cc16', '#10b981'][i] }));
+    return st.items.map((e, i) => ({ id: 'r' + (i + 1), value: i + 1, emoji: e, label: S.rating.style === 'grade' ? '' : st.labels[i], color: ['var(--k7)', 'var(--k9)', 'var(--k3)', 'var(--k8)', 'var(--k2)'][i] }));
   }
   return [];
 }
@@ -1523,6 +1730,7 @@ function vote(id, delta) {
 }
 function updateCounts() {
   const total = totalVotes();
+  const top = Math.max(1, ...scoped().map(it => run.votes[it.id] || 0));
   $('vstage-total-count').textContent = run.type === 'words' ? [...run.words.values()].reduce((s, w) => s + w.count, 0) : total;
   scoped().forEach(it => {
     const v = run.votes[it.id] || 0;
@@ -1530,6 +1738,7 @@ function updateCounts() {
     if (c && !c.querySelector('input')) c.textContent = v;
     const m = document.querySelector(`[data-minus="${it.id}"]`); if (m) m.disabled = v <= 0;
     const f = document.querySelector(`[data-fill="${it.id}"]`); if (f) f.style.width = (total ? v / total * 100 : 0) + '%';
+    const tl = document.querySelector(`.tile[data-id="${it.id}"]`); if (tl) tl.style.setProperty('--h', v / top);
     const p = document.querySelector(`[data-pct="${it.id}"]`); if (p) p.textContent = total ? Math.round(v / total * 100) + '%' : '';
   });
   const ls = $('live-stat');
@@ -1608,7 +1817,7 @@ function cloudLayout(container, words, opts = {}) {
     let size = minSize + (maxSize - minSize) * t;
     let box = null;
     for (let attempt = 0; attempt < 3 && !box; attempt++) {
-      measureCtx.font = `800 ${size}px Inter, system-ui, sans-serif`;
+      measureCtx.font = `600 ${size}px 'IBM Plex Sans', system-ui, sans-serif`;
       const ww = measureCtx.measureText(w.text).width + 14 + (opts.showCount ? size * .5 : 0), hh = size * 1.12;
       for (let k = 0; k < 2400; k++) {
         const a = k * 0.35, r = 3 * Math.sqrt(k) * 2.2;
@@ -1625,7 +1834,7 @@ function cloudLayout(container, words, opts = {}) {
     const el = document.createElement('span');
     el.className = 'w';
     el.style.left = box.cx + 'px'; el.style.top = box.cy + 'px'; el.style.fontSize = size + 'px';
-    el.style.color = i === 0 ? '#fbbf24' : COLORS[Math.abs(hash(w.text)) % COLORS.length];
+    el.style.color = i === 0 ? 'var(--gold-t)' : COLORS[Math.abs(hash(w.text)) % COLORS.length];
     el.innerHTML = escapeHtml(w.text) + (opts.showCount ? `<sup>${w.count}</sup>` : '');
     el.title = `${w.text}: ${w.count}`;
     if (opts.onClick) el.addEventListener('click', e => opts.onClick(w, e));
@@ -1747,7 +1956,7 @@ function showPodium(first) {
     return `<div class="podium-slot" data-place="${p}" id="podium-slot-${p}">
       <div class="podium-card">
         <div class="pc-medal">${p}</div>
-        <div class="pc-photo">${d.it.photos[0] ? `<img src="${d.it.photos[0]}" alt="">` : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:900;color:rgba(255,255,255,.35)">${escapeHtml(d.it.label.slice(0, 1).toUpperCase())}</div>`}</div>
+        <div class="pc-photo">${d.it.photos[0] ? `<img src="${d.it.photos[0]}" alt="">` : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:900;color:var(--muted)">${escapeHtml(d.it.label.slice(0, 1).toUpperCase())}</div>`}</div>
         <div class="pc-body"><div class="pc-name">${escapeHtml(d.it.label)}</div><div class="pc-votes">${d.v} ${pluralVotes(d.v)}</div></div>
       </div>
       <div class="podium-base">${p}</div>
@@ -1779,7 +1988,7 @@ function nextNom() { run.nomIndex++; startRound(); }
 function rerunRound() { startRound(); }
 function backToSetup() { hideStage(); showStageView('voting'); run = null; renderSetup(); }
 function sumCard(nom, w, v) {
-  return `<div class="sum-card"><div class="sc-nom">${escapeHtml(nom)}</div><div class="sc-photo">${w.photos && w.photos[0] ? `<img src="${w.photos[0]}" alt="">` : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:900;color:rgba(255,255,255,.3)">${escapeHtml(w.label.slice(0, 1).toUpperCase())}</div>`}</div>
+  return `<div class="sum-card"><div class="sc-nom">${escapeHtml(nom)}</div><div class="sc-photo">${w.photos && w.photos[0] ? `<img src="${w.photos[0]}" alt="">` : `<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:900;color:var(--muted)">${escapeHtml(w.label.slice(0, 1).toUpperCase())}</div>`}</div>
     <div class="sc-body"><div class="sc-name">${ic('trophy', 'ic-win')}${escapeHtml(w.label)}</div><div class="sc-votes">${v} ${pluralVotes(v)}</div></div></div>`;
 }
 function revealSum() { document.querySelectorAll('#res-body .sum-card').forEach((c, i) => setTimeout(() => c.classList.add('shown'), 250 + i * 500)); }
@@ -1848,7 +2057,7 @@ function renderRatingResult() {
   showStageView('res');
   $('res-heading').textContent = S.rating.q.trim() || 'Оцінка';
   $('res-sub').textContent = `${total} ${total % 10 === 1 && total % 100 !== 11 ? 'оцінка' : (total % 10 >= 2 && total % 10 <= 4 && (total % 100 < 12 || total % 100 > 14)) ? 'оцінки' : 'оцінок'}`;
-  const rows = scoped().slice().reverse().map(it => ({ it: { ...it, label: S.rating.style === 'grade' ? `Оцінка ${it.value}` : `${it.value} — ${it.label}` , emoji: S.rating.style === 'faces' ? it.emoji : '' }, v: run.votes[it.id] || 0 }));
+  const rows = scoped().slice().reverse().map(it => ({ it: { ...it, label: S.rating.style === 'faces' ? `${it.value} — ${it.label}` : `Оцінка ${it.value}` , emoji: S.rating.style === 'faces' ? it.emoji : '' }, v: run.votes[it.id] || 0 }));
   $('res-body').innerHTML = `<div class="big-avg"><div class="num">${avg.toFixed(1)}</div><div class="stars">${ic('star').repeat(full)}<span class="ic-row" style="opacity:.25">${ic('star').repeat(5 - full)}</span></div><div class="meta">середня оцінка з 5</div></div><div style="height:26px"></div>` + barsHtml(rows, total, []);
   animateBars();
   setTimeout(() => { if (avg >= 4) { playFanfare(); burstConfetti(); } else playTick(); }, 500);
