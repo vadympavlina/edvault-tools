@@ -40,7 +40,11 @@ function toast(msg, kind = '') {
 }
 
 /* ═════════ Тема ═════════ */
-function syncTheme() { const dark = document.documentElement.dataset.theme === 'dark'; $('themeBtn').innerHTML = icon(dark ? 'sun' : 'moon'); }
+function syncTheme() {
+  const dark = document.documentElement.dataset.theme === 'dark';
+  $('themeBtn').innerHTML = icon(dark ? 'sun' : 'moon');
+  const mt = document.querySelector('meta[name="theme-color"]'); if (mt) mt.content = dark ? '#1e1e1e' : '#1c2869';
+}
 $('themeBtn').onclick = () => {
   const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
   document.documentElement.dataset.theme = next;
