@@ -3,27 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Менеджер класу — Edvault</title>
+<title>Менеджер класу · Edvault</title>
 <link rel="icon" href="icons/class-manager.ico" sizes="32x32">
 <link rel="icon" href="icons/class-manager.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/class-manager-180.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#1c2869">
+<!-- шрифти лежать поруч (спільні з текстовим редактором), тож вигляд однаковий і без інтернету -->
+<link rel="stylesheet" href="textcraft/fonts.css">
+<script>try{var t=localStorage.getItem('edvault-theme')||'auto';if(t==='dark'||(t==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <style>
 :root{
-  --bg:#f0f2f5;--surface:#fff;--border:#e2e5ea;--border2:#d0d5dd;
-  --text:#1a1d23;--muted:#4b5563;--subtle:#9ca3af;
-  --accent:#4F6BF4;--accent-h:#3d57e0;--accent-bg:#eef0fe;--accent-lt:#c7d0fc;
-  --red:#dc2626;--red-bg:#fee2e2;--green:#16a34a;--green-bg:#dcfce7;
-  --r:7px;--r-lg:13px;
-  --sh-sm:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
-  --sh:0 4px 16px rgba(0,0,0,.09),0 1px 4px rgba(0,0,0,.05);
-  --sh-lg:0 16px 48px rgba(0,0,0,.10),0 4px 16px rgba(0,0,0,.06);
-  --topbar:52px;
+  color-scheme:light;
+  --bg:#dfe4ea;--surface:#fdfefb;--surface2:#f2f5f7;--surface3:#e8edf1;--border:#d9e0e7;--border2:#bfc9d4;
+  --text:#1d2236;--muted:#454c63;--subtle:#5d6478;
+  --accent:#2337a8;--accent-h:#1a2a8a;--accent-bg:#e8ecfb;--accent-lt:#b9c3ef;--on-accent:#ffffff;
+  --red:#c8352d;--red-bg:#fbeceb;--green:#1a7a50;--green-bg:#e3f2ea;
+  --r:8px;--r-lg:14px;
+  --sh-sm:0 1px 2px rgba(28,40,105,.08);
+  --sh:0 6px 18px rgba(28,40,105,.12),0 1px 3px rgba(28,40,105,.08);
+  --sh-lg:0 22px 50px rgba(28,40,105,.18),0 4px 12px rgba(28,40,105,.08);
+  --overlay:rgba(29,34,54,.45);--float-bg:#1c2869;--float-text:#eef1ff;
+  --topbar:56px;
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#1e1e1e;--surface:#2c2c2c;--surface2:#383838;--surface3:#424242;--border:#3a3a3a;--border2:#4a4a4a;
+  --text:#ededed;--muted:#c2c2c2;--subtle:#9a9a9a;
+  --accent:#9aabff;--accent-h:#b3c0ff;--accent-bg:rgba(154,171,255,.14);--accent-lt:rgba(154,171,255,.38);--on-accent:#10153a;
+  --red:#f08a82;--red-bg:rgba(240,138,130,.12);--green:#5fd39b;--green-bg:rgba(95,211,155,.14);
+  --sh-sm:0 1px 2px rgba(0,0,0,.4);--sh:0 8px 22px rgba(0,0,0,.45);--sh-lg:0 24px 60px rgba(0,0,0,.6);
+  --overlay:rgba(0,0,0,.55);--float-bg:#383838;--float-text:#ededed;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100%;overflow:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'IBM Plex Sans','Commissioner',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100%;overflow:hidden;-webkit-font-smoothing:antialiased}
 
 /* TOPBAR */
 .topbar{height:var(--topbar);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;box-shadow:var(--sh-sm);z-index:60}
@@ -36,7 +49,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:6px}
 
 /* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 12px;border:1px solid transparent;border-radius:var(--r);font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .13s;white-space:nowrap;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 12px;border:1px solid transparent;border-radius:var(--r);font-family:'IBM Plex Sans','Commissioner',system-ui,sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .13s;white-space:nowrap;flex-shrink:0}
 .btn svg{width:14px;height:14px;flex-shrink:0}
 .btn-ghost{background:transparent;color:var(--muted);border-color:transparent}
 .btn-ghost:hover{background:var(--bg);color:var(--text)}
@@ -71,13 +84,13 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .s-del:hover{color:var(--red)}
 .s-del svg,.s-drag svg{width:13px;height:13px}
 .add-row{display:flex;gap:6px;padding:8px 14px 10px;flex-shrink:0;border-top:1px solid var(--border)}
-.add-inp{flex:1;height:32px;border:1px solid var(--border2);border-radius:var(--r);padding:0 10px;font-family:'Inter',system-ui,sans-serif;font-size:13px;color:var(--text);background:var(--surface);outline:none;transition:border-color .13s,box-shadow .13s}
+.add-inp{flex:1;height:32px;border:1px solid var(--border2);border-radius:var(--r);padding:0 10px;font-family:'IBM Plex Sans','Commissioner',system-ui,sans-serif;font-size:13px;color:var(--text);background:var(--surface);outline:none;transition:border-color .13s,box-shadow .13s}
 .add-inp:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(79,107,244,.15)}
 
 /* CONTENT */
 .content{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .tabs{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:flex-end;padding:0 16px;gap:2px;flex-shrink:0;box-shadow:var(--sh-sm);z-index:10}
-.tab{padding:0 14px;height:48px;border:none;background:none;cursor:pointer;font-family:'Inter',system-ui,sans-serif;font-size:13.5px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:7px;transition:color .13s,border-color .13s;white-space:nowrap}
+.tab{padding:0 14px;height:48px;border:none;background:none;cursor:pointer;font-family:'IBM Plex Sans','Commissioner',system-ui,sans-serif;font-size:13.5px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:7px;transition:color .13s,border-color .13s;white-space:nowrap}
 .tab svg{width:15px;height:15px}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
@@ -92,7 +105,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .group-card:hover{box-shadow:var(--sh)}
 .group-head{padding:10px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
 .group-color-strip{width:4px;height:32px;border-radius:2px;flex-shrink:0}
-.group-name-inp{flex:1;border:none;background:transparent;font-family:'Inter',system-ui,sans-serif;font-size:13.5px;font-weight:600;color:var(--text);outline:none;min-width:0}
+.group-name-inp{flex:1;border:none;background:transparent;font-family:'IBM Plex Sans','Commissioner',system-ui,sans-serif;font-size:13.5px;font-weight:600;color:var(--text);outline:none;min-width:0}
 .group-name-inp:focus{border-bottom:1px dashed var(--accent)}
 .group-count-badge{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600;flex-shrink:0}
 .group-del{width:22px;height:22px;border:none;background:none;cursor:pointer;color:var(--subtle);border-radius:4px;display:flex;align-items:center;justify-content:center;transition:color .12s,background .12s}
@@ -116,7 +129,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .num-ctrl{display:flex;align-items:center;border:1px solid var(--border2);border-radius:var(--r);overflow:hidden;height:28px}
 .nc-btn{width:24px;height:26px;border:none;background:var(--bg);cursor:pointer;font-size:14px;color:var(--muted);transition:background .1s;display:flex;align-items:center;justify-content:center}
 .nc-btn:hover{background:var(--border2);color:var(--text)}
-.nc-val{width:32px;height:26px;border:none;border-left:1px solid var(--border2);border-right:1px solid var(--border2);text-align:center;font-family:'Inter',system-ui,sans-serif;font-size:12.5px;font-weight:600;color:var(--text);background:var(--surface);outline:none;-moz-appearance:textfield}
+.nc-val{width:32px;height:26px;border:none;border-left:1px solid var(--border2);border-right:1px solid var(--border2);text-align:center;font-family:'IBM Plex Sans','Commissioner',system-ui,sans-serif;font-size:12.5px;font-weight:600;color:var(--text);background:var(--surface);outline:none;-moz-appearance:textfield}
 .nc-val::-webkit-inner-spin-button{-webkit-appearance:none}
 
 /* ═══════ CANVAS SEATS PANEL ═══════ */
@@ -154,7 +167,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 /* Seat assign dropdown */
 .seat-dropdown{position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-lg);box-shadow:var(--sh-lg);padding:6px;z-index:600;min-width:200px;max-height:280px;overflow-y:auto;display:none}
 .seat-dropdown.open{display:block}
-.seat-dd-search{width:100%;height:30px;border:1px solid var(--border2);border-radius:var(--r);padding:0 8px;font-family:'Inter',sans-serif;font-size:12.5px;outline:none;margin-bottom:5px}
+.seat-dd-search{width:100%;height:30px;border:1px solid var(--border2);border-radius:var(--r);padding:0 8px;font-family:inherit;font-size:12.5px;outline:none;margin-bottom:5px}
 .seat-dd-search:focus{border-color:var(--accent)}
 .seat-dd-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--r);font-size:12.5px;cursor:pointer;transition:background .1s}
 .seat-dd-item:hover{background:var(--bg)}
@@ -167,9 +180,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .random-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-lg);padding:36px 40px;text-align:center;max-width:440px;width:100%}
 .random-source-label{font-size:11px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
 .random-source-tabs{display:flex;gap:4px;background:var(--bg);border-radius:var(--r);padding:3px;margin-bottom:20px}
-.rs-tab{flex:1;padding:6px 8px;border:none;border-radius:5px;font-family:Inter,sans-serif;font-size:12.5px;font-weight:500;color:var(--muted);background:transparent;cursor:pointer;transition:all .13s;white-space:nowrap}
+.rs-tab{flex:1;padding:6px 8px;border:none;border-radius:5px;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--muted);background:transparent;cursor:pointer;transition:all .13s;white-space:nowrap}
 .rs-tab.active{background:var(--surface);color:var(--text);box-shadow:var(--sh-sm)}
-.random-group-sel{width:100%;border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;font-family:Inter,sans-serif;font-size:13px;color:var(--text);background:var(--surface);outline:none;cursor:pointer;margin-bottom:16px;display:none}
+.random-group-sel{width:100%;border:1px solid var(--border2);border-radius:var(--r);padding:7px 10px;font-family:inherit;font-size:13px;color:var(--text);background:var(--surface);outline:none;cursor:pointer;margin-bottom:16px;display:none}
 .random-group-sel.visible{display:block}
 .random-title{font-size:30px;font-weight:700;color:var(--text);min-height:44px;line-height:1.2;margin:10px 0 4px;transition:all .1s}
 .random-subtitle{font-size:12px;color:var(--subtle);margin-bottom:20px;min-height:18px}
@@ -214,7 +227,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .modal-close svg{width:16px;height:16px}
 .form-label{font-size:12.5px;font-weight:500;color:var(--muted);margin-bottom:5px}
 .form-row{margin-bottom:14px}
-.import-ta{width:100%;height:160px;border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);background:var(--surface);outline:none;resize:vertical;line-height:1.6;transition:border-color .13s}
+.import-ta{width:100%;height:160px;border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;font-family:inherit;font-size:13px;color:var(--text);background:var(--surface);outline:none;resize:vertical;line-height:1.6;transition:border-color .13s}
 .import-ta:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(79,107,244,.15)}
 .import-drop{border:1.5px dashed var(--border2);border-radius:var(--r);padding:20px;text-align:center;font-size:13px;color:var(--subtle);cursor:pointer;transition:border-color .15s,background .15s;margin-bottom:10px}
 .import-drop:hover,.import-drop.drag-over{border-color:var(--accent);background:var(--accent-bg);color:var(--accent)}
@@ -232,12 +245,12 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .timer-main-col{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
 .timer-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--sh-lg);padding:28px 36px 24px;text-align:center;width:420px}
 .timer-presets{display:flex;gap:6px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
-.preset-btn{padding:5px 14px;border:1px solid var(--border2);border-radius:999px;font-family:Inter,sans-serif;font-size:12.5px;font-weight:500;color:var(--muted);background:var(--surface);cursor:pointer;transition:all .13s}
+.preset-btn{padding:5px 14px;border:1px solid var(--border2);border-radius:999px;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--muted);background:var(--surface);cursor:pointer;transition:all .13s}
 .preset-btn:hover{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-lt)}
 .preset-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .timer-custom-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px}
 .timer-custom-field{display:flex;align-items:center;gap:5px}
-.timer-digit-inp{width:60px;height:38px;border:1px solid var(--border2);border-radius:var(--r);text-align:center;font-family:Inter,sans-serif;font-size:18px;font-weight:700;color:var(--text);background:var(--bg);outline:none;-moz-appearance:textfield;transition:border-color .13s,box-shadow .13s}
+.timer-digit-inp{width:60px;height:38px;border:1px solid var(--border2);border-radius:var(--r);text-align:center;font-family:inherit;font-size:18px;font-weight:700;color:var(--text);background:var(--bg);outline:none;-moz-appearance:textfield;transition:border-color .13s,box-shadow .13s}
 .timer-digit-inp::-webkit-inner-spin-button{-webkit-appearance:none}
 .timer-digit-inp:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(79,107,244,.15);background:var(--surface)}
 .timer-digit-label{font-size:11px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.4px}
@@ -263,19 +276,19 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .timer-pct-label{font-size:11px;color:var(--subtle)}
 /* controls */
 .timer-controls{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px}
-.timer-btn-play{display:inline-flex;align-items:center;gap:7px;padding:0 32px;height:46px;font-size:15px;font-weight:600;font-family:Inter,sans-serif;border:none;border-radius:999px;background:var(--accent);color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(79,107,244,.3);transition:all .15s}
+.timer-btn-play{display:inline-flex;align-items:center;gap:7px;padding:0 32px;height:46px;font-size:15px;font-weight:600;font-family:inherit;border:none;border-radius:999px;background:var(--accent);color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(79,107,244,.3);transition:all .15s}
 .timer-btn-play:hover{background:var(--accent-h);transform:scale(1.02)}
 .timer-btn-play:active{transform:scale(.97)}
 .timer-btn-play.paused{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent-lt);box-shadow:none}
 .timer-btn-play.finished{background:#dcfce7;color:#16a34a;border:1.5px solid #86efac;box-shadow:none}
-.timer-btn-sq{width:40px;height:40px;border:1px solid var(--border2);border-radius:50%;background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .13s;font-family:Inter,sans-serif}
+.timer-btn-sq{width:40px;height:40px;border:1px solid var(--border2);border-radius:50%;background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .13s;font-family:inherit}
 .timer-btn-sq:hover{background:var(--bg);color:var(--text);border-color:var(--border2)}
 .timer-btn-sq svg{width:16px;height:16px}
 .timer-btn-sq.active{color:var(--accent);border-color:var(--accent-lt);background:var(--accent-bg)}
 /* music selector */
 .timer-bottom{padding-top:14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:10px}
 .timer-music-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.music-btn{padding:8px 4px;border:1px solid var(--border2);border-radius:var(--r);font-family:Inter,sans-serif;font-size:11.5px;font-weight:500;color:var(--muted);background:var(--surface);cursor:pointer;transition:all .13s;text-align:center;line-height:1.4}
+.music-btn{padding:8px 4px;border:1px solid var(--border2);border-radius:var(--r);font-family:inherit;font-size:11.5px;font-weight:500;color:var(--muted);background:var(--surface);cursor:pointer;transition:all .13s;text-align:center;line-height:1.4}
 .music-btn:hover{background:var(--bg);color:var(--text)}
 .music-btn.active{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-lt);font-weight:600}
 .music-btn-icon{display:flex;justify-content:center;margin-bottom:3px}.music-btn-icon svg{width:16px;height:16px}
@@ -283,14 +296,14 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 /* TASKS PANEL */
 .tasks-panel{position:fixed;top:var(--topbar);right:0;bottom:0;width:320px;background:var(--surface);border-left:1px solid var(--border);box-shadow:var(--sh-lg);z-index:400;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
 .tasks-panel.open{transform:translateX(0)}
-.tasks-toggle{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:401;background:var(--accent);color:#fff;border:none;border-radius:10px 0 0 10px;padding:12px 8px;cursor:pointer;box-shadow:var(--sh);transition:background .13s,right .25s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;align-items:center;gap:6px;font-family:Inter,sans-serif;font-size:10px;font-weight:600;letter-spacing:.3px}
+.tasks-toggle{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:401;background:var(--accent);color:#fff;border:none;border-radius:10px 0 0 10px;padding:12px 8px;cursor:pointer;box-shadow:var(--sh);transition:background .13s,right .25s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;align-items:center;gap:6px;font-family:inherit;font-size:10px;font-weight:600;letter-spacing:.3px}
 .tasks-toggle:hover{background:var(--accent-h)}
 .tasks-toggle svg{width:18px;height:18px}
 .tasks-toggle.shifted{right:320px}
 .tasks-head{padding:16px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;gap:8px}
 .tasks-head-title{font-size:15px;font-weight:700;flex:1}
 .tasks-add-row{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;gap:6px}
-.tasks-add-inp{flex:1;height:34px;border:1px solid var(--border2);border-radius:var(--r);padding:0 10px;font-family:Inter,sans-serif;font-size:13px;color:var(--text);background:var(--surface);outline:none;transition:border-color .13s,box-shadow .13s}
+.tasks-add-inp{flex:1;height:34px;border:1px solid var(--border2);border-radius:var(--r);padding:0 10px;font-family:inherit;font-size:13px;color:var(--text);background:var(--surface);outline:none;transition:border-color .13s,box-shadow .13s}
 .tasks-add-inp:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(79,107,244,.15)}
 .tasks-list{flex:1;overflow-y:auto;padding:8px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
 .task-item{display:flex;align-items:flex-start;gap:10px;padding:10px 10px 10px 12px;border-radius:var(--r-lg);border:1px solid transparent;transition:all .15s;margin-bottom:4px;cursor:pointer;position:relative;background:var(--surface)}
@@ -313,6 +326,183 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .tasks-stats{font-size:12px;color:var(--subtle);white-space:nowrap}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ════════════ Головна з плитками + робочий простір «план класу і панель інструментів» ════════════ */
+.hidden{display:none!important}
+[hidden]{display:none!important}
+body{background:var(--bg)}
+.topbar{height:56px;box-shadow:none;gap:10px;padding:0 14px}
+.home-btn{display:none}.home-btn.shown{display:inline-flex}
+img.brand-mark{width:32px;height:32px;border-radius:9px;display:block;box-shadow:none;background:none;flex-shrink:0}
+.brand-name{font-weight:600;font-size:15px;letter-spacing:0;white-space:nowrap}
+.class-name-inp{height:34px;min-width:0;width:200px;border:1px solid transparent;border-radius:8px;background:transparent;padding:0 10px;font:inherit;font-size:14px;color:var(--muted);outline:none}
+.class-name-inp:hover{border-color:var(--border)}
+.class-name-inp:focus{border-color:var(--accent);background:var(--surface);color:var(--text);box-shadow:0 0 0 3px var(--accent-bg)}
+.class-name-inp::placeholder{color:var(--subtle)}
+.topbar-right{gap:4px}
+.btn{height:34px;border-radius:8px;font-size:13.5px;padding:0 12px;gap:6px}
+.btn svg{width:16px;height:16px}
+.btn-sm{height:28px;font-size:12.5px;padding:0 10px}
+.btn-icon{width:34px}
+.btn-solid{color:var(--on-accent);box-shadow:none;font-weight:600}
+.btn-ghost:hover{background:var(--surface2)}
+.btn-ghost-b{background:var(--surface);color:var(--muted);border-color:var(--border)}
+.btn-ghost-b:hover{background:var(--surface2);color:var(--text);border-color:var(--border2)}
+.btn-outline:hover{background:var(--accent-bg);border-color:var(--accent)}
+.btn-danger{border-color:color-mix(in srgb,var(--red) 35%,transparent)}
+.btn-danger:hover{background:color-mix(in srgb,var(--red) 18%,transparent)}
+.view-btn{width:34px;height:34px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.view-btn:hover{background:var(--surface2);border-color:var(--border);color:var(--text)}
+.view-btn svg{width:18px;height:18px}
+#tasks-top-btn .count-badge{margin-left:2px}
+.count-badge{background:var(--accent-bg);color:var(--accent)}
+.file-wrap{position:relative}
+.file-menu{position:absolute;right:0;top:calc(100% + 6px);min-width:270px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--sh-lg);padding:6px;z-index:300;display:none}
+.file-menu.open{display:block}
+.fm-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:0;border-radius:8px;background:none;font:inherit;font-size:13.5px;color:var(--text);cursor:pointer;text-align:left}
+.fm-item:hover{background:var(--surface2)}
+.fm-item svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.fm-item.danger,.fm-item.danger svg{color:var(--red)}
+.fm-sep{height:1px;background:var(--border);margin:4px 6px}
+
+/* головна */
+.home{flex:1;overflow-y:auto}
+.home-inner{max-width:1120px;margin:0 auto;padding:24px 20px 40px;display:flex;flex-direction:column;gap:16px}
+.home-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+.hc-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.home h2,.home h3,.plan-head h2{font-family:'Literata',Georgia,serif;font-weight:600;letter-spacing:0}
+.hc-head h2{font-size:20px;flex:1;display:flex;align-items:center;gap:8px}
+.home-chips{display:flex;flex-wrap:wrap;gap:6px}
+.hchip{display:inline-flex;align-items:center;gap:7px;padding:3px 4px 3px 3px;border:1px solid var(--border);border-radius:18px;font-size:13.5px;background:var(--surface);user-select:none}
+.hchip .s-avatar{width:26px;height:26px;font-size:10px}
+.s-avatar.tc{background:color-mix(in srgb,var(--tc) 15%,var(--surface));color:var(--tc)}
+:root[data-theme="dark"] .s-avatar.tc{background:var(--tc);color:#fff}
+.hchip .s-name{white-space:nowrap}
+.hchip input{font:inherit;font-size:13.5px}
+.hchip-x{width:22px;height:22px;border:0;border-radius:50%;background:none;color:var(--subtle);cursor:pointer;font-size:16px;line-height:1;opacity:0;transition:opacity .12s}
+.hchip:hover .hchip-x,.hchip-x:focus-visible{opacity:1}
+.hchip-x:hover{background:var(--red-bg);color:var(--red)}
+@media (hover:none){.hchip-x{opacity:.6}}
+.home-empty{color:var(--subtle);font-size:14px}
+.home-add{display:flex;gap:8px;margin-top:14px;max-width:460px}
+.home-add .add-inp{height:36px;font-size:14px}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.tile{display:flex;flex-direction:column;gap:8px;min-height:200px}
+.tile-ic{width:42px;height:42px;border-radius:11px;background:var(--accent-bg);color:var(--accent);display:grid;place-items:center}
+.tile-ic svg{width:22px;height:22px}
+.tile h3{font-size:20px}
+.tile-sub{color:var(--muted);font-size:13.5px}
+.tile-bar{display:flex;gap:4px;height:8px}.tile-bar i{border-radius:4px;height:100%}
+.tile-big{font-size:22px;font-weight:600;color:var(--text)}
+.tile-time{font-size:44px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.tile-time.danger,#mini-timer-time.danger{color:var(--red)}
+.tile-actions{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;padding-top:8px}
+.mini-plan{width:100%;height:96px;border-radius:10px;background:#eef1f4;display:block}
+
+/* робочий простір */
+.main-layout{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 380px;min-height:0}
+.plan-col{display:flex;flex-direction:column;min-width:0;min-height:0;padding:14px 16px 16px;gap:10px}
+.plan-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.plan-head h2{font-size:21px}
+.plan-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.plan-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.plan-panel{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.seats-layout{flex-direction:column}
+.canvas-toolbar{border-bottom:1px solid var(--border);padding:8px 10px;gap:4px}
+.canvas-toolbar .btn-sm{height:30px}
+/* сам план — робоча поверхня, лишається світлим і в темній темі */
+.seats-canvas-wrap{background-color:#eef1f4;background-image:radial-gradient(circle,rgba(93,100,120,.28) 1px,transparent 1px)}
+.seats-right{width:auto;min-width:0;border-left:0;border-top:1px solid var(--border);flex-direction:row;align-items:center;max-height:132px;background:var(--surface)}
+.seats-right.all-placed{display:none}
+.seats-right-section{border-bottom:0;border-right:1px solid var(--border);width:190px;flex-shrink:0;align-self:stretch;display:flex;flex-direction:column;justify-content:center}
+.unassigned-chips{flex-direction:row;flex-wrap:wrap;align-content:flex-start;padding:8px;gap:6px;max-height:130px}
+.ua-chip{background:var(--surface2);border-radius:16px;padding:3px 10px 3px 3px}
+.ua-chip:hover{background:var(--surface3)}
+.side-col{background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;min-height:0;position:relative}
+.side-col .tabs{box-shadow:none;padding:8px;gap:2px;align-items:stretch;border-bottom:1px solid var(--border)}
+.side-col .tab{flex:1;height:auto;flex-direction:column;gap:3px;padding:7px 2px;border:0;border-radius:9px;margin:0;font-size:12px;color:var(--muted)}
+.side-col .tab svg{width:20px;height:20px}
+.side-col .tab>span{display:flex;align-items:center;gap:4px}
+.side-col .tab .count-badge{min-width:16px;height:16px;font-size:10px;padding:0 4px}
+.side-col .tab:hover{background:var(--surface2);color:var(--text)}
+.side-col .tab.active{background:var(--accent-bg);color:var(--accent);font-weight:600}
+.timer-badge{background:var(--red);color:#fff;font-size:10px;font-weight:600;padding:0 5px;border-radius:999px}
+.side-col .panel{min-height:0}
+.side-col .panel-toolbar{padding:10px 12px;gap:6px;background:none}
+.side-col .panel-toolbar>span:first-child{display:none}
+.side-col .panel-scroll{padding:12px}
+.side-col .groups-grid{grid-template-columns:1fr;gap:10px}
+.group-card{border-radius:12px}
+.group-member{background:var(--surface2)}
+.group-member:hover{background:var(--surface3)}
+.group-name-inp{font-family:inherit;font-weight:600}
+.unassigned-pool{border-radius:12px}
+.nc-btn{background:var(--surface2)}
+.nc-val{background:var(--surface)}
+/* рандом у панелі: картка над чергою */
+.side-col .random-wrap{flex-direction:column;overflow-y:auto}
+.side-col .random-left{flex:none;padding:16px 14px 10px;border-right:0}
+.side-col .random-card{box-shadow:none;border:0;padding:4px 0;max-width:none}
+.random-title{font-family:'Literata',Georgia,serif;font-weight:600;font-size:28px}
+.side-col .random-right{width:auto;min-width:0;flex:1;overflow:visible;border-top:1px solid var(--border)}
+.side-col .rand-queue{overflow:visible}
+.rs-tab{font-family:inherit}
+.rand-queue-item.picked{background:var(--green-bg)}
+/* таймер у панелі */
+.side-col .timer-wrap{overflow-y:auto}
+.side-col .timer-main-col{padding:14px;background:none;align-items:flex-start}
+.side-col .timer-card{width:100%;border:0;box-shadow:none;padding:4px 0}
+.side-col .timer-ring-wrap{width:200px;height:200px;margin-bottom:16px}
+.side-col .timer-display{font-size:44px}
+.timer-display{font-weight:600;letter-spacing:-1px}
+.timer-btn-play{color:var(--on-accent);box-shadow:none;font-family:inherit}
+.timer-btn-play.finished{background:var(--green-bg);color:var(--green);border-color:color-mix(in srgb,var(--green) 40%,transparent)}
+.preset-btn.active{color:var(--on-accent)}
+.timer-ring-track{stroke:var(--surface2)}
+.timer-digit-inp{background:var(--surface2)}
+.side-col .timer-music-grid{grid-template-columns:repeat(4,1fr)}
+/* учні в панелі */
+.side-col #panel-students .student-list{flex:1;overflow-y:auto}
+.side-hint{font-size:12px;color:var(--subtle);text-align:center;padding:0 12px 10px}
+.add-inp{background:var(--surface);color:var(--text)}
+.add-inp:focus{box-shadow:0 0 0 3px var(--accent-bg)}
+.student-item:hover{background:var(--surface2)}
+/* маленький таймер унизу панелі */
+.mini-timer{margin:10px;padding:8px 10px 8px 12px;border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:10px;flex-shrink:0;color:var(--muted)}
+.mini-timer svg{width:18px;height:18px}
+.mini-timer b{flex:1;font-size:20px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+
+/* решта: модальні вікна, меню, завдання */
+.modal-overlay{background:var(--overlay)}
+.modal,.desk-ctx,.seat-dropdown{border:1px solid var(--border)}
+.dialog-title,.modal-title{font-family:'Literata',Georgia,serif;font-weight:600}
+.dialog-meta{background:var(--surface2)}
+.import-ta,.seat-dd-search,.random-group-sel{background:var(--surface);color:var(--text);font-family:inherit}
+.ctx-item:hover,.seat-dd-item:hover{background:var(--surface2)}
+.tasks-panel{top:56px}
+.tasks-add-inp{font-family:inherit}
+.task-item:hover{background:var(--surface2)}
+.empty-state{color:var(--subtle)}
+
+@media (max-width:900px){
+  .main-layout{display:flex;flex-direction:column;overflow-y:auto}
+  .plan-col{flex:none;height:62vh;padding:10px}
+  .side-col{flex:none;border-left:0;border-top:1px solid var(--border);min-height:70vh}
+  .tiles{grid-template-columns:minmax(0,1fr)}
+  .seats-right-section{display:none}
+}
+@media (max-width:640px){
+  .hide-sm{display:none}
+  .topbar{padding:0 8px;gap:4px}
+  .class-name-inp{flex:1;width:auto}
+  .home-inner{padding:14px 12px 30px;gap:12px}
+  .home-card{padding:14px}
+  .tile{min-height:0}
+  .tile-time{font-size:36px}
+  .canvas-toolbar .btn-sm:has(svg){font-size:0;gap:0;padding:0 8px}
+  .canvas-toolbar .btn-sm svg{width:16px;height:16px}
+  .canvas-toolbar #snap-btn+div{display:none!important}
+}
 </style>
 <meta name="description" content="Учні, розклад, відвідуваність і оцінки в одному місці.">
 <!-- og -->
@@ -332,103 +522,72 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 <body>
 
 <header class="topbar">
-  <a class="brand" href="#">
-    <div class="brand-mark">
-      <svg viewBox="0 0 20 20" fill="none"><circle cx="7" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="13" cy="13" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 17l4-4M17 3l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-    </div>
-    <span class="brand-name">Edvault</span>
-    <span class="brand-sub">/ Менеджер класу</span>
-  </a>
-  <div class="topbar-div"></div>
+  <button class="btn btn-ghost home-btn" id="home-btn" onclick="goHome()" data-tip="На головну"><svg viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="hide-sm">Головна</span></button>
+  <img class="brand-mark" src="icons/class-manager.svg" alt="">
+  <span class="brand-name hide-sm">Менеджер класу</span>
+  <input class="class-name-inp" id="class-name" placeholder="Назва класу" maxlength="40" autocomplete="off" data-tip="Назва класу — підставляється в ім'я файлу">
   <div class="topbar-right">
-    <button class="btn btn-ghost" onclick="openImportModal()" data-tip="Імпорт студентів зі списку або Excel">
-      <svg viewBox="0 0 20 20" fill="none"><path d="M17 13v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M10 3v9M7 9l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Імпорт
-    </button>
-    <div class="topbar-div"></div>
-    <button class="btn btn-ghost" onclick="openFileState()" data-tip="Відкрити збережений клас (.evclass)">
-      <svg viewBox="0 0 20 20" fill="none"><path d="M4 4h5l2 2h5a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-      Відкрити
-    </button>
-    <button class="btn btn-outline" onclick="exportFileState()" data-tip="Зберегти клас у файл (.evclass)">
-      <svg viewBox="0 0 20 20" fill="none"><path d="M15 17H5a2 2 0 01-2-2V5a2 2 0 012-2h8l4 4v8a2 2 0 01-2 2z" stroke="currentColor" stroke-width="1.5"/><path d="M7 17v-5h6v5M7 3v4h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Зберегти файл
-    </button>
-    <div class="topbar-div"></div>
-    <button class="btn btn-danger" onclick="clearAll()">
-      <svg viewBox="0 0 20 20" fill="none"><path d="M3 5h14M8 5V3h4v2M6 5l1 12h6l1-12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Очистити все
-    </button>
+    <button class="btn btn-ghost" id="tasks-top-btn" onclick="toggleTasksPanel()" data-tip="Завдання уроку"><svg viewBox="0 0 20 20" fill="none"><path d="M5 10l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/></svg><span class="hide-sm">Завдання</span><span class="count-badge" id="tasks-top-count">0</span></button>
+    <div class="file-wrap">
+      <button class="btn btn-ghost-b" id="file-btn" onclick="toggleFileMenu(event)" aria-haspopup="menu"><svg viewBox="0 0 20 20" fill="none"><path d="M3 6a2 2 0 012-2h3.5l2 2H15a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span class="hide-sm">Файл</span></button>
+      <div class="file-menu" id="file-menu" role="menu">
+        <button class="fm-item" onclick="closeFileMenu();openImportModal()"><svg viewBox="0 0 20 20" fill="none"><path d="M17 13v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M10 3v9M7 9l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Імпорт учнів зі списку чи Excel</button>
+        <button class="fm-item" onclick="closeFileMenu();openFileState()"><svg viewBox="0 0 20 20" fill="none"><path d="M3 6a2 2 0 012-2h3.5l2 2H15a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Відкрити файл класу (.evclass)</button>
+        <button class="fm-item" onclick="closeFileMenu();exportFileState()"><svg viewBox="0 0 20 20" fill="none"><path d="M15 17H5a2 2 0 01-2-2V5a2 2 0 012-2h8l4 4v8a2 2 0 01-2 2z" stroke="currentColor" stroke-width="1.5"/><path d="M7 17v-5h6v5M7 3v4h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Зберегти клас у файл</button>
+        <div class="fm-sep"></div>
+        <button class="fm-item danger" onclick="closeFileMenu();clearAll()"><svg viewBox="0 0 20 20" fill="none"><path d="M3 5h14M8 5V3h4v2M6 5l1 12h6l1-12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Очистити все</button>
+      </div>
+    </div>
+    <button class="view-btn" id="theme-btn" onclick="toggleTheme()" data-tip="Світла / темна тема"></button>
   </div>
   <input type="file" id="file-state-input" accept=".evclass,.json" style="display:none" onchange="handleFileOpen(event)">
 </header>
 
-<div class="main-layout">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-label">Студенти <span class="count-badge" id="student-count">0</span></div>
-    </div>
-    <div class="student-list" id="student-list"></div>
-    <div class="add-row">
-      <input class="add-inp" id="add-inp" placeholder="Прізвище Ім'я…" autocomplete="off" onkeydown="if(event.key==='Enter')addStudent()">
-      <button class="btn btn-solid btn-icon" onclick="addStudent()" data-tip="Додати">
-        <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </div>
-  </aside>
-
-  <!-- CONTENT -->
-  <div class="content">
-    <nav class="tabs">
-      <button class="tab active" id="tab-groups-btn" onclick="switchTab('groups')">
-        <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="3" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="11" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="11" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
-        Команди <span class="count-badge" id="groups-count">0</span>
-      </button>
-      <button class="tab" id="tab-seats-btn" onclick="switchTab('seats')">
-        <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="5" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="11" y="5" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="2" y="12" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="11" y="12" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.4"/></svg>
-        Парти
-      </button>
-      <button class="tab" id="tab-random-btn" onclick="switchTab('random')">
-        <svg viewBox="0 0 20 20" fill="none"><path d="M13 3h4v4M17 3l-5 5M7 17H3v-4M3 17l5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
-        Рандом
-      </button>
-      <button class="tab" id="tab-timer-btn" onclick="switchTab('timer')">
-        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 7v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 2h4M10 2v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        Таймер
-        <span id="timer-tab-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:999px;min-width:18px;text-align:center" id="timer-badge"></span>
-      </button>
-    </nav>
-
-    <!-- GROUPS -->
-    <div class="panel active" id="panel-groups">
-      <div class="panel-toolbar">
-        <span style="font-size:14px;font-weight:600;margin-right:auto">Команди</span>
-        <button class="btn btn-ghost btn-sm" onclick="autoGroups()">
-          <svg viewBox="0 0 20 20" fill="none"><path d="M4 4l5 5-5 5M16 4l-5 5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Авторозподіл
-        </button>
-        <div style="display:flex;align-items:center;gap:6px">
-          <span style="font-size:12px;color:var(--muted)">Кількість:</span>
-          <div class="num-ctrl">
-            <button class="nc-btn" onclick="changeGroupCount(-1)">−</button>
-            <input class="nc-val" type="number" id="group-count-inp" value="3" min="2" max="12" readonly>
-            <button class="nc-btn" onclick="changeGroupCount(1)">+</button>
-          </div>
-        </div>
-        <button class="btn btn-outline btn-sm" onclick="addGroup()">
-          <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          Нова команда
-        </button>
+<!-- ═══ ГОЛОВНА: учні й плитки інструментів ═══ -->
+<main class="home" id="home-view">
+  <div class="home-inner">
+    <section class="home-card home-students">
+      <div class="hc-head">
+        <h2>Учні <span class="count-badge" id="home-student-count">0</span></h2>
+        <button class="btn btn-ghost-b btn-sm" onclick="openImportModal()"><svg viewBox="0 0 20 20" fill="none"><path d="M17 13v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M10 3v9M7 9l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Імпорт списку</button>
       </div>
-      <div class="panel-scroll" id="groups-scroll">
-        <div class="groups-grid" id="groups-grid"></div>
-        <div id="unassigned-pool-wrap"></div>
+      <div class="home-chips" id="home-chips"></div>
+      <div class="home-add">
+        <input class="add-inp" id="add-inp" placeholder="Прізвище та ім'я…" autocomplete="off" onkeydown="if(event.key==='Enter')addStudent()">
+        <button class="btn btn-solid" onclick="addStudent()"><svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Додати</button>
       </div>
+    </section>
+    <div class="tiles">
+      <section class="home-card tile" id="tile-groups">
+        <div class="tile-ic"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="3" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="11" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="11" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg></div><h3>Команди</h3>
+        <p class="tile-sub" id="tile-groups-sub"></p><div class="tile-bar" id="tile-groups-bar"></div>
+        <div class="tile-actions"><button class="btn btn-solid" onclick="openWork('groups')">Відкрити</button><button class="btn btn-ghost-b" onclick="autoGroups()">Розподілити заново</button></div>
+      </section>
+      <section class="home-card tile" id="tile-seats">
+        <div class="tile-ic"><svg viewBox="0 0 20 20" fill="none"><rect x="2" y="5" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="11" y="5" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="2" y="12" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.4"/><rect x="11" y="12" width="7" height="5" rx="1.5" stroke="currentColor" stroke-width="1.4"/></svg></div><h3>Парти</h3>
+        <p class="tile-sub" id="tile-seats-sub"></p><canvas class="mini-plan" id="mini-plan"></canvas>
+        <div class="tile-actions" id="tile-seats-actions"></div>
+      </section>
+      <section class="home-card tile" id="tile-random">
+        <div class="tile-ic"><svg viewBox="0 0 20 20" fill="none"><path d="M13 3h4v4M17 3l-5 5M7 17H3v-4M3 17l5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/></svg></div><h3>Хто відповідає?</h3>
+        <p class="tile-sub" id="tile-random-sub"></p><div class="tile-big" id="tile-random-last"></div>
+        <div class="tile-actions"><button class="btn btn-solid" onclick="openWork('random');setRandMode('student');pickRandom()">Вибрати учня</button><button class="btn btn-ghost-b" onclick="openWork('random');setRandMode('group');pickRandom()">Вибрати команду</button></div>
+      </section>
+      <section class="home-card tile" id="tile-timer">
+        <div class="tile-ic"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 7v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 2h4M10 2v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><h3>Таймер</h3>
+        <div class="tile-big tile-time" id="tile-timer-time">02:00</div>
+        <div class="tile-actions"><button class="btn btn-solid" id="tile-timer-btn" onclick="timerToggle()">Старт</button><button class="btn btn-ghost-b" onclick="setPreset(60)">1 хв</button><button class="btn btn-ghost-b" onclick="setPreset(300)">5 хв</button><button class="btn btn-ghost-b" onclick="setPreset(600)">10 хв</button><button class="btn btn-ghost-b" onclick="openWork('timer')">Відкрити</button></div>
+      </section>
     </div>
+  </div>
+</main>
 
+<!-- ═══ РОБОЧИЙ ПРОСТІР: план класу + інструменти ═══ -->
+<div class="main-layout hidden" id="work-view">
+  <section class="plan-col">
+    <div class="plan-head"><h2>План класу</h2><span class="plan-legend" id="plan-legend"></span></div>
     <!-- SEATS -->
-    <div class="panel" id="panel-seats">
+    <div class="plan-panel" id="panel-seats">
       <div class="seats-layout">
         <div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
 
@@ -492,8 +651,17 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
       </div>
     </div>
 
+    
+  </section>
+  <aside class="side-col">
+    <nav class="tabs">
+      <button class="tab active" id="tab-random-btn" onclick="switchTab('random')"><svg viewBox="0 0 20 20" fill="none"><path d="M13 3h4v4M17 3l-5 5M7 17H3v-4M3 17l5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/></svg>Рандом</button>
+      <button class="tab" id="tab-groups-btn" onclick="switchTab('groups')"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="3" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="3" y="11" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="11" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg><span>Команди <span class="count-badge" id="groups-count">0</span></span></button>
+      <button class="tab" id="tab-timer-btn" onclick="switchTab('timer')"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 7v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 2h4M10 2v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Таймер <span id="timer-tab-badge" class="timer-badge" style="display:none"></span></span></button>
+      <button class="tab" id="tab-students-btn" onclick="switchTab('students')"><svg viewBox="0 0 20 20" fill="none"><circle cx="8" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 17a5.5 5.5 0 0111 0M13.5 4a3 3 0 010 6M17.5 17a5 5 0 00-3-4.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Учні <span class="count-badge" id="student-count">0</span></span></button>
+    </nav>
     <!-- RANDOM -->
-    <div class="panel" id="panel-random">
+    <div class="panel active" id="panel-random">
       <div class="random-wrap">
         <!-- LEFT: picker -->
         <div class="random-left">
@@ -529,6 +697,35 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
         </aside>
       </div>
     </div>
+    
+    <!-- GROUPS -->
+    <div class="panel" id="panel-groups">
+      <div class="panel-toolbar">
+        <span style="font-size:14px;font-weight:600;margin-right:auto">Команди</span>
+        <button class="btn btn-ghost btn-sm" onclick="autoGroups()">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M4 4l5 5-5 5M16 4l-5 5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Авторозподіл
+        </button>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:12px;color:var(--muted)">Кількість:</span>
+          <div class="num-ctrl">
+            <button class="nc-btn" onclick="changeGroupCount(-1)">−</button>
+            <input class="nc-val" type="number" id="group-count-inp" value="3" min="2" max="12" readonly>
+            <button class="nc-btn" onclick="changeGroupCount(1)">+</button>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="addGroup()">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Нова команда
+        </button>
+      </div>
+      <div class="panel-scroll" id="groups-scroll">
+        <div class="groups-grid" id="groups-grid"></div>
+        <div id="unassigned-pool-wrap"></div>
+      </div>
+    </div>
+
+    
     <!-- TIMER PANEL -->
     <div class="panel" id="panel-timer">
       <div class="timer-wrap">
@@ -599,7 +796,18 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
         </div>
       </div>
     </div>
-  </div>
+
+    <!-- STUDENTS -->
+    <div class="panel" id="panel-students">
+      <div class="student-list" id="student-list"></div>
+      <div class="add-row">
+        <input class="add-inp" id="add-inp-side" placeholder="Прізвище та ім'я…" autocomplete="off" onkeydown="if(event.key==='Enter')addStudent('add-inp-side')">
+        <button class="btn btn-solid btn-icon" onclick="addStudent('add-inp-side')" data-tip="Додати"><svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+      <p class="side-hint">Подвійний клік по імені — перейменувати</p>
+    </div>
+    <div class="mini-timer" id="mini-timer"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="11" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 7v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 2h4M10 2v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><b id="mini-timer-time">02:00</b><button class="btn btn-solid btn-sm" id="mini-timer-btn" onclick="timerToggle()">Старт</button></div>
+  </aside>
 </div>
 
 <!-- desk context menu -->
@@ -674,6 +882,7 @@ let S = {
   desks: [],      // {id, x, y, angle, spp, seats:[sid|null,...]}  angle in degrees
   boards: [],     // {id, x, y, angle, label}
   teachers: [],   // {id, x, y, angle, label}
+  className: '',  // назва класу: показується вгорі й іде в ім'я файлу
   randHistory: []
 };
 
@@ -715,7 +924,8 @@ const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>
 const initials = n => n.trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
 const AV = ['av0','av1','av2','av3','av4','av5','av6','av7'];
 const CHIP = ['chip0','chip1','chip2','chip3','chip4','chip5','chip6','chip7'];
-const GCOL = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4','#f43f5e','#84cc16'];
+// кольори команд (план класу лишається світлим і в темній темі, тож кольори однакові)
+const GCOL = ['#2337a8','#1a7a50','#c98a00','#b4366b','#6d4bc4','#0f7f91','#c8352d','#5f8a14'];
 const AVCOL = [['#dbeafe','#1e40af'],['#dcfce7','#15803d'],['#fef3c7','#b45309'],['#fce7f3','#9d174d'],['#ede9fe','#5b21b6'],['#ffedd5','#9a3412'],['#f0fdf4','#166534'],['#fef2f2','#991b1b']];
 
 function avIdx(id){ const i=S.students.findIndex(s=>s.id===id); return i<0?0:i%8; }
@@ -736,7 +946,7 @@ function deskGroupColor(d){
 
 function showToast(msg,dur=1800){
   let t=document.getElementById('_toast');
-  if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:24px;right:24px;background:#1a1d23;color:#fff;font-family:Inter,sans-serif;font-size:13px;font-weight:500;padding:10px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999;pointer-events:none;opacity:0;transition:opacity .2s';document.body.appendChild(t)}
+  if(!t){t=document.createElement('div');t.id='_toast';t.style.cssText='position:fixed;bottom:24px;left:24px;background:var(--float-bg);color:var(--float-text);font-family:inherit;font-size:13px;font-weight:500;padding:10px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999;pointer-events:none;opacity:0;transition:opacity .2s';document.body.appendChild(t)}
   t.textContent=msg;t.style.opacity='1';clearTimeout(t._tid);t._tid=setTimeout(()=>t.style.opacity='0',dur);
 }
 
@@ -746,10 +956,12 @@ function showToast(msg,dur=1800){
 function loadState(){
   try{ const d=localStorage.getItem('ev-cm3'); if(d) S={...S,...JSON.parse(d)}; }catch(e){}
   if(!S.teachers) S.teachers=[];
+  if(typeof S.className!=='string') S.className='';
 }
 function saveState(){
   localStorage.setItem('ev-cm3',JSON.stringify(S));
   showToast('Збережено');
+  renderHomeSoon();
 }
 async function clearAll(){
   const ok=await showDialog({
@@ -760,7 +972,8 @@ async function clearAll(){
     confirmClass:'btn-danger'
   });
   if(!ok) return;
-  S={students:[],groups:[],desks:[],boards:[],randHistory:[]};
+  S={students:[],groups:[],desks:[],boards:[],teachers:[],randHistory:[],className:''};
+  hlIds=new Set(); lastPick=null; syncClassName();
   saveState(); renderAll();
 }
 
@@ -777,9 +990,12 @@ function exportFileState(){
 }
 
 function promptClassName(){
-  const names = S.students.slice(0,2).map(s=>s.name.split(' ')[0]).join('-');
   const date = new Date().toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',year:'2-digit'}).replace(/\./g,'-');
-  return 'клас-' + (names||'edvault') + '-' + date;
+  const cls = (S.className||'').trim().replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,'-');
+  if(cls) return 'клас-' + cls + '-' + date;
+  const names = S.students.slice(0,2).map(s=>s.name.split(' ')[0]).join('-');
+  const date2 = new Date().toLocaleDateString('uk-UA',{day:'2-digit',month:'2-digit',year:'2-digit'}).replace(/\./g,'-');
+  return 'клас-' + (names||'edvault') + '-' + date2;
 }
 
 /* ── FILE IMPORT ── */
@@ -806,8 +1022,11 @@ function handleFileOpen(e){
         groups:   data.groups   || [],
         desks:    data.desks    || [],
         boards:   data.boards   || [],
-        randHistory: data.randHistory || []
+        teachers: data.teachers || [],
+        randHistory: data.randHistory || [],
+        className: typeof data.className==='string' ? data.className : ''
       };
+      hlIds=new Set(); lastPick=null; studentQueue=null; groupQueue=null; syncClassName();
       saveState(); renderAll();
       showToast('Відкрито: ' + data.students.length + ' студентів', 2500);
     } catch(err) {
@@ -824,8 +1043,8 @@ function handleFileOpen(e){
   function getOverlay(){
     if(!dropOverlay){
       dropOverlay = document.createElement('div');
-      dropOverlay.style.cssText='position:fixed;inset:0;background:rgba(79,107,244,.12);border:3px dashed #4F6BF4;border-radius:16px;z-index:9000;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .18s';
-      dropOverlay.innerHTML='<div style="background:#fff;border-radius:16px;padding:24px 40px;box-shadow:0 16px 48px rgba(0,0,0,.15);text-align:center"><div style="font-size:22px;font-weight:700;color:#4F6BF4;margin-bottom:6px">Відкрити файл класу</div><div style="font-size:14px;color:#6b7280">Відпусти .evclass файл тут</div></div>';
+      dropOverlay.style.cssText='position:fixed;inset:0;background:var(--accent-bg);border:3px dashed var(--accent);border-radius:16px;z-index:9000;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .18s';
+      dropOverlay.innerHTML='<div style="background:var(--surface);border-radius:16px;padding:24px 40px;box-shadow:var(--sh-lg);text-align:center"><div style="font-size:22px;font-weight:600;color:var(--accent);margin-bottom:6px">Відкрити файл класу</div><div style="font-size:14px;color:#6b7280">Відпусти .evclass файл тут</div></div>';
       document.body.appendChild(dropOverlay);
     }
     return dropOverlay;
@@ -850,8 +1069,8 @@ function handleFileOpen(e){
 /* ════════════════════════════════════════
    STUDENTS
 ════════════════════════════════════════ */
-function addStudent(){
-  const inp=document.getElementById('add-inp');
+function addStudent(srcId='add-inp'){
+  const inp=document.getElementById(srcId);
   const name=inp.value.trim(); if(!name) return;
   S.students.push({id:uid(),name});
   inp.value=''; saveState(); renderAll(); inp.focus();
@@ -870,7 +1089,7 @@ function startEditStudent(id, row){
   const orig=s.name;
   const inp=document.createElement('input');
   inp.value=orig;
-  inp.style.cssText='flex:1;border:none;border-bottom:1.5px solid var(--accent);background:transparent;font-family:Inter,sans-serif;font-size:13px;color:var(--text);outline:none;min-width:0;padding:0';
+  inp.style.cssText='flex:1;border:none;border-bottom:1.5px solid var(--accent);background:transparent;font-family:inherit;font-size:13px;color:var(--text);outline:none;min-width:0;padding:0';
   span.replaceWith(inp);
   inp.focus(); inp.select();
   function commit(){
@@ -975,6 +1194,7 @@ let cDragging=null; // {type:'desk'|'board', id, ox, oy}
 let ctxDesk=null;   // id of right-clicked desk
 let seatTarget=null; // {deskId, seatIdx} for assign dropdown
 let canvasEl, ctx2d;
+let cW=0, cH=0, cDpr=1; // логічний розмір полотна в CSS-пікселях
 
 function initCanvas(){
   canvasEl=document.getElementById('seats-canvas');
@@ -1011,13 +1231,15 @@ function onCanvasWheel(e){
 function resizeCanvas(){
   if(!canvasEl) return;
   const wrap=document.getElementById('seats-canvas-wrap');
-  canvasEl.width=wrap.clientWidth;
-  canvasEl.height=wrap.clientHeight;
+  // розмір у CSS-пікселях, а полотно — з урахуванням щільності екрана, щоб текст був чітким
+  cDpr=window.devicePixelRatio||1; cW=wrap.clientWidth; cH=wrap.clientHeight;
+  canvasEl.width=Math.round(cW*cDpr); canvasEl.height=Math.round(cH*cDpr);
+  canvasEl.style.width=cW+'px'; canvasEl.style.height=cH+'px';
   drawCanvas();
 }
 
 function zoomCanvas(delta){
-  const mx=canvasEl.width/2, my=canvasEl.height/2;
+  const mx=cW/2, my=cH/2;
   const oldZoom=cZoom;
   cZoom=Math.max(0.4,Math.min(2.5,cZoom+delta));
   cOffX=mx-(mx-cOffX)*(cZoom/oldZoom);
@@ -1085,7 +1307,8 @@ function toggleSnap(){
 /* ════════ DRAW ════════ */
 function drawCanvas(){
   if(!ctx2d) return;
-  const c=ctx2d, W=canvasEl.width, H=canvasEl.height;
+  const c=ctx2d, W=cW, H=cH;
+  c.setTransform(cDpr,0,0,cDpr,0,0);
   c.clearRect(0,0,W,H);
 
   if(snapEnabled) drawSnapGrid(c,W,H);
@@ -1181,7 +1404,7 @@ function drawBoard(c,b){
   c.shadowColor='transparent';
   // text
   c.fillStyle='#fff';
-  c.font=`600 ${Math.round(12*cZoom)}px Inter,sans-serif`;
+  c.font=`600 ${Math.round(12*cZoom)}px 'IBM Plex Sans',sans-serif`;
   c.textAlign='center'; c.textBaseline='middle';
   c.fillText(b.label||'Дошка', W/2, H/2);
   if(cZoom>0.7){
@@ -1213,7 +1436,7 @@ function drawTeacher(c,t){
     c.beginPath(); c.arc(cx2,cy2+7*cZoom,7*cZoom,0,Math.PI); c.fill();
     // label
     c.fillStyle='#92400e';
-    c.font=`600 ${Math.round(11*cZoom)}px Inter,sans-serif`;
+    c.font=`600 ${Math.round(11*cZoom)}px 'IBM Plex Sans',sans-serif`;
     c.textAlign='left'; c.textBaseline='middle';
     const label=t.label||'Викладач';
     c.fillText(clipText(c,label,W-38*cZoom), 36*cZoom, H/2);
@@ -1258,7 +1481,7 @@ function drawDesk(c,d){
   // header label
   if(cZoom>0.5){
     c.fillStyle=gCol?gCol:'#9ca3af';
-    c.font=`500 ${Math.round(10*cZoom)}px Inter,sans-serif`;
+    c.font=`500 ${Math.round(10*cZoom)}px 'IBM Plex Sans',sans-serif`;
     c.textAlign='center'; c.textBaseline='middle';
     const deskNum=S.desks.indexOf(d)+1;
     c.fillText(`Парта ${deskNum}`,W/2,hdr/2);
@@ -1275,26 +1498,36 @@ function drawDesk(c,d){
     const st=sid?studentById(sid):null;
     if(st){
       const si=S.students.indexOf(st)%8;
-      const [bg,fg]=AVCOL[si];
+      const tc=groupColorOfStudent(st.id);
+      const [bg,fg]=tc?[tc+'26',tc]:AVCOL[si];
+      // підсвічування того, кого щойно вибрав рандом
+      if(hlIds.has(st.id)){
+        c.fillStyle='rgba(35,55,168,.12)';
+        c.fillRect(2*cZoom,sy+2*cZoom,W-4*cZoom,sh-4*cZoom);
+        c.strokeStyle='#2337a8'; c.lineWidth=2.5;
+        roundRect(c,2*cZoom,sy+2*cZoom,W-4*cZoom,sh-4*cZoom,6*cZoom); c.stroke();
+      }
+      // смужка кольору команди біля учня
+      if(tc){ c.fillStyle=tc; roundRect(c,4*cZoom,sy+8*cZoom,3.5*cZoom,sh-16*cZoom,2*cZoom); c.fill(); }
       // avatar circle
       const r=12*cZoom, ax=22*cZoom, ay=sy+sh/2;
       c.beginPath(); c.arc(ax,ay,r,0,Math.PI*2);
       c.fillStyle=bg; c.fill();
       c.fillStyle=fg;
-      c.font=`600 ${Math.round(9*cZoom)}px Inter,sans-serif`;
+      c.font=`600 ${Math.round(9*cZoom)}px 'IBM Plex Sans',sans-serif`;
       c.textAlign='center'; c.textBaseline='middle';
       c.fillText(initials(st.name),ax,ay);
       // name
       if(cZoom>0.45){
-        c.fillStyle='#1a1d23';
-        c.font=`500 ${Math.round(11*cZoom)}px Inter,sans-serif`;
+        c.fillStyle=hlIds.has(st.id)?'#2337a8':'#1d2236';
+        c.font=`${hlIds.has(st.id)?600:500} ${Math.round(11*cZoom)}px 'IBM Plex Sans',sans-serif`;
         c.textAlign='left'; c.textBaseline='middle';
         const maxW=W-38*cZoom-10*cZoom;
         c.fillText(clipText(c,st.name,maxW), 38*cZoom, sy+sh/2);
       }
     } else {
       c.fillStyle='#d1d5db';
-      c.font=`400 ${Math.round(11*cZoom)}px Inter,sans-serif`;
+      c.font=`400 ${Math.round(11*cZoom)}px 'IBM Plex Sans',sans-serif`;
       c.textAlign='center'; c.textBaseline='middle';
       if(cZoom>0.5) c.fillText('— вільно —', W/2, sy+sh/2);
     }
@@ -1602,6 +1835,7 @@ function renderUnassigned(){
   const taken=new Set(S.desks.flatMap(d=>d.seats.filter(Boolean)));
   const ua=S.students.filter(s=>!taken.has(s.id));
   document.getElementById('unassigned-count').textContent=ua.length;
+  document.querySelector('.seats-right')?.classList.toggle('all-placed', !ua.length);
   const el=document.getElementById('unassigned-chips');
   if(!ua.length){ el.innerHTML=`<div style="padding:16px;font-size:12px;color:var(--subtle);text-align:center">Всі розміщені</div>`; return; }
   el.innerHTML=ua.map((s,i)=>{
@@ -1620,21 +1854,21 @@ function uaChipDragEnd(e){ e.target.style.opacity=''; }
 /* ════════ DESK / BOARD ADD ════════ */
 function addDesk(spp=2){
   pushUndo();
-  const wp=s2w(canvasEl.width/2-DESK_W/2, 80);
+  const wp=s2w(cW/2-DESK_W/2, 80);
   const nx=snap(wp.x+Math.random()*48-24), ny=snap(wp.y+Math.random()*48-24);
   S.desks.push({id:uid(),x:nx,y:ny,angle:0,spp,seats:Array(spp).fill(null)});
   saveState(); drawCanvas(); renderUnassigned();
 }
 function addBoard(){
   pushUndo();
-  const wp=s2w(canvasEl.width/2-BOARD_W/2,20);
+  const wp=s2w(cW/2-BOARD_W/2,20);
   S.boards.push({id:uid(),x:wp.x,y:wp.y,angle:0,label:'Дошка'});
   saveState(); drawCanvas();
 }
 
 function addTeacherDesk(){
   pushUndo();
-  const wp=s2w(canvasEl.width/2-TEACHER_W/2, 80);
+  const wp=s2w(cW/2-TEACHER_W/2, 80);
   const nx=snap(wp.x), ny=snap(wp.y);
   if(!S.teachers) S.teachers=[];
   S.teachers.push({id:uid(),x:nx,y:ny,angle:0,label:'Стіл викладача'});
@@ -1667,6 +1901,7 @@ function autoFillSeats(){
 
 /* ════════ TEMPLATES ════════ */
 function applyTemplate(name){
+  pushUndo();
   S.desks=[]; S.boards=[];
   const n=Math.max(S.students.length,6);
   if(name==='rows'){
@@ -1725,6 +1960,7 @@ let groupQueue=null;    // Set of group ids remaining
 
 function setRandMode(mode){
   randMode=mode;
+  document.getElementById('random-result').style.color='';
   document.getElementById('rs-student').classList.toggle('active',mode==='student');
   document.getElementById('rs-group').classList.toggle('active',mode==='group');
   document.getElementById('random-result').textContent='—';
@@ -1769,6 +2005,7 @@ function pickRandomStudent(){
       const w=remaining[Math.floor(Math.random()*remaining.length)];
       el.textContent=w.name;
       studentQueue.delete(w.id);
+      lastPick=w.name; hlIds=new Set([w.id]); drawCanvas();
       const left=studentQueue.size, total=S.students.length;
       if(left===0){
         sub.textContent='Всі студенти відповіли! Черга скинута';
@@ -1799,6 +2036,7 @@ function pickRandomGroup(){
       el.textContent=w.name;
       el.style.color=GCOL[gi%GCOL.length];
       groupQueue.delete(w.id);
+      lastPick=w.name; hlIds=new Set(w.memberIds); drawCanvas();
       const left=groupQueue.size, total=S.groups.length;
       if(left===0){
         sub.textContent='Всі команди вийшли! Черга скинута';
@@ -1812,6 +2050,7 @@ function pickRandomGroup(){
 }
 
 function resetRandQueue(){
+  hlIds=new Set(); lastPick=null; drawCanvas();
   if(randMode==='student'){
     studentQueue=new Set(S.students.map(s=>s.id));
   } else {
@@ -1901,11 +2140,15 @@ idrop.addEventListener('drop',e=>{e.preventDefault();idrop.classList.remove('dra
    TABS
 ════════════════════════════════════════ */
 function switchTab(name){
+  // план класу тепер завжди ліворуч, тож «Парти» лише відкривають робочий простір
+  if(name==='seats'){ openWork(); return; }
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById(`tab-${name}-btn`).classList.add('active');
   document.getElementById(`panel-${name}`).classList.add('active');
-  if(name==='seats'){ setTimeout(()=>{resizeCanvas();renderUnassigned();},30); }
+  document.getElementById('mini-timer').classList.toggle('hidden', name==='timer');
+  if(name==='students') renderStudentList();
+  updateTabBadge();
   if(name==='random'){ renderRandQueue(); }
   if(name==='timer'){ updateTimerUI(); }
 }
@@ -2189,6 +2432,7 @@ function updateTimerUI(){
   const mbtn=document.getElementById('timer-main-btn');
   const mlbl=document.getElementById('timer-main-label');
   const mico=document.getElementById('timer-main-icon');
+  syncTimerMirrors();
   // panel may be hidden — skip if key elements missing
   if(!dEl||!rEl||!lEl) return;
 
@@ -2227,6 +2471,15 @@ function updateTimerUI(){
   }
 }
 
+function syncTimerMirrors(){
+  const t=`${String(Math.floor(timerLeft/60)).padStart(2,'0')}:${String(timerLeft%60).padStart(2,'0')}`;
+  const label=timerLeft===0?'Ще раз':timerRunning?'Пауза':'Старт';
+  [['tile-timer-time','tile-timer-btn'],['mini-timer-time','mini-timer-btn']].forEach(([a,b])=>{
+    const ta=document.getElementById(a), tb=document.getElementById(b);
+    if(ta){ ta.textContent=t; ta.classList.toggle('danger', timerLeft<=5&&timerLeft>0); }
+    if(tb) tb.textContent=label;
+  });
+}
 function updateTabBadge(){
   const badge=document.getElementById('timer-tab-badge');
   if(!badge) return;
@@ -2253,6 +2506,7 @@ function toggleTimerSound(){
    RENDER ALL
 ════════════════════════════════════════ */
 function renderAll(){
+  renderHome();
   renderStudentList();
   renderGroups();
   drawCanvas();
@@ -2260,9 +2514,118 @@ function renderAll(){
 }
 
 /* ════════════════════════════════════════
+   ГОЛОВНА, РОБОЧИЙ ПРОСТІР, ТЕМА, МЕНЮ «ФАЙЛ»
+════════════════════════════════════════ */
+let hlIds=new Set();   // учні, підсвічені на плані після рандому
+let lastPick=null;     // останній вибраний учень чи команда
+function plural(n,one,few,many){ const a=n%10,b=n%100; return a===1&&b!==11?one:a>=2&&a<=4&&(b<12||b>14)?few:many; }
+
+function openWork(tab){
+  document.getElementById('home-view').classList.add('hidden');
+  document.getElementById('work-view').classList.remove('hidden');
+  document.getElementById('home-btn').classList.add('shown');
+  if(tab&&tab!=='seats') switchTab(tab);
+  requestAnimationFrame(()=>{ resizeCanvas(); fitPlan(); renderUnassigned(); });
+}
+function goHome(){
+  document.getElementById('work-view').classList.add('hidden');
+  document.getElementById('home-view').classList.remove('hidden');
+  document.getElementById('home-btn').classList.remove('shown');
+  renderHome();
+}
+// показати всі парти в межах поля, щойно план відкрито
+function fitPlan(){
+  if(!canvasEl||!cW) return;
+  const items=[...S.desks.map(d=>({x:d.x,y:d.y,w:DESK_W,h:deskHeight(d)})),...S.boards.map(b=>({x:b.x,y:b.y,w:BOARD_W,h:BOARD_H})),...(S.teachers||[]).map(t=>({x:t.x,y:t.y,w:TEACHER_W,h:TEACHER_H}))];
+  if(!items.length) return;
+  const x0=Math.min(...items.map(i=>i.x)), y0=Math.min(...items.map(i=>i.y));
+  const x1=Math.max(...items.map(i=>i.x+i.w)), y1=Math.max(...items.map(i=>i.y+i.h));
+  const pad=32, W=cW, H=cH;
+  cZoom=Math.max(0.4,Math.min(1.4,Math.min((W-pad*2)/(x1-x0||1),(H-pad*2)/(y1-y0||1))));
+  cOffX=(W-(x1-x0)*cZoom)/2-x0*cZoom; cOffY=(H-(y1-y0)*cZoom)/2-y0*cZoom;
+  document.getElementById('zoom-label').textContent=Math.round(cZoom*100)+'%';
+  drawCanvas();
+}
+
+let _homeRaf=0;
+function renderHomeSoon(){ cancelAnimationFrame(_homeRaf); _homeRaf=requestAnimationFrame(renderHome); }
+function renderHome(){
+  const n=S.students.length;
+  document.getElementById('home-student-count').textContent=n;
+  const chips=document.getElementById('home-chips');
+  chips.innerHTML=n?S.students.map((st,i)=>{
+    const tc=groupColorOfStudent(st.id);
+    const av=tc?`class="s-avatar tc" style="--tc:${tc}"`:`class="s-avatar ${AV[i%8]}"`;
+    return `<span class="hchip" ondblclick="startEditStudent('${st.id}',this)" title="Подвійний клік — перейменувати"><span ${av}>${initials(st.name)}</span><span class="s-name">${esc(st.name)}</span><button class="hchip-x" onclick="removeStudent('${st.id}')" title="Прибрати зі списку" aria-label="Прибрати ${esc(st.name)}">×</button></span>`;
+  }).join(''):'<p class="home-empty">Додай учнів по одному нижче або встав увесь список через «Імпорт списку».</p>';
+  // команди
+  const g=S.groups.length, members=S.groups.reduce((a,x)=>a+x.memberIds.length,0);
+  document.getElementById('tile-groups-sub').textContent=g?`${g} ${plural(g,'команда','команди','команд')} · ${members} з ${n} ${plural(n,'учня','учнів','учнів')} розподілено`:'Ще немає команд. Розподіл займе секунду';
+  document.querySelector('#tile-groups .btn-ghost-b').textContent=g?'Розподілити заново':'Розподілити на команди';
+  document.getElementById('tile-groups-bar').innerHTML=S.groups.map((x,i)=>`<i style="flex:${Math.max(1,x.memberIds.length)};background:${GCOL[i%8]}" title="${esc(x.name)}"></i>`).join('');
+  // парти
+  const seats=S.desks.reduce((a,d)=>a+d.spp,0), seated=new Set(S.desks.flatMap(d=>d.seats.filter(Boolean))).size;
+  document.getElementById('tile-seats-sub').textContent=S.desks.length?`${S.desks.length} ${plural(S.desks.length,'парта','парти','парт')} · розсаджено ${seated} з ${n}`+(S.groups.length?' · кольори — команди':''):'План класу ще порожній';
+  document.getElementById('tile-seats-actions').innerHTML=S.desks.length
+    ?`<button class="btn btn-solid" onclick="openWork()">Відкрити план</button><button class="btn btn-ghost-b" onclick="autoFillSeats()">Розсадити випадково</button>`
+    :`<button class="btn btn-solid" onclick="applyTemplate('rows');autoFillSeats();openWork()">Створити ряди парт</button><button class="btn btn-ghost-b" onclick="openWork()">Відкрити план</button>`;
+  document.getElementById('mini-plan').classList.toggle('hidden', !S.desks.length);
+  drawMiniPlan();
+  // рандом
+  const left=studentQueue?[...studentQueue].filter(id=>studentById(id)).length:n;
+  document.getElementById('tile-random-sub').textContent=n?`Відповіли ${n-left} з ${n}`:'Спершу додай учнів';
+  document.getElementById('tile-random-last').textContent=lastPick||'—';
+  // легенда команд на плані
+  document.getElementById('plan-legend').innerHTML=S.groups.map((x,i)=>`<span><i style="background:${GCOL[i%8]}"></i>${esc(x.name)}</span>`).join('');
+  syncTimerMirrors();
+}
+// мініатюра плану на плитці «Парти»
+function drawMiniPlan(){
+  const cv=document.getElementById('mini-plan'); if(!cv||!S.desks.length) return;
+  const dpr=window.devicePixelRatio||1, Wc=cv.clientWidth||300, Hc=96;
+  cv.width=Wc*dpr; cv.height=Hc*dpr;
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,Wc,Hc);
+  const items=[...S.desks.map(d=>({x:d.x,y:d.y,w:DESK_W,h:deskHeight(d)})),...S.boards.map(b=>({x:b.x,y:b.y,w:BOARD_W,h:BOARD_H}))];
+  const x0=Math.min(...items.map(i=>i.x)), y0=Math.min(...items.map(i=>i.y));
+  const x1=Math.max(...items.map(i=>i.x+i.w)), y1=Math.max(...items.map(i=>i.y+i.h));
+  const k=Math.min((Wc-16)/(x1-x0||1),(Hc-16)/(y1-y0||1)), ox=(Wc-(x1-x0)*k)/2, oy=(Hc-(y1-y0)*k)/2;
+  const P=(x,y)=>[ox+(x-x0)*k, oy+(y-y0)*k];
+  S.boards.forEach(b=>{ const [x,y]=P(b.x,b.y); c.save(); c.translate(x,y); c.rotate((b.angle||0)*Math.PI/180); c.fillStyle='#1d2236'; roundRect(c,0,0,BOARD_W*k,BOARD_H*k,3); c.fill(); c.restore(); });
+  S.desks.forEach(d=>{
+    const [x,y]=P(d.x,d.y); c.save(); c.translate(x,y); c.rotate((d.angle||0)*Math.PI/180);
+    const w=DESK_W*k, h=deskHeight(d)*k, hdr=DESK_H_BASE*k, sh=SEAT_H*k;
+    c.fillStyle='#ffffff'; c.strokeStyle='#bfc9d4'; c.lineWidth=1; roundRect(c,0,0,w,h,3); c.fill(); c.stroke();
+    d.seats.forEach((sid,i)=>{ const tc=sid?groupColorOfStudent(sid):null; c.fillStyle=tc||(sid?'#8a93a6':'#e8edf1'); roundRect(c,2,hdr+i*sh+1.5,w-4,sh-3,2); c.fill(); });
+    c.restore();
+  });
+}
+
+function syncClassName(){
+  const inp=document.getElementById('class-name'); if(inp&&document.activeElement!==inp) inp.value=S.className||'';
+  document.title=(S.className?S.className+' · ':'')+'Менеджер класу · Edvault';
+}
+document.getElementById('class-name').addEventListener('input',e=>{ S.className=e.target.value; localStorage.setItem('ev-cm3',JSON.stringify(S)); syncClassName(); });
+
+function toggleFileMenu(e){ e.stopPropagation(); document.getElementById('file-menu').classList.toggle('open'); }
+function closeFileMenu(){ document.getElementById('file-menu').classList.remove('open'); }
+document.addEventListener('click',e=>{ if(!e.target.closest('.file-wrap')) closeFileMenu(); });
+
+const THEME_IC={sun:'<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3.5" stroke="currentColor" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',moon:'<svg viewBox="0 0 20 20" fill="none"><path d="M17 11.5A7 7 0 118.5 3a5.5 5.5 0 008.5 8.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>'};
+function applyTheme(dark){
+  document.documentElement.setAttribute('data-theme', dark?'dark':'light');
+  try{ localStorage.setItem('edvault-theme', dark?'dark':'light'); }catch(e){}
+  document.getElementById('theme-btn').innerHTML=dark?THEME_IC.sun:THEME_IC.moon;
+  const mt=document.querySelector('meta[name="theme-color"]'); if(mt) mt.content=dark?'#1e1e1e':'#1c2869';
+}
+function toggleTheme(){ applyTheme(document.documentElement.getAttribute('data-theme')!=='dark'); }
+applyTheme(document.documentElement.getAttribute('data-theme')==='dark');
+window.addEventListener('resize',()=>{ if(!document.getElementById('home-view').classList.contains('hidden')) drawMiniPlan(); });
+
+/* ════════════════════════════════════════
    INIT
 ════════════════════════════════════════ */
 loadState();
+syncClassName();
 renderAll();
 // timer UI updates when tab is opened via switchTab
 
@@ -2272,15 +2635,17 @@ setTimeout(()=>{
   // snap ON by default — mark button active
   const sb=document.getElementById('snap-btn');
   if(sb) sb.classList.add('btn-outline');
+  // полотно малює текст шрифтом сторінки, тож перемальовуємо, коли шрифти довантажились
+  if(document.fonts) document.fonts.ready.then(()=>{ drawCanvas(); drawMiniPlan(); });
 }, 80);
 
 // keyboard
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
-    closeModal('import-modal'); closeContextMenu(); closeSeatDD();
+    closeModal('import-modal'); closeContextMenu(); closeSeatDD(); closeFileMenu();
     selectedIds.clear(); drawCanvas();
   }
-  if(e.code==='Space'&&document.getElementById('panel-random').classList.contains('active')){ e.preventDefault(); pickRandom(); }
+  if(e.code==='Space'&&!e.target.matches('input,textarea')&&!document.getElementById('work-view').classList.contains('hidden')&&document.getElementById('panel-random').classList.contains('active')){ e.preventDefault(); pickRandom(); }
   if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey&&!e.target.matches('input,textarea')){ e.preventDefault(); doUndo(); }
   if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))&&!e.target.matches('input,textarea')){ e.preventDefault(); doRedo(); }
   if((e.ctrlKey||e.metaKey)&&e.key==='d'&&selectedIds.size>0&&!e.target.matches('input,textarea')){
@@ -2399,6 +2764,7 @@ function renderTasks(){
   const total=tasks.length;
 
   if(badge) badge.textContent=total;
+  const tb=document.getElementById('tasks-top-count'); if(tb){ tb.textContent=total-done; tb.style.display=total-done?'':'none'; }
   if(bar){ bar.style.width=total?Math.round(done/total*100)+'%':'0%'; }
   if(stats) stats.textContent=`${done} / ${total}`;
 
@@ -2469,7 +2835,7 @@ document.getElementById('dialog-modal').addEventListener('click',function(e){if(
 
 
 <!-- TASKS TOGGLE BUTTON -->
-<button class="tasks-toggle" id="tasks-toggle-btn" onclick="toggleTasksPanel()" data-tip="Завдання уроку">
+<button class="tasks-toggle" hidden id="tasks-toggle-btn" onclick="toggleTasksPanel()" data-tip="Завдання уроку">
   <svg viewBox="0 0 20 20" fill="none"><path d="M5 10l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/></svg>
   <span id="tasks-toggle-count" style="background:rgba(255,255,255,.25);border-radius:999px;padding:1px 6px;font-size:10px">0</span>
 </button>
