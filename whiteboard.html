@@ -888,6 +888,11 @@
     box-shadow: 0 8px 24px rgba(28,40,105,.10), 0 1px 3px rgba(28,40,105,.08);
   }
   .page-strip::-webkit-scrollbar { display: none; }
+  .page-strip.fade-r { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); }
+  .page-strip.fade-l { -webkit-mask-image: linear-gradient(90deg, transparent, #000 28px); mask-image: linear-gradient(90deg, transparent, #000 28px); }
+  .page-strip.fade-l.fade-r { -webkit-mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); }
+  .page-strip.dragging { cursor: grabbing; }
+  .page-strip.dragging .page-pill { pointer-events: none; }
   :root[data-theme="dark"] .page-strip { box-shadow: 0 10px 28px rgba(0,0,0,.45); }
   .page-strip .strip-hint { display: none; }
   .page-pill { padding: 3px 8px 3px 3px; border-radius: 9px; border-color: transparent; gap: 6px; font-size: 12px; }
@@ -1571,7 +1576,54 @@
     });
     const countEl = document.getElementById('pageCountVal');
     if (countEl) countEl.textContent = state.pages.length;
+    revealActivePill();
     Persist.schedule();
+  }
+
+  // стрічка сторінок: прокручування коліщатком, перетягуванням мишею і тінь-підказка з боку, де є ще сторінки
+  function updateStripEdges() {
+    const max = stripEl.scrollWidth - stripEl.clientWidth;
+    stripEl.classList.toggle('fade-l', stripEl.scrollLeft > 2);
+    stripEl.classList.toggle('fade-r', stripEl.scrollLeft < max - 2);
+  }
+  function revealActivePill() {
+    requestAnimationFrame(() => {
+      const pill = stripEl.querySelector('.page-pill.active');
+      if (pill) {
+        // остання сторінка: показуємо й кнопку «+» за нею
+        const l = pill.offsetLeft - 8, r = pill.nextElementSibling === stripAddBtn ? stripEl.scrollWidth : pill.offsetLeft + pill.offsetWidth + 8;
+        if (l < stripEl.scrollLeft) stripEl.scrollLeft = l;
+        else if (r > stripEl.scrollLeft + stripEl.clientWidth) stripEl.scrollLeft = r - stripEl.clientWidth;
+      }
+      updateStripEdges();
+    });
+  }
+  stripEl.addEventListener('scroll', updateStripEdges, { passive: true });
+  window.addEventListener('resize', updateStripEdges);
+  stripEl.addEventListener('wheel', (e) => {
+    if (stripEl.scrollWidth <= stripEl.clientWidth) return;
+    const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    e.preventDefault();
+    stripEl.scrollLeft += d * (e.deltaMode === 1 ? 32 : 1);
+  }, { passive: false });
+  {
+    let drag = null, moved = false;
+    stripEl.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      drag = { x: e.clientX, left: stripEl.scrollLeft }; moved = false;
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x;
+      if (!moved && Math.abs(dx) > 5) { moved = true; stripEl.classList.add('dragging'); }
+      if (moved) stripEl.scrollLeft = drag.left - dx;
+    });
+    window.addEventListener('pointerup', () => {
+      if (!drag) return;
+      drag = null; stripEl.classList.remove('dragging');
+    });
+    // після перетягування не вмикаємо сторінку, на якій відпустили мишу
+    stripEl.addEventListener('click', (e) => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
   }
 
   // ── мініатюра сторінки для смуги знизу (додано): компонує 3 растрові шари в маленький canvas ──
@@ -3390,8 +3442,9 @@
       return;
     }
     if (mod || e.altKey) return;
-    // у презентації — гортання сторінок стрілками / PageUp / PageDown
-    if (appEl.classList.contains('presentation-mode') && ['ArrowRight', 'ArrowDown', 'PageDown', 'ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+    // стрілки вліво / вправо гортають сторінки; у презентації ще й вгору / вниз і PageUp / PageDown
+    if (['ArrowRight', 'ArrowLeft'].includes(e.key) || (appEl.classList.contains('presentation-mode') && ['ArrowDown', 'PageDown', 'ArrowUp', 'PageUp'].includes(e.key))) {
+      if (e.target && e.target.isContentEditable) return;
       e.preventDefault();
       gotoAdjacentPage(['ArrowRight', 'ArrowDown', 'PageDown'].includes(e.key) ? 1 : -1);
       return;
