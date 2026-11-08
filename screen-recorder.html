@@ -1080,34 +1080,23 @@ body.recording .rec-chip{display:inline-flex}
   $('btnNew').addEventListener('click', newRecording);
   $('btnEdit').addEventListener('click', openInEditor);
 
-  // Передаємо запис у відеоредактор через IndexedDB — без завантаження файлу
-  function handoffPut(key, value) {
-    return new Promise((res, rej) => {
-      const r = indexedDB.open('edvault-handoff', 1);
-      r.onupgradeneeded = () => { if (!r.result.objectStoreNames.contains('files')) r.result.createObjectStore('files'); };
-      r.onerror = () => rej(r.error);
-      r.onsuccess = () => {
-        const t = r.result.transaction('files', 'readwrite');
-        t.objectStore('files').put(value, key);
-        t.oncomplete = () => res();
-        t.onerror = () => rej(t.error);
-      };
-    });
-  }
+  const EDITOR_URL = 'https://videocut.edvault.online/', EDITOR_ORIGIN = 'https://videocut.edvault.online';
   async function openInEditor() {
     if (!result || !result.blob) return;
-    const url = 'videocut.html?import=recording';
-    const w = window.open('about:blank', '_blank'); // відкриваємо одразу, інакше браузер заблокує вікно
-    try {
-      let name = $('fileName').value.trim().replace(/[\\/:*?"<>|]+/g, '-') || defaultName();
-      if (!name.toLowerCase().endsWith(result.ext)) name += result.ext;
-      await handoffPut('recording', { blob: result.blob, name });
-      if (w) w.location.href = url;
-      else { result.saved = true; location.href = url; }
-    } catch (e) {
-      if (w) w.close();
-      toast('Не вдалося передати запис у редактор — завантажте файл і відкрийте його там', 'err', 6000);
-    }
+    // Редактор живе на власному піддомені, тож спільного сховища немає: відкриваємо його й відправляємо файл повідомленням,
+    // коли він скаже, що готовий. Приймаємо відповідь лише від вікна редактора з його адреси.
+    const w = window.open(EDITOR_URL + '?import=recording', '_blank'); // відкриваємо одразу, інакше браузер заблокує вікно
+    if (!w) { toast('Браузер заблокував нове вікно — дозвольте його або завантажте файл і відкрийте в редакторі', 'err', 6000); return; }
+    let name = $('fileName').value.trim().replace(/[\\/:*?"<>|]+/g, '-') || defaultName();
+    if (!name.toLowerCase().endsWith(result.ext)) name += result.ext;
+    const blob = result.blob;
+    const on = e => {
+      if (e.source !== w || e.origin !== EDITOR_ORIGIN || !e.data || e.data.type !== 'videocut:ready') return;
+      removeEventListener('message', on); clearTimeout(t);
+      w.postMessage({ type: 'videocut:file', blob, name }, EDITOR_ORIGIN);
+    };
+    const t = setTimeout(() => { removeEventListener('message', on); toast('Редактор не відповів — завантажте файл і відкрийте його там', 'err', 6000); }, 30000);
+    addEventListener('message', on);
   }
   $('fileName').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); download(); } });
 

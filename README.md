@@ -9,7 +9,7 @@
 | `vote.html` | Голосування за кращу роботу з підрахунком наживо |
 | `class-manager.html` | Менеджер класу: учні, розклад, відвідуваність і оцінки |
 | `screen-recorder.html` | Запис екрана з мікрофоном і веб-камерою, MP4 або WebM |
-| `videocut.html` | Відеоредактор: різання, текст, субтитри, музика, експорт у MP4 |
+| `videocut.html` | Перенаправлення на відеоредактор, який тепер живе окремо: [videocut.edvault.online](https://videocut.edvault.online/) (репозиторій `videocut-edvault`) |
 | `snap-editor.html` | Редактор фото й скриншотів: стрілки, текст, розмиття, кроки |
 | `image-convert.html` | Конвертер зображень: JPG, PNG, WebP, AVIF, SVG, ICO |
 | `text-craft.html` | Текстовий редактор з блоками, шаблонами й експортом |
