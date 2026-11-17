@@ -211,6 +211,7 @@
   .anchor-grid button { width: 28px; height: 28px; border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface2); cursor: pointer; }
   .anchor-grid button.active { background: var(--accent); border-color: var(--accent); }
   .check-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); font-weight: 600; cursor: pointer; margin-top: 10px; }
+  #optbar .check-row { margin-top: 0; }
   .check-row input { width: 16px; height: 16px; accent-color: var(--accent); }
   .seg { display: flex; flex-wrap: wrap; gap: 6px; }
   .seg button {
@@ -350,6 +351,35 @@
     display: flex; flex-direction: column; gap: 16px;
   }
   .pal-actions [hidden], .ref-ctrl[hidden] { display: none !important; }
+  .frame-num { bottom: 17px !important; }
+  .anim-row.col { flex-direction: column; align-items: stretch; gap: 6px; }
+  .anim-row.col .mini-seg { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .anim-row.col .mini-seg button { white-space: nowrap; }
+  .right-panel { scrollbar-width: thin; }
+  .frame-tagbar { height: 11px; margin-top: 4px; border-radius: 4px; font: 700 8.5px/11px 'JetBrains Mono', monospace; padding: 0 4px; color: #fff; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .frame-tagbar.none { background: transparent !important; }
+  .frame-tagbar.dim { opacity: .55; }
+  .frame-dur { position: absolute; left: 4px; top: 4px; font: 700 8.5px 'JetBrains Mono', monospace; color: #fff; background: rgba(0,0,0,.55); border-radius: 4px; padding: 0 3px; pointer-events: none; }
+  .frames-list { align-items: flex-start !important; }
+  .frame-add { align-self: flex-start; }
+  .anim-opts { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .anim-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 600; color: var(--text2); }
+  .anim-row .num-input { width: 74px; padding: 5px 8px; font: 600 12px 'JetBrains Mono', monospace; }
+  .anim-row .mini-seg button { padding: 4px 8px; font-size: 11.5px; width: auto; height: auto; }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+  .tag-chip { display: inline-flex; align-items: center; border-radius: 999px; border: 1px solid var(--border2); background: var(--surface); overflow: hidden; font-size: 11.5px; font-weight: 700; color: var(--text2); }
+  .tag-chip button { border: 0; background: none; color: inherit; font: inherit; cursor: pointer; padding: 3px 8px; display: inline-flex; align-items: center; gap: 5px; }
+  .tag-chip button:hover { background: var(--surface2); }
+  .tag-chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .tag-chip i { font: 600 10px 'JetBrains Mono', monospace; color: var(--muted); font-style: normal; }
+  .tag-chip .tag-edit { padding: 3px 6px; border-left: 1px solid var(--border); }
+  .tag-chip .tag-edit svg { width: 11px; height: 11px; }
+  .tag-chip.on { border-color: var(--accent); background: var(--accent-light); color: var(--text); }
+  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--text2); margin-top: 8px; }
+  .set-row .num-input { width: 56px; padding: 5px 8px; font: 600 12px 'JetBrains Mono', monospace; }
+  .set-row input[type=range] { flex: 1; accent-color: var(--accent); min-width: 0; }
+  .sheet-prev { margin-top: 10px; display: flex; justify-content: center; background: repeating-conic-gradient(#e9ebef 0 25%, #f7f8fa 0 50%) 0 0 / 12px 12px; border-radius: 10px; padding: 8px; }
+  .sheet-prev canvas { max-width: 100%; max-height: 260px; image-rendering: pixelated; }
   .ramp-row { display: flex; gap: 3px; margin-top: 8px; }
   .ramp-row button { flex: 1; height: 20px; border-radius: 5px; border: 1px solid rgba(0,0,0,.12); cursor: pointer; padding: 0; }
   .ramp-row button.mid { outline: 2px solid var(--accent); outline-offset: 1px; }
@@ -446,6 +476,8 @@
   .size-line { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; color: var(--text); }
 
   @media (max-width: 900px) {
+    .palette-grid { grid-template-columns: repeat(auto-fill, minmax(34px, 1fr)); }
+    .ramp-row button { height: 26px; }
     .ed-main { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(260px, 1fr) auto; }
     .toolbar-left { flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); overflow-x: auto; overflow-y: hidden; padding: 6px 8px; }
     .tb-sep { width: 1px; height: auto; margin: 4px 2px; }
@@ -715,6 +747,11 @@
           </div>
           <span class="opt-hint" id="frames-info"></span>
         </div>
+        <div class="anim-opts">
+          <div class="anim-row"><span id="fdur-label">Тривалість кадру</span><span><input class="num-input" id="fdur" type="number" min="10" max="10000" step="10" title="Скільки мілісекунд показується поточний кадр"> мс <button class="mini-btn" id="fdur-all" title="Однакова тривалість для всіх кадрів">Всім</button></span></div>
+          <div class="anim-row col"><span>Порядок</span><div class="mini-seg" id="dir-seg"><button data-d="fwd" title="Від першого до останнього">Вперед</button><button data-d="rev" title="Від останнього до першого">Назад</button><button data-d="pp" title="Вперед і назад без повтору крайніх кадрів">Туди-назад</button></div></div>
+          <div class="tag-list" id="tag-list"></div>
+        </div>
       </div>
 
       <details class="rp-more">
@@ -729,6 +766,9 @@
         <div class="size-line" id="size-line">16 × 16</div>
         <button class="wide-btn" id="resize-btn"></button>
         <label class="toggle-row"><span>Сітка</span><span class="switch"><input type="checkbox" id="grid-toggle" checked><span class="slider"></span></span></label>
+        <label class="toggle-row" title="Показати спрайт повтореним навколо, щоб перевірити безшовність"><span>Плитка 3×3 навколо полотна</span><span class="switch"><input type="checkbox" id="tile-toggle"><span class="slider"></span></span></label>
+        <div class="set-row"><span>Калька: назад</span><input class="num-input" id="onion-b" type="number" min="0" max="4" value="1"><span>вперед</span><input class="num-input" id="onion-a" type="number" min="0" max="4" value="1"></div>
+        <div class="set-row"><span>Яскравість кальки</span><input type="range" id="onion-op" min="10" max="70" step="5" value="30"></div>
         <div class="ref-box">
           <button class="wide-btn" id="ref-btn"></button>
           <div class="ref-ctrl" id="ref-ctrl" hidden>
@@ -767,8 +807,8 @@
     ellipse: '<ellipse cx="12" cy="12" rx="9" ry="7"/>',
     select: '<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M11 4h2M11 20h2M4 11v2M20 11v2"/>',
     shade: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor"/>',
-    mirrorX: '<path d="M12 3v18" stroke-dasharray="2 2.5"/><path d="M9 7 4 12l5 5Z"/><path d="m15 7 5 5-5 5Z"/>',
-    mirrorY: '<path d="M3 12h18" stroke-dasharray="2 2.5"/><path d="M7 9l5-5 5 5Z"/><path d="m7 15 5 5 5-5Z"/>',
+    mirrorX: '<path d="M12 3v18" stroke-dasharray="1.5 3"/><path d="M9 8 4 12l5 4V8Z"/><path d="m15 8 5 4-5 4V8Z"/>',
+    mirrorY: '<path d="M3 12h18" stroke-dasharray="1.5 3"/><path d="M8 9l4-5 4 5H8Z"/><path d="m8 15 4 5 4-5H8Z"/>',
     undo: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
     redo: '<path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/>',
     upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
@@ -803,8 +843,8 @@
     filled: '<rect x="4" y="5" width="16" height="14" rx="1" fill="currentColor"/>',
     wand: '<path d="m4 20 11-11"/><path d="m14 4 1 2 2 1-2 1-1 2-1-2-2-1 2-1Z"/><path d="m19 12 .6 1.3 1.4.7-1.4.7L19 16l-.6-1.3-1.4-.7 1.4-.7Z"/>',
     lasso: '<path d="M12 4c5 0 9 2 9 5.5S17 15 12 15 3 13 3 9.5 7 4 12 4Z" stroke-dasharray="3 2.5"/><path d="M8 15c-1 2 0 4 2.5 4 1.5 0 2-1 2-2"/>',
-    dither: '<rect x="4" y="4" width="4" height="4" fill="currentColor"/><rect x="12" y="4" width="4" height="4" fill="currentColor"/><rect x="8" y="8" width="4" height="4" fill="currentColor"/><rect x="16" y="8" width="4" height="4" fill="currentColor"/><rect x="4" y="12" width="4" height="4" fill="currentColor"/><rect x="12" y="12" width="4" height="4" fill="currentColor"/><rect x="8" y="16" width="4" height="4" fill="currentColor"/><rect x="16" y="16" width="4" height="4" fill="currentColor"/>',
-    gradient: '<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M7 9v6M11 9v6M15 9v6" opacity=".7"/><path d="M17.5 9v6" opacity=".3"/>',
+    dither: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01" stroke-width="3.2"/>',
+    gradient: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 7.5v9"/><path d="M12 7.5v9" opacity=".6"/><path d="M16 7.5v9" opacity=".3"/>',
     eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
     eyeOff: '<path d="M17.94 17.94A10.1 10.1 0 0 1 12 19c-6.4 0-10-7-10-7a18 18 0 0 1 5.06-5.94M9.9 4.24A9.1 9.1 0 0 1 12 4c6.4 0 10 7 10 7a18 18 0 0 1-2.16 3.19M1 1l22 22"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>',
     merge: '<path d="M8 4v6a4 4 0 0 0 4 4 4 4 0 0 1 4 4v2"/><path d="M16 4v6a4 4 0 0 1-4 4"/><path d="m13 19 3 3 3-3"/>',
@@ -853,6 +893,15 @@
   let mirrorX = false, mirrorY = false;
   let showGrid = true, showMajor = true;
   let onion = false;
+  // анімація: тривалість кадрів (мс, 0 — за замовчуванням з кадр/с), теги, напрямок, налаштування кальки
+  let durs = [], tags = [], playDir = 'fwd', activeTag = null;
+  let onionB = 1, onionA = 1, onionOp = .3, tileMode = false;
+  const TAG_COLORS = ['#4f6bf4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'];
+  const DIRS = { fwd: 'Вперед', rev: 'Назад', pp: 'Туди-назад' };
+  const VIEW_KEY = 'edvault-sprite-view';
+  const clamp0 = (v, a, b) => Math.max(a, Math.min(b, v));
+  try{ const v = JSON.parse(localStorage.getItem(VIEW_KEY) || '{}'); if(v){ onionB = clamp0(+v.onionB, 0, 4); onionA = clamp0(+v.onionA, 0, 4); if(v.onionOp >= .1 && v.onionOp <= .7) onionOp = v.onionOp; if(isNaN(onionB)) onionB = 1; if(isNaN(onionA)) onionA = 1; } }catch(e){}
+  function saveView(){ try{ localStorage.setItem(VIEW_KEY, JSON.stringify({ onionB, onionA, onionOp })); }catch(e){} }
   let fps = 8;
   let previewPlaying = true;
   let canvasPlaying = false;
@@ -1048,7 +1097,21 @@
     const ls = layers.map(L => ({ name: L.name, visible: L.visible, opacity: L.opacity, frames: encCels(L.cels) }));
     return { v:3, palette: pal, layers: ls, active: curLayer };
   }
-  function decodeSprite(s){
+  function normAnim(a, n){
+    a = a || {};
+    const d = Array.from({ length: n }, (_, i) => { const v = +(a.durs && a.durs[i]); return v > 0 ? clamp(Math.round(v), 10, 10000) : 0; });
+    const t = (Array.isArray(a.tags) ? a.tags : []).map(x => ({ id: String(x.id || newId()), name: String(x.name || 'Тег').slice(0, 24), from: clamp(+x.from | 0, 0, n - 1), to: clamp(+x.to | 0, 0, n - 1), dir: DIRS[x.dir] ? x.dir : 'fwd' }))
+      .map(x => x.to < x.from ? { ...x, from: x.to, to: x.from } : x).slice(0, 12);
+    return { durs: d, tags: t, dir: DIRS[a.dir] ? a.dir : 'fwd' };
+  }
+  function animData(){
+    padDurs();
+    const d = durs.slice(0, frameCount());
+    if(!d.some(v => v > 0) && !tags.length && playDir === 'fwd') return null;
+    return { durs: d.some(v => v > 0) ? d : undefined, tags: tags.length ? tags.map(t => ({ ...t })) : undefined, dir: playDir === 'fwd' ? undefined : playDir };
+  }
+  function decodeSprite(s){ const d = decodeSpriteBase(s); d.anim = normAnim(s.anim, d.frames.length); return d; }
+  function decodeSpriteBase(s){
     let w = s.width || s.gridSize || 16, h = s.height || s.gridSize || 16;
     let fr;
     const dec = strs => strs.map(str => {
@@ -1082,10 +1145,11 @@
   // ---------- History ----------
   // A snapshot keeps references to the frame arrays; any edit first replaces
   // the touched frame with a copy (beginChange), so snapshots stay intact.
-  function snapshot(){ return { W, H, cur, curLayer, layers: layers.map(layerCelsCopy) }; }
+  function snapshot(){ return { W, H, cur, curLayer, layers: layers.map(layerCelsCopy), durs: durs.slice(), tags: tags.map(t => ({ ...t })), dir: playDir }; }
   function restore(s){
     W = s.W; H = s.H; layers = s.layers.map(layerCelsCopy);
     cur = Math.min(s.cur, frameCount() - 1); curLayer = Math.min(s.curLayer, layers.length - 1);
+    durs = (s.durs || []).slice(); tags = (s.tags || []).map(t => ({ ...t })); playDir = s.dir || 'fwd';
     recompAll();
   }
   function beginChange(allFrames){
@@ -1294,13 +1358,20 @@
       ctx.save(); ctx.globalAlpha = refOpacity; ctx.imageSmoothingEnabled = true; ctx.drawImage(refImg, ox + (w - rw) / 2, oy + (h - rh) / 2, rw, rh); ctx.restore();
     }
     if(!canvasPlaying) recomp(cur);
-    const shown = canvasPlaying ? frames[playIndex % frames.length] : frames[cur];
+    const shown = canvasPlaying ? frames[playFrame()] : frames[cur];
 
     if(onion && !canvasPlaying && frames.length > 1){
-      const prev = frames[(cur - 1 + frames.length) % frames.length];
-      ctx.globalAlpha = .3; ctx.drawImage(frameBitmap(prev), ox, oy, w, h);
-      if(frames.length > 2){ const next = frames[(cur + 1) % frames.length]; ctx.globalAlpha = .12; ctx.drawImage(frameBitmap(next), ox, oy, w, h); }
+      const n = frames.length, seen = new Set([cur]);
+      const ghost = (k, dirn, base) => { const j = (((cur + dirn * k) % n) + n) % n; if(seen.has(j)) return; seen.add(j); ctx.globalAlpha = base * Math.pow(.6, k - 1); ctx.drawImage(frameBitmap(frames[j]), ox, oy, w, h); };
+      for(let k = onionB; k >= 1; k--) ghost(k, -1, onionOp);
+      for(let k = 1; k <= onionA; k++) ghost(k, 1, onionOp * .6);
       ctx.globalAlpha = 1;
+    }
+    if(tileMode){ // сусідні плитки: перевірка безшовності повтору
+      const bm = frameBitmap(shown); ctx.globalAlpha = .55;
+      for(let dy = -1; dy <= 1; dy++) for(let dx = -1; dx <= 1; dx++) if(dx || dy) ctx.drawImage(bm, ox + dx * w, oy + dy * h, w, h);
+      ctx.globalAlpha = 1;
+      ctx.save(); ctx.strokeStyle = 'rgba(128,128,128,.5)'; ctx.setLineDash([4, 4]); ctx.strokeRect(ox - w + .5, oy - h + .5, w * 3, h * 3); ctx.restore();
     }
     ctx.drawImage(frameBitmap(shown), ox, oy, w, h);
 
@@ -2113,6 +2184,12 @@
       acts.querySelector('.fa-dup').onclick = e => { e.stopPropagation(); duplicateFrame(i); };
       const del = acts.querySelector('.fa-del'); if(del) del.onclick = e => { e.stopPropagation(); deleteFrame(i); };
       item.appendChild(acts);
+      const dms = durs[i] > 0 ? durs[i] : 0;
+      if(dms){ const b = document.createElement('span'); b.className = 'frame-dur'; b.textContent = dms + 'мс'; b.title = 'Тривалість кадру'; item.appendChild(b); }
+      const tg = tags.filter(t => i >= t.from && i <= t.to), bar = document.createElement('div');
+      bar.className = 'frame-tagbar' + (tg.length ? '' : ' none') + (tg.length && activeTag && !tg.some(t => t.id === activeTag) ? ' dim' : '');
+      if(tg.length){ bar.style.background = tagColor(tg[0]); bar.title = tg.map(t => t.name + ' (' + DIRS[t.dir] + ')').join(', '); if(tg.some(t => t.from === i)) bar.textContent = tg[0].name; }
+      item.appendChild(bar);
       // drag to reorder
       item.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', String(i)); e.dataTransfer.effectAllowed = 'move'; });
       item.addEventListener('dragover', e => {
@@ -2139,6 +2216,7 @@
     $('frames-info').textContent = frames.length > 1 ? `${frames.length} ${plural(frames.length, 'кадр', 'кадри', 'кадрів')}` : '1 кадр';
     const active = framesList.querySelector('.frame-thumb.active');
     if(active) active.scrollIntoView({ block:'nearest', inline:'nearest' });
+    updateAnimUi();
   }
   function updateFrameThumb(i){
     const t = framesList.querySelectorAll('.frame-thumb')[i];
@@ -2152,9 +2230,27 @@
     if(canvasPlaying) stopCanvasPlay();
     cur = i; renderFrames(); updateOptbar(); render();
   }
+  // тривалості й теги йдуть за кадрами при вставці, видаленні, переміщенні
+  function padDurs(){ const n = frameCount(); while(durs.length < n) durs.push(0); if(durs.length > n) durs.length = n; }
+  function framesInserted(at, dur){
+    padDurs(); durs.splice(at, 0, dur || 0);
+    tags.forEach(t => { if(t.from >= at) t.from++; if(t.to >= at) t.to++; });
+  }
+  function framesRemoved(at){
+    padDurs(); durs.splice(at, 1);
+    tags.forEach(t => { if(t.from > at) t.from--; if(t.to >= at) t.to--; });
+    tags = tags.filter(t => t.to >= t.from && t.to >= 0);
+    if(activeTag && !tags.some(t => t.id === activeTag)) activeTag = null;
+  }
+  function framesMoved(from, to){
+    padDurs(); const [d] = durs.splice(from, 1); durs.splice(to, 0, d);
+    const map = i => i === from ? to : (from < to ? (i > from && i <= to ? i - 1 : i) : (i >= to && i < from ? i + 1 : i));
+    tags.forEach(t => { const a = map(t.from), b = map(t.to); t.from = Math.min(a, b); t.to = Math.max(a, b); });
+  }
   function addFrame(){
     commitFloat(); sel = null;
     beginChange();
+    framesInserted(cur + 1, 0);
     layers.forEach(L => L.cels.splice(cur + 1, 0, blank()));
     cur++;
     afterStructureChange();
@@ -2162,6 +2258,7 @@
   function duplicateFrame(i){
     commitFloat(); sel = null;
     beginChange();
+    padDurs(); framesInserted(i + 1, durs[i]);
     layers.forEach(L => L.cels.splice(i + 1, 0, L.cels[i].slice()));
     cur = i + 1;
     afterStructureChange();
@@ -2170,6 +2267,7 @@
     if(frames.length <= 1) return;
     commitFloat(); sel = null;
     beginChange();
+    framesRemoved(i);
     layers.forEach(L => L.cels.splice(i, 1));
     cur = clamp(cur > i ? cur - 1 : cur, 0, frameCount() - 1);
     afterStructureChange();
@@ -2178,19 +2276,34 @@
   function moveFrame(from, to){
     commitFloat(); sel = null;
     beginChange();
+    framesMoved(from, to);
     layers.forEach(L => { const [f] = L.cels.splice(from, 1); L.cels.splice(to, 0, f); });
     cur = to;
     afterStructureChange();
   }
 
   // ---------- Playback ----------
-  let playIndex = 0, playTimer = null, previewIndex = 0;
+  let playTimer = null, previewIndex = 0;
   const playBtn = $('play-btn'), onionBtn = $('onion-btn');
+  const tagColor = t => TAG_COLORS[Math.max(0, tags.indexOf(t)) % TAG_COLORS.length];
+  const frameMs = i => durs[i] > 0 ? durs[i] : Math.round(1000 / fps);
+  // порядок показу кадрів: тег або всі кадри, з урахуванням напрямку (вперед / назад / туди-назад)
+  function seqFor(tag, dir){
+    const n = frames.length; let a = 0, b = n - 1;
+    if(tag){ a = clamp(tag.from, 0, n - 1); b = clamp(tag.to, a, n - 1); dir = tag.dir || 'fwd'; }
+    const r = []; for(let i = a; i <= b; i++) r.push(i);
+    if(dir === 'rev') r.reverse();
+    else if(dir === 'pp' && r.length > 2) for(let i = r.length - 2; i >= 1; i--) r.push(r[i]);
+    return r;
+  }
+  const curSeq = () => seqFor(tags.find(t => t.id === activeTag), playDir);
+  const playFrame = () => { const q = curSeq(); return q[previewIndex % q.length]; };
   function updatePlayBtn(){ playBtn.innerHTML = svg(canvasPlaying ? I.pause : I.play) + (canvasPlaying ? 'Стоп' : 'Грати'); playBtn.classList.toggle('active', canvasPlaying); }
   function startCanvasPlay(){
     if(frames.length < 2){ toast('Додай хоча б 2 кадри, щоб була анімація'); return; }
     commitFloat(); sel = null;
-    canvasPlaying = true; playIndex = cur; updatePlayBtn(); render();
+    const q = curSeq(); previewIndex = Math.max(0, q.indexOf(cur));
+    canvasPlaying = true; updatePlayBtn(); render();
   }
   function stopCanvasPlay(){ canvasPlaying = false; updatePlayBtn(); render(); }
   playBtn.onclick = () => canvasPlaying ? stopCanvasPlay() : startCanvasPlay();
@@ -2205,23 +2318,94 @@
     if(previewCanvas.height !== H) previewCanvas.height = H;
     previewCanvas.style.width = W * s + 'px'; previewCanvas.style.height = H * s + 'px';
     recomp(cur);
-    const arr = frames.length > 1 && previewPlaying ? frames[previewIndex % frames.length] : frames[cur];
+    const arr = frames.length > 1 && previewPlaying ? frames[playFrame()] : frames[cur];
     previewCtx.clearRect(0, 0, W, H);
     paintFrameTo(previewCtx, arr, W, H);
   }
   function tick(){
     clearTimeout(playTimer);
-    playTimer = setTimeout(tick, 1000 / fps);
-    if(viewEditor.classList.contains('hidden')) return;
-    previewIndex = (previewIndex + 1) % Math.max(1, frames.length);
-    if(canvasPlaying){ playIndex = (playIndex + 1) % frames.length; render(); }
+    if(viewEditor.classList.contains('hidden') || !frames.length){ playTimer = setTimeout(tick, 250); return; }
+    const q = curSeq();
+    previewIndex = (previewIndex + 1) % Math.max(1, q.length);
+    playTimer = setTimeout(tick, Math.max(10, frameMs(q[previewIndex % q.length])));
+    if(canvasPlaying) render();
     drawPreview();
   }
   tick();
   $('preview-box').onclick = () => { previewPlaying = !previewPlaying; toast(previewPlaying ? 'Перегляд анімації увімкнено' : 'Перегляд на паузі'); };
   function updateFps(){ $('fps-value').textContent = fps + ' кадр/с'; }
-  $('fps-up').onclick = () => { fps = Math.min(30, fps + 1); updateFps(); markDirty(); };
-  $('fps-down').onclick = () => { fps = Math.max(1, fps - 1); updateFps(); markDirty(); };
+  $('fps-up').onclick = () => { fps = Math.min(60, fps + 1); updateFps(); updateAnimUi(); markDirty(); };
+  $('fps-down').onclick = () => { fps = Math.max(1, fps - 1); updateFps(); updateAnimUi(); markDirty(); };
+
+  // зміна параметрів анімації з одним кроком в історії
+  function animChange(fn){
+    commitFloat();
+    undoStack.push(snapshot()); if(undoStack.length > 120) undoStack.shift(); redoStack = [];
+    fn(); markDirty(); renderFrames(); updateUndoButtons();
+  }
+  const fmtSec = ms => (ms / 1000).toLocaleString('uk-UA', { maximumFractionDigits: 2 }) + ' с';
+  function updateAnimUi(){
+    if(activeTag && !tags.some(t => t.id === activeTag)) activeTag = null;
+    const fd = $('fdur'); if(document.activeElement !== fd) fd.value = frameMs(cur);
+    $('fdur-label').textContent = 'Кадр ' + (cur + 1);
+    $('dir-seg').querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.d === playDir));
+    const q = curSeq(), total = q.reduce((s, i) => s + frameMs(i), 0);
+    $('frames-info').textContent = (frames.length > 1 ? `${frames.length} ${plural(frames.length, 'кадр', 'кадри', 'кадрів')} · ${fmtSec(total)}` : '1 кадр');
+    const box = $('tag-list'); box.innerHTML = '';
+    tags.forEach(t => {
+      const c = document.createElement('span'); c.className = 'tag-chip' + (t.id === activeTag ? ' on' : '');
+      c.innerHTML = `<button class="tag-pick" title="Грати й експортувати лише цей діапазон"><span class="dot" style="background:${tagColor(t)}"></span>${escapeHtml(t.name)} <i>${t.from + 1}–${t.to + 1}</i></button><button class="tag-edit" title="Змінити тег">${svg(I.rename)}</button>`;
+      c.querySelector('.tag-pick').onclick = () => { activeTag = activeTag === t.id ? null : t.id; previewIndex = 0; if(canvasPlaying) stopCanvasPlay(); updateAnimUi(); renderFrames(); };
+      c.querySelector('.tag-edit').onclick = () => openTagModal(t);
+      box.appendChild(c);
+    });
+    const add = document.createElement('button'); add.className = 'mini-btn'; add.textContent = '+ Тег';
+    add.title = 'Позначити діапазон кадрів (наприклад, «ходьба» або «удар»)'; add.onclick = () => openTagModal(null);
+    box.appendChild(add);
+  }
+  $('fdur').onchange = () => {
+    const v = clamp(parseInt($('fdur').value, 10) || frameMs(cur), 10, 10000);
+    animChange(() => { padDurs(); durs[cur] = v === Math.round(1000 / fps) ? 0 : v; });
+    $('fdur').blur();
+  };
+  $('fdur-all').onclick = () => { const v = clamp(parseInt($('fdur').value, 10) || frameMs(cur), 10, 10000); animChange(() => { padDurs(); durs = durs.map(() => v === Math.round(1000 / fps) ? 0 : v); }); toast('Тривалість застосовано до всіх кадрів'); };
+  $('dir-seg').querySelectorAll('button').forEach(b => b.onclick = () => { if(playDir !== b.dataset.d){ animChange(() => { playDir = b.dataset.d; }); previewIndex = 0; } });
+  function openTagModal(tag){
+    const n = frames.length, isNewTag = !tag;
+    let dir = tag ? tag.dir : 'fwd';
+    const box = openModal(`<h3 class="modal-title">${isNewTag ? 'Новий тег' : 'Тег'}</h3>
+      <p class="modal-sub">Тег — це підписаний діапазон кадрів. Його можна грати окремо й експортувати як окрему анімацію.</p>
+      <div class="field-label">Назва</div><input class="modal-input" id="tg-name" maxlength="24" value="${escapeAttr(tag ? tag.name : 'Анімація ' + (tags.length + 1))}">
+      <div class="field-label">Кадри (від – до)</div>
+      <div class="wh-row"><input class="num-input" id="tg-from" type="number" min="1" max="${n}" value="${tag ? tag.from + 1 : cur + 1}"><span>–</span><input class="num-input" id="tg-to" type="number" min="1" max="${n}" value="${tag ? tag.to + 1 : cur + 1}"></div>
+      <div class="field-label">Порядок</div>
+      <div class="seg" id="tg-dir">${Object.entries(DIRS).map(([k, v]) => `<button data-d="${k}" class="${k === dir ? 'active' : ''}">${v}</button>`).join('')}</div>
+      <div class="modal-actions">${isNewTag ? '' : '<button class="ghost-btn" data-del style="margin-right:auto;color:var(--danger)">Видалити тег</button>'}<button class="ghost-btn" data-x>Скасувати</button><button class="retry-btn" data-ok>Зберегти</button></div>`, 'modal-sm');
+    box.querySelectorAll('#tg-dir button').forEach(b => b.onclick = () => { dir = b.dataset.d; box.querySelectorAll('#tg-dir button').forEach(x => x.classList.toggle('active', x === b)); });
+    box.querySelector('[data-x]').onclick = closeModal;
+    const del = box.querySelector('[data-del]'); if(del) del.onclick = () => { closeModal(); animChange(() => { tags = tags.filter(t => t !== tag); if(activeTag === tag.id) activeTag = null; }); };
+    box.querySelector('[data-ok]').onclick = () => {
+      const name = box.querySelector('#tg-name').value.trim() || 'Тег';
+      let a = clamp((parseInt(box.querySelector('#tg-from').value, 10) || 1) - 1, 0, n - 1), b = clamp((parseInt(box.querySelector('#tg-to').value, 10) || 1) - 1, 0, n - 1);
+      if(b < a) [a, b] = [b, a];
+      closeModal();
+      animChange(() => {
+        if(tag){ Object.assign(tag, { name, from: a, to: b, dir }); }
+        else { if(tags.length >= 12){ toast('Можна створити до 12 тегів'); return; } const t = { id: newId(), name, from: a, to: b, dir }; tags.push(t); activeTag = t.id; }
+      });
+    };
+    setTimeout(() => { const i = box.querySelector('#tg-name'); i.focus(); i.select(); }, 0);
+  }
+  // налаштування кальки, плитки
+  function syncViewUi(){
+    $('onion-b').value = onionB; $('onion-a').value = onionA; $('onion-op').value = Math.round(onionOp * 100);
+    $('tile-toggle').checked = tileMode;
+  }
+  $('onion-b').onchange = e => { onionB = clamp(parseInt(e.target.value, 10) || 0, 0, 4); e.target.value = onionB; saveView(); render(); e.target.blur(); };
+  $('onion-a').onchange = e => { onionA = clamp(parseInt(e.target.value, 10) || 0, 0, 4); e.target.value = onionA; saveView(); render(); e.target.blur(); };
+  $('onion-op').oninput = e => { onionOp = (+e.target.value) / 100; saveView(); render(); };
+  $('onion-op').onchange = e => e.target.blur();
+  $('tile-toggle').onchange = e => { tileMode = e.target.checked; render(); e.target.blur(); };
 
   // ---------- Colours ----------
   // ---------- Відтінки (рампа) ----------
@@ -2560,8 +2744,9 @@
     for(let i = 0; i < size; i++){ const p = pal[i] || [0, 0, 0]; out.push(p[0], p[1], p[2]); }
     if(frameArrs.length > 1){ out.push(0x21, 0xff, 11); str('NETSCAPE2.0'); out.push(3, 1); u16(0); out.push(0); }
     const minCode = Math.max(2, bits);
-    frameArrs.forEach(a => {
-      out.push(0x21, 0xf9, 4, (2 << 2) | (bg ? 0 : 1)); u16(Math.round(delayMs / 10)); out.push(0, 0);
+    frameArrs.forEach((a, fi) => {
+      const dl = Array.isArray(delayMs) ? delayMs[fi] : delayMs;
+      out.push(0x21, 0xf9, 4, (2 << 2) | (bg ? 0 : 1)); u16(Math.max(2, Math.round(dl / 10))); out.push(0, 0);
       out.push(0x2c); u16(0); u16(0); u16(sw); u16(sh); out.push(0);
       const idx = new Uint8Array(sw * sh);
       for(let y = 0; y < sh; y++) for(let x = 0; x < sw; x++){
@@ -2604,13 +2789,34 @@
     const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(src, 0, 0, c.width, c.height);
     return c;
   }
-  function sheetCanvas(scale, cols){
-    cols = clamp(cols, 1, frames.length);
-    const rows = Math.ceil(frames.length / cols);
-    const c = document.createElement('canvas'); c.width = W * scale * cols; c.height = H * scale * rows;
+  // кадри для експорту: усі або діапазон тегу
+  function expRange(rid){
+    const n = frames.length, t = rid && rid !== 'all' ? tags.find(x => x.id === rid) : null;
+    if(!t) return { a: 0, b: n - 1, tag: null };
+    const a = clamp(t.from, 0, n - 1); return { a, b: clamp(t.to, a, n - 1), tag: t };
+  }
+  const expIdx = rid => { const r = expRange(rid), o = []; for(let i = r.a; i <= r.b; i++) o.push(i); return o; };
+  function sheetLayout(scale, cols, idx, pad){
+    cols = clamp(cols, 1, idx.length);
+    const cw = W * scale, ch = H * scale, rows = Math.ceil(idx.length / cols);
+    return { cols, rows, cw, ch, pad, width: cols * cw + (cols - 1) * pad, height: rows * ch + (rows - 1) * pad, pos: k => ({ x: (k % cols) * (cw + pad), y: Math.floor(k / cols) * (ch + pad) }) };
+  }
+  function sheetCanvas(scale, cols, idx = frames.map((_, i) => i), pad = 0){
+    const L = sheetLayout(scale, cols, idx, pad);
+    const c = document.createElement('canvas'); c.width = L.width; c.height = L.height;
     const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
-    frames.forEach((f, i) => g.drawImage(frameToCanvas(f), (i % cols) * W * scale, Math.floor(i / cols) * H * scale, W * scale, H * scale));
+    idx.forEach((fi, k) => { const p = L.pos(k); g.drawImage(frameToCanvas(frames[fi]), p.x, p.y, L.cw, L.ch); });
     return c;
+  }
+  // дані для рушія гри: положення кадрів, тривалість, теги (формат близький до Aseprite)
+  function sheetJson(base, scale, cols, idx, pad, rid){
+    const L = sheetLayout(scale, cols, idx, pad), r = expRange(rid), a0 = idx[0], z = idx[idx.length - 1];
+    const DN = { fwd: 'forward', rev: 'reverse', pp: 'pingpong' };
+    return JSON.stringify({
+      meta: { app: 'Edvault Sprite', version: 1, image: base + '-sheet.png', size: { w: L.width, h: L.height }, frameSize: { w: L.cw, h: L.ch }, scale, spacing: pad, fps },
+      frames: idx.map((fi, k) => { const p = L.pos(k); return { filename: `${base}_${k}`, frame: { x: p.x, y: p.y, w: L.cw, h: L.ch }, duration: frameMs(fi) }; }),
+      tags: tags.filter(t => t.to >= a0 && t.from <= z).map(t => ({ name: t.name, from: Math.max(t.from, a0) - a0, to: Math.min(t.to, z) - a0, direction: DN[t.dir] || 'forward' }))
+    }, null, 2);
   }
   function download(blob, name){
     const url = URL.createObjectURL(blob);
@@ -2633,11 +2839,13 @@
   function openExport(){
     commitFloat(); sel = null; render();
     let kind = frames.length > 1 ? 'gif' : 'png', scale = Math.max(1, Math.min(16, Math.floor(256 / Math.max(W, H)))), cols = frames.length, gifBg = false;
+    let rid = activeTag || 'all', pad = 0, withJson = false;
     const box = openModal(`<h3 class="modal-title">Експорт</h3>
       <div class="field-label">Що зберегти</div>
       <div class="seg" id="ex-kind">
         <button data-k="png">PNG · цей кадр</button>
-        <button data-k="sheet" ${frames.length < 2 ? 'disabled' : ''}>PNG · аркуш усіх кадрів</button>
+        <button data-k="sheet" ${frames.length < 2 ? 'disabled' : ''}>Аркуш кадрів</button>
+        <button data-k="seq" ${frames.length < 2 ? 'disabled' : ''}>Послідовність PNG (.zip)</button>
         <button data-k="gif">GIF-анімація</button>
         <button data-k="code">Код для гри (JS)</button>
       </div>
@@ -2647,40 +2855,57 @@
       <div class="modal-actions"><button class="ghost-btn" data-x>Закрити</button><button class="retry-btn" data-ok>Завантажити</button></div>`, 'modal-lg');
     const opts = box.querySelector('#ex-opts'), prev = box.querySelector('#ex-preview'), info = box.querySelector('#ex-info'), ok = box.querySelector('[data-ok]');
     const scales = [1, 2, 4, 8, 16, 32].filter(s => Math.max(W, H) * s <= 4096);
+    if(!scales.includes(scale)) scale = scales[scales.length - 1] || 1;
+    const base = () => slugify($('sprite-name').value) || 'sprite';
     function draw(){
       box.querySelectorAll('[data-k]').forEach(b => b.classList.toggle('active', b.dataset.k === kind));
       let o = '';
       if(kind !== 'code'){
         o += `<div class="field-label">Збільшення (кожен піксель стає квадратом)</div><div class="seg" id="ex-scale">${scales.map(s => `<button data-s="${s}" class="${s === scale ? 'active' : ''}">${s}×</button>`).join('')}</div>`;
       }
+      if(tags.length && (kind === 'gif' || kind === 'sheet' || kind === 'seq')){
+        o += `<div class="field-label">Які кадри</div><div class="seg" id="ex-range"><button data-r="all" class="${rid === 'all' ? 'active' : ''}">Усі кадри</button>${tags.map(t => `<button data-r="${t.id}" class="${rid === t.id ? 'active' : ''}">${escapeHtml(t.name)} (${t.from + 1}–${t.to + 1})</button>`).join('')}</div>`;
+      }
       if(kind === 'sheet'){
-        o += `<div class="field-label">Кадрів у рядку</div><div class="wh-row"><input class="num-input" id="ex-cols" type="number" min="1" max="${frames.length}" value="${cols}"></div>`;
+        const n = expIdx(rid).length;
+        o += `<div class="field-label">Кадрів у рядку та відступ між кадрами</div><div class="wh-row"><input class="num-input" id="ex-cols" type="number" min="1" max="${n}" value="${Math.min(cols, n)}"><span>відступ</span><input class="num-input" id="ex-pad" type="number" min="0" max="16" value="${pad}"><span>px</span></div>`;
+      }
+      if(kind === 'sheet' || kind === 'seq'){
+        o += `<label class="check-row"><input type="checkbox" id="ex-json" ${withJson ? 'checked' : ''}> Додати файл JSON з даними кадрів і тегів${kind === 'sheet' ? ' (усе буде в .zip)' : ''}</label>`;
       }
       if(kind === 'gif'){
         o += `<label class="check-row"><input type="checkbox" id="ex-bg" ${gifBg ? 'checked' : ''}> Білий фон замість прозорого</label>`;
       }
       opts.innerHTML = o;
       opts.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { scale = +b.dataset.s; draw(); });
-      const ci = opts.querySelector('#ex-cols'); if(ci) ci.oninput = () => { cols = clamp(parseInt(ci.value, 10) || 1, 1, frames.length); drawPreviewOnly(); };
+      opts.querySelectorAll('[data-r]').forEach(b => b.onclick = () => { rid = b.dataset.r; draw(); });
+      const ci = opts.querySelector('#ex-cols'); if(ci) ci.oninput = () => { cols = clamp(parseInt(ci.value, 10) || 1, 1, expIdx(rid).length); drawPreviewOnly(); };
+      const pi = opts.querySelector('#ex-pad'); if(pi) pi.oninput = () => { pad = clamp(parseInt(pi.value, 10) || 0, 0, 16); drawPreviewOnly(); };
+      const jI = opts.querySelector('#ex-json'); if(jI) jI.onchange = () => { withJson = jI.checked; drawPreviewOnly(); };
       const bgI = opts.querySelector('#ex-bg'); if(bgI) bgI.onchange = () => { gifBg = bgI.checked; drawPreviewOnly(); };
       drawPreviewOnly();
     }
     let gifUrl = null;
+    const gifData = () => { const tag = expRange(rid).tag, q = seqFor(tag, playDir); return encodeGIF(q.map(i => frames[i]), W, H, scale, q.map(frameMs), gifBg ? '#ffffff' : null); };
     function drawPreviewOnly(){
       prev.innerHTML = '';
       if(gifUrl){ URL.revokeObjectURL(gifUrl); gifUrl = null; }
       ok.textContent = kind === 'code' ? 'Копіювати код' : 'Завантажити';
+      const idx = expIdx(rid);
       if(kind === 'png'){
         const c = scaledCanvas(px(), scale); prev.appendChild(c);
         info.textContent = `${c.width}×${c.height} px · кадр ${cur + 1}`;
       } else if(kind === 'sheet'){
-        const c = sheetCanvas(scale, cols); prev.appendChild(c);
-        info.textContent = `${c.width}×${c.height} px · ${frames.length} кадрів по ${W * scale}×${H * scale}`;
+        const c = sheetCanvas(scale, Math.min(cols, idx.length), idx, pad); prev.appendChild(c);
+        info.textContent = `${c.width}×${c.height} px · ${idx.length} ${plural(idx.length, 'кадр', 'кадри', 'кадрів')} по ${W * scale}×${H * scale}${withJson ? ' · + JSON' : ''}`;
+      } else if(kind === 'seq'){
+        const c = scaledCanvas(frames[idx[0]], scale); prev.appendChild(c);
+        info.textContent = `${idx.length} файлів ${W * scale}×${H * scale} px: ${base()}_001.png … ${base()}_${String(idx.length).padStart(3, '0')}.png${withJson ? ' + JSON' : ''}`;
       } else if(kind === 'gif'){
-        const bytes = encodeGIF(frames, W, H, scale, 1000 / fps, gifBg ? '#ffffff' : null);
+        const bytes = gifData(), q = seqFor(expRange(rid).tag, playDir), total = q.reduce((s, i) => s + frameMs(i), 0);
         gifUrl = URL.createObjectURL(new Blob([bytes], { type:'image/gif' }));
         const img = new Image(); img.src = gifUrl; prev.appendChild(img);
-        info.textContent = `${W * scale}×${H * scale} px · ${frames.length} ${plural(frames.length, 'кадр', 'кадри', 'кадрів')} · ${fps} кадр/с · ${(bytes.length / 1024).toFixed(1)} КБ`;
+        info.textContent = `${W * scale}×${H * scale} px · ${q.length} ${plural(q.length, 'кадр', 'кадри', 'кадрів')} · ${fmtSec(total)} · ${DIRS[expRange(rid).tag ? expRange(rid).tag.dir : playDir]} · ${(bytes.length / 1024).toFixed(1)} КБ`;
       } else {
         const pre = document.createElement('pre');
         pre.style.cssText = 'font:12px/1.5 "JetBrains Mono",monospace;white-space:pre-wrap;word-break:break-all;max-height:220px;overflow:auto;width:100%;background:var(--surface);padding:10px;border-radius:8px;color:var(--text)';
@@ -2694,16 +2919,32 @@
     box.querySelector('[data-x]').onclick = closeModal;
     modalOnClose = () => { if(gifUrl) URL.revokeObjectURL(gifUrl); };
     ok.onclick = async () => {
-      const base = slugify($('sprite-name').value);
-      if(kind === 'png') download(await canvasBlob(scaledCanvas(px(), scale)), `${base}${frames.length > 1 ? '-' + (cur + 1) : ''}.png`);
-      else if(kind === 'sheet') download(await canvasBlob(sheetCanvas(scale, cols)), `${base}-sheet.png`);
-      else if(kind === 'gif') download(new Blob([encodeGIF(frames, W, H, scale, 1000 / fps, gifBg ? '#ffffff' : null)], { type:'image/gif' }), `${base}.gif`);
-      else {
-        try{ await navigator.clipboard.writeText(codeSnippet()); ok.textContent = 'Скопійовано'; }
-        catch(e){ toast('Не вдалося скопіювати автоматично'); }
-        return;
-      }
-      toast('Файл збережено');
+      const nm = base(), idx = expIdx(rid), suffix = rid !== 'all' && expRange(rid).tag ? '-' + slugify(expRange(rid).tag.name) : '';
+      try{
+        if(kind === 'png') download(await canvasBlob(scaledCanvas(px(), scale)), `${nm}${frames.length > 1 ? '-' + (cur + 1) : ''}.png`);
+        else if(kind === 'sheet'){
+          const blob = await canvasBlob(sheetCanvas(scale, Math.min(cols, idx.length), idx, pad));
+          if(withJson){
+            const { makeZip } = await import('./shared/zip.js');
+            download(await makeZip([{ name: `${nm}-sheet.png`, data: blob }, { name: `${nm}-sheet.json`, data: sheetJson(nm, scale, Math.min(cols, idx.length), idx, pad, rid) }]), `${nm}${suffix}-sheet.zip`);
+          } else download(blob, `${nm}${suffix}-sheet.png`);
+        } else if(kind === 'seq'){
+          const { makeZip } = await import('./shared/zip.js');
+          ok.disabled = true; ok.textContent = 'Пакую…';
+          const entries = [];
+          for(let k = 0; k < idx.length; k++) entries.push({ name: `${nm}_${String(k + 1).padStart(3, '0')}.png`, data: await canvasBlob(scaledCanvas(frames[idx[k]], scale)) });
+          if(withJson) entries.push({ name: `${nm}.json`, data: sheetJson(nm, scale, idx.length, idx, 0, rid) });
+          download(await makeZip(entries), `${nm}${suffix}-png.zip`);
+          ok.disabled = false; ok.textContent = 'Завантажити';
+        }
+        else if(kind === 'gif') download(new Blob([gifData()], { type:'image/gif' }), `${nm}${suffix}.gif`);
+        else {
+          try{ await navigator.clipboard.writeText(codeSnippet()); ok.textContent = 'Скопійовано'; }
+          catch(e){ toast('Не вдалося скопіювати автоматично'); }
+          return;
+        }
+        toast('Файл збережено');
+      }catch(e){ ok.disabled = false; ok.textContent = 'Завантажити'; toast('Не вдалося створити файл: ' + (e && e.message || 'помилка')); }
     };
     draw();
   }
@@ -2747,10 +2988,12 @@
       <div class="seg" id="im-mode"><button data-m="fit" class="active">Вписати в полотно ${W}×${H}</button><button data-m="own">Змінити полотно на ${nw}×${nh}</button></div>
       <div class="field-label">Куди</div>
       <div class="seg" id="im-target"><button data-t="replace" class="active">Замінити цей кадр</button><button data-t="new">Як новий кадр</button></div>
+      <button class="wide-btn" id="im-sheet" style="margin-top:12px" title="Якщо це аркуш з кадрами анімації">Це аркуш кадрів — нарізати на анімацію…</button>
       <div class="modal-actions"><button class="ghost-btn" data-x>Скасувати</button><button class="retry-btn" data-ok>Імпортувати</button></div>`, 'modal-sm');
     box.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { mode = b.dataset.m; box.querySelectorAll('[data-m]').forEach(x => x.classList.toggle('active', x === b)); });
     box.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { target = b.dataset.t; box.querySelectorAll('[data-t]').forEach(x => x.classList.toggle('active', x === b)); });
     box.querySelector('[data-x]').onclick = closeModal;
+    box.querySelector('#im-sheet').onclick = () => { closeModal(); openSheetImport(img, file.name.replace(/\.[^.]+$/, '')); };
     box.querySelector('[data-ok]').onclick = () => {
       closeModal(); commitFloat(); sel = null;
       if(mode === 'own' && (nw !== W || nh !== H)) resizeCanvasTo(nw, nh, false, 0);
@@ -2761,11 +3004,66 @@
       const arr = blank(), offX = Math.floor((W - tw) / 2), offY = Math.floor((H - th) / 2);
       for(let y = 0; y < th; y++) for(let x = 0; x < tw; x++) arr[(y + offY) * W + x + offX] = small[y * tw + x];
       beginChange();
-      if(target === 'new'){ layers.forEach((L, k) => L.cels.splice(cur + 1, 0, k === curLayer ? arr : blank())); cur++; } else layers[curLayer].cels[cur] = arr;
+      if(target === 'new'){ framesInserted(cur + 1, 0); layers.forEach((L, k) => L.cels.splice(cur + 1, 0, k === curLayer ? arr : blank())); cur++; } else layers[curLayer].cels[cur] = arr;
       afterStructureChange();
       toast('Картинку імпортовано');
     };
   };
+
+  // ---------- Імпорт аркуша кадрів: нарізка за сіткою на новий анімований спрайт ----------
+  function openSheetImport(img, baseName){
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    let cols = 1, rows = 1, skipEmpty = true;
+    if(iw > ih && iw % ih === 0) cols = iw / ih; else if(ih > iw && ih % iw === 0) rows = ih / iw;
+    const box = openModal(`<h3 class="modal-title">Нарізати аркуш кадрів</h3>
+      <p class="modal-sub">Картинка ${iw}×${ih} px. Вкажи, скільки в ній стовпців і рядків — вийде новий спрайт, де кожна клітинка стане кадром.</p>
+      <div class="wh-row"><input class="num-input" id="sh-c" type="number" min="1" max="64" value="${cols}"><span>стовпців ×</span><input class="num-input" id="sh-r" type="number" min="1" max="64" value="${rows}"><span>рядків</span></div>
+      <label class="check-row"><input type="checkbox" id="sh-skip" checked> Пропускати порожні клітинки</label>
+      <div class="sheet-prev"><canvas id="sh-prev"></canvas></div>
+      <div class="export-info" id="sh-info"></div>
+      <div class="modal-actions"><button class="ghost-btn" data-x>Скасувати</button><button class="retry-btn" data-ok>Створити спрайт</button></div>`, 'modal-sm');
+    const pc = box.querySelector('#sh-prev'), info = box.querySelector('#sh-info'), ok = box.querySelector('[data-ok]');
+    const grab = document.createElement('canvas'); grab.width = iw; grab.height = ih;
+    const gx = grab.getContext('2d', { willReadFrequently: true }); gx.drawImage(img, 0, 0);
+    const cell = () => ({ fw: Math.floor(iw / cols), fh: Math.floor(ih / rows) });
+    function redraw(){
+      const { fw, fh } = cell(), k = Math.max(1, Math.min(8, Math.floor(300 / Math.max(iw, ih)) || 1));
+      pc.width = iw * k; pc.height = ih * k;
+      const g = pc.getContext('2d'); g.imageSmoothingEnabled = false; g.drawImage(img, 0, 0, pc.width, pc.height);
+      g.strokeStyle = 'rgba(79,107,244,.9)'; g.lineWidth = 1; g.beginPath();
+      for(let c = 1; c < cols; c++){ g.moveTo(c * fw * k + .5, 0); g.lineTo(c * fw * k + .5, ih * k); }
+      for(let r = 1; r < rows; r++){ g.moveTo(0, r * fh * k + .5); g.lineTo(iw * k, r * fh * k + .5); }
+      g.stroke();
+      const bad = fw < 1 || fh < 1 || fw > MAX_SIZE || fh > MAX_SIZE;
+      info.textContent = bad ? `Розмір кадру ${fw}×${fh} — допустимо від 1 до ${MAX_SIZE} пікселів` : `Кадр ${fw}×${fh} px · ${cols * rows} ${plural(cols * rows, 'клітинка', 'клітинки', 'клітинок')}` + (iw % cols || ih % rows ? ' · краї, що не вмістилися, буде відкинуто' : '');
+      ok.disabled = bad;
+    }
+    box.querySelector('#sh-c').oninput = e => { cols = clamp(parseInt(e.target.value, 10) || 1, 1, 64); redraw(); };
+    box.querySelector('#sh-r').oninput = e => { rows = clamp(parseInt(e.target.value, 10) || 1, 1, 64); redraw(); };
+    box.querySelector('#sh-skip').onchange = e => { skipEmpty = e.target.checked; };
+    box.querySelector('[data-x]').onclick = closeModal;
+    ok.onclick = () => {
+      const { fw, fh } = cell(), pal = [], idx = new Map(), strs = [];
+      for(let r = 0; r < rows; r++) for(let c = 0; c < cols; c++){
+        const d = gx.getImageData(c * fw, r * fh, fw, fh).data; let s = '', any = false;
+        for(let i = 0; i < fw * fh; i++){
+          const a = d[i * 4 + 3];
+          if(a < 128){ s += '0'; continue; }
+          any = true;
+          const hex = rgbToHex(d[i * 4], d[i * 4 + 1], d[i * 4 + 2]); let k = idx.get(hex);
+          if(k === undefined){ k = pal.length; pal.push(hex); idx.set(hex, k); }
+          s += String.fromCharCode(49 + k);
+        }
+        if(any || !skipEmpty) strs.push(s);
+      }
+      if(!strs.length){ toast('У клітинках немає пікселів'); return; }
+      closeModal(); commitFloat(); sel = null;
+      if(!viewEditor.classList.contains('hidden') && isDirty) save();
+      openEditor({ name: uniqueName(baseName || 'Аркуш'), width: fw, height: fh, v: 2, palette: pal, frames: strs }, { isNew: true });
+      toast(`Створено спрайт: ${strs.length} ${plural(strs.length, 'кадр', 'кадри', 'кадрів')}` + (pal.length > 256 ? ' · багато кольорів: це не піксель-арт?' : ''), 3500);
+    };
+    redraw();
+  }
 
   // ---------- Catalog ----------
   const grid = $('grid');
@@ -2883,17 +3181,29 @@
   $('empty-new-btn').onclick = openNewSprite;
 
   // create from an image right from the catalog
-  const catInput = document.createElement('input'); catInput.type = 'file'; catInput.accept = 'image/*';
+  const catInput = document.createElement('input'); catInput.type = 'file'; catInput.accept = 'image/*,.json,application/json';
   $('catalog-import-btn').onclick = () => catInput.click();
   catInput.onchange = async () => {
     const file = catInput.files[0]; catInput.value = '';
     if(!file) return;
+    if(/\.json$/i.test(file.name) || file.type === 'application/json'){ importBackup(file); return; }
     let img; try{ img = await loadImageFile(file); }catch(e){ toast('Не вдалося відкрити картинку'); return; }
+    if(img.naturalWidth >= img.naturalHeight * 2 && img.naturalWidth % img.naturalHeight === 0 && img.naturalHeight <= MAX_SIZE){
+      const box = openModal(`<h3 class="modal-title">Схоже на аркуш кадрів</h3><p class="modal-sub">Картинка ${img.naturalWidth}×${img.naturalHeight} — це кілька квадратних кадрів поспіль. Нарізати її на анімацію чи імпортувати як одну картинку?</p>
+        <div class="modal-actions"><button class="ghost-btn" data-one>Як одну картинку</button><button class="retry-btn" data-cut>Нарізати</button></div>`, 'modal-sm');
+      const nm = file.name.replace(/\.[^.]+$/, '');
+      box.querySelector('[data-cut]').onclick = () => { closeModal(); openSheetImport(img, nm); };
+      box.querySelector('[data-one]').onclick = () => { closeModal(); importSingle(img, file); };
+      return;
+    }
+    importSingle(img, file);
+  };
+  function importSingle(img, file){
     const [nw, nh] = fitSize(img.naturalWidth, img.naturalHeight, 64);
     const pixels = imageToPixels(img, nw, nh);
     openEditor({ name: uniqueName(file.name.replace(/\.[^.]+$/, '') || 'Картинка'), width: nw, height: nh, frames: [{ pixels }] }, { isNew:true });
     if(img.naturalWidth > 64 || img.naturalHeight > 64) toast(`Картинку зменшено до ${nw}×${nh} пікселів`, 3500);
-  };
+  }
 
   // ---------- Editor open / save ----------
   const saveStatus = $('save-status');
@@ -2902,6 +3212,27 @@
     saveStatus.classList.toggle('pending', st === 'pending');
     saveStatus.innerHTML = st === 'pending' ? 'Не збережено' : st === 'saved' ? svg(I.check) + 'Збережено' : st === 'error' ? svg('<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>') + 'Не збережено' : '';
     saveStatus.classList.toggle('error', st === 'error');
+  }
+  // коли у браузері закінчилося місце: пропонуємо зберегти копію файлом, щоб нічого не втратити
+  let backupShown = false;
+  function offerBackup(rec){
+    if(backupShown || !rec) { toast('Не вдалося зберегти: у браузері закінчилося місце', 4000); return; }
+    backupShown = true;
+    const box = openModal(`<h3 class="modal-title">У браузері закінчилося місце</h3>
+      <p class="modal-sub">Автозбереження не спрацювало, але твій спрайт ще відкритий. Завантаж копію файлом — її можна повернути кнопкою імпорту в каталозі. Також звільни місце: видали непотрібні спрайти.</p>
+      <div class="modal-actions"><button class="ghost-btn" data-x>Закрити</button><button class="retry-btn" data-ok>Завантажити копію</button></div>`, 'modal-sm');
+    modalOnClose = () => { setTimeout(() => { backupShown = false; }, 30000); };
+    box.querySelector('[data-x]').onclick = closeModal;
+    box.querySelector('[data-ok]').onclick = () => { download(new Blob([JSON.stringify(rec)], { type: 'application/json' }), (slugify(rec.name || 'sprite') || 'sprite') + '.edvault-sprite.json'); closeModal(); };
+  }
+  async function importBackup(file){
+    try{
+      const rec = JSON.parse(await file.text());
+      if(!rec || typeof rec !== 'object' || !(rec.frames || rec.layers || rec.pixels)) throw new Error('bad');
+      decodeSprite(rec);
+      const list = loadSprites(); rec.id = newId(); rec.name = uniqueName(String(rec.name || 'Спрайт').slice(0, 60)); rec.updated = Date.now(); list.push(rec);
+      saveSprites(list); renderCatalog(); toast('Спрайт відновлено з файлу');
+    }catch(e){ toast('Не вдалося прочитати файл копії спрайту'); }
   }
   function markDirty(){
     if(loading) return;
@@ -2923,10 +3254,10 @@
     }
     const enc = encodeSprite();
     layers = keepLayers;
-    const data = { name, width: W, height: H, gridSize: W, fps, ...enc, updated: Date.now() };
-    if(existing) Object.assign(existing, data), delete existing.pixels;
+    const data = { name, width: W, height: H, gridSize: W, fps, ...enc, anim: animData() || undefined, updated: Date.now() };
+    if(existing) Object.assign(existing, data), delete existing.pixels, (data.anim || delete existing.anim);
     else { currentEditId = currentEditId || newId(); list.push({ id: currentEditId, created: Date.now(), ...data }); }
-    try{ saveSprites(list); }catch(e){ setSaveStatus('error'); toast('Не вдалося зберегти: у браузері закінчилося місце', 4000); return false; }
+    try{ saveSprites(list); }catch(e){ setSaveStatus('error'); offerBackup(existing || list[list.length - 1]); return false; }
     isDirty = false; setSaveStatus('saved');
     return true;
   }
@@ -2938,10 +3269,11 @@
     loading = true;
     const d = decodeSprite(s);
     W = d.w; H = d.h; layers = d.layers; curLayer = layers.length - 1; frames = d.frames; cur = 0; fps = d.fps || 8;
+    durs = d.anim.durs; tags = d.anim.tags; playDir = d.anim.dir; activeTag = null;
     currentEditId = s.id || null;
     $('sprite-name').value = s.name || '';
     undoStack = []; redoStack = []; sel = null; clipboard = clipboard || null; drag = null; selDraft = null;
-    canvasPlaying = false; previewIndex = 0;
+    canvasPlaying = false; previewIndex = 0; syncViewUi();
     viewCatalog.classList.add('hidden');
     viewEditor.classList.remove('hidden');
     loading = false;
@@ -3051,7 +3383,7 @@
   setColor(color);
   renderPalette();
   renderCatalog();
-  window.__spriteEditor = { get state(){ return { W, H, frames, cur, sel, tool, color, undo: undoStack.length, view: { ...view }, layers, curLayer }; }, encodeGIF };
+  window.__spriteEditor = { get state(){ return { W, H, frames, cur, sel, tool, color, undo: undoStack.length, view: { ...view }, layers, curLayer }; }, get anim(){ return { durs: durs.slice(), tags: tags.map(t => ({ ...t })), dir: playDir, activeTag, seq: curSeq(), onionB, onionA, tile: tileMode }; }, encodeGIF, importBackup };
 })();
 </script>
 
