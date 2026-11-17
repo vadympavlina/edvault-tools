@@ -74,20 +74,33 @@ export function toast(msg, kind = '', opts = {}) {
 // Вікно: html, кнопки закриття data-close; повертає { el, close }
 export function modal({ title, html, cls = '', onOpen, onClose, wide = false }) {
   $('#toast').classList.remove('on'); // підказка не повинна закривати вікно
+  const opener = document.activeElement && document.activeElement !== document.body ? document.activeElement : null;
   const wrap = document.createElement('div');
   wrap.className = 'md-wrap';
   wrap.innerHTML = `<div class="md ${cls} ${wide ? 'wide' : ''}" role="dialog" aria-modal="true" aria-label="${esc(title)}"><header><h2>${esc(title)}</h2><button class="ib" data-close aria-label="Закрити">${icon('close')}</button></header><div class="md-body">${html}</div></div>`;
   document.body.appendChild(wrap);
   const api = {
     el: wrap.querySelector('.md'),
-    close() { wrap.remove(); document.removeEventListener('keydown', key, true); onClose && onClose(); },
+    close() {
+      wrap.remove(); document.removeEventListener('keydown', key, true); onClose && onClose();
+      if (opener && document.contains(opener)) try { opener.focus({ preventScroll: true }); } catch (e) { /* елемент зник */ }
+    },
   };
-  const key = e => { if (e.key === 'Escape') { e.stopPropagation(); api.close(); } };
+  const key = e => {
+    if (e.key === 'Escape') { e.stopPropagation(); api.close(); return; }
+    if (e.key !== 'Tab') return;
+    // Tab не виходить за межі вікна
+    const f = [...wrap.querySelectorAll('button, input, select, textarea, [tabindex]:not([tabindex="-1"])')].filter(x => !x.disabled && x.offsetParent);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && (document.activeElement === first || !wrap.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && (document.activeElement === last || !wrap.contains(document.activeElement))) { e.preventDefault(); first.focus(); }
+  };
   document.addEventListener('keydown', key, true);
   wrap.addEventListener('mousedown', e => { if (e.target === wrap) api.close(); });
   wrap.addEventListener('click', e => { if (e.target.closest('[data-close]')) api.close(); });
   onOpen && onOpen(api);
-  setTimeout(() => { const f = wrap.querySelector('[autofocus], input, .primary'); f && f.focus(); }, 30);
+  setTimeout(() => { const f = wrap.querySelector('[autofocus], input, .primary') || wrap.querySelector('.md button:not([data-close])') || wrap.querySelector('button'); f && f.focus(); }, 30);
   return api;
 }
 export function confirmBox(title, sub, ok = 'Так', danger = false) {

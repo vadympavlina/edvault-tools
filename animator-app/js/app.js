@@ -269,6 +269,15 @@ function colors() {
   const custom = !PALETTE.includes(S.color);
   return `<span class="pg"><span class="sws">${PALETTE.map(c => `<button class="sw ${S.color === c ? 'on' : ''}" data-color="${c}" style="background:${c}" aria-label="${COLOR_NAMES[c]}" data-tip="${COLOR_NAMES[c]}"></button>`).join('')}<button class="sw sw-custom ${custom ? 'on' : ''}" ${custom ? `style="background:${S.color}"` : ''} data-act="colorPick" data-tip="Свій колір" aria-label="Свій колір"></button></span>${S.recent.filter(c => !PALETTE.includes(c)).length ? `<span class="sws" aria-label="Нещодавні кольори">${S.recent.filter(c => !PALETTE.includes(c)).slice(0, 4).map(c => `<button class="sw ${S.color === c ? 'on' : ''}" data-color="${c}" style="background:${c}" aria-label="Нещодавній колір ${c}"></button>`).join('')}</span>` : ''}</span>`;
 }
+// підказка про прокрутку налаштувань інструмента, якщо вони не вміщаються (затухання з боків)
+function updatePropOvf() {
+  const e = document.getElementById('prop'); if (!e) return;
+  const ovf = e.scrollWidth > e.clientWidth + 2;
+  e.classList.toggle('ovf', ovf);
+  e.classList.toggle('at-start', e.scrollLeft <= 1);
+  e.classList.toggle('at-end', e.scrollLeft + e.clientWidth >= e.scrollWidth - 1);
+}
+{ const pe = document.getElementById('prop'); if (pe) { pe.addEventListener('scroll', updatePropOvf, { passive: true }); window.addEventListener('resize', updatePropOvf); } }
 function renderProp() {
   const t = S.tool, el = $('#prop'), toolIco = (TOOLS.find(x => x && x[0] === t) || [])[2];
   let h = `<span class="ttl">${icon(toolIco || 'brush', 16)}<span>${esc(TOOL_NAMES[t] || '')}</span></span>`;
@@ -314,6 +323,13 @@ function renderProp() {
   } else if (t === 'picker') h += colors() + `<span class="hint">Клацніть на малюнку — колір стане поточним. З пензлем: Alt+клік</span>`;
   else if (t === 'hand') h += `<span class="hint">Тягніть аркуш. Коліщатко — масштаб, F — вписати в екран</span>`;
   el.innerHTML = h;
+  // кнопки-перемикачі: підпис винесено в окремий елемент (на вужчих вікнах лишається значок), доступна назва й стан задані явно
+  el.querySelectorAll('.tg').forEach(b => {
+    [...b.childNodes].forEach(n => { if (n.nodeType === 3 && n.textContent.trim()) { const sp = document.createElement('span'); sp.className = 'tgl'; sp.textContent = n.textContent.trim() + ' '; b.replaceChild(sp, n); } });
+    if (!b.getAttribute('aria-label')) b.setAttribute('aria-label', b.textContent.replace(/\s+/g, ' ').trim());
+    if (b.dataset.toggle) b.setAttribute('aria-pressed', b.classList.contains('on') ? 'true' : 'false');
+  });
+  updatePropOvf();
   const bb = $('#brushBtn canvas'); if (bb) { bb.width = 224; bb.height = 72; sampleStroke(bb, BRUSHES[S.brush], S.color, 26); }
 }
 
@@ -358,6 +374,19 @@ function renderSide() {
   ${sec('about', 'Про мультфільм', 'film', '', `
     <p class="sm">Аркуш ${P.w} × ${P.h}. ${P.frames.length} ${plural(P.frames.length, 'кадр', 'кадри', 'кадрів')}, тривалість ${fmtTime(P.duration)}.</p>`)}`;
   renderLayerThumbs(); markLayers();
+  // рядки шарів доступні з клавіатури: Enter / Пробіл — вибрати, F2 — перейменувати, стрілки — ходити списком
+  document.querySelectorAll('#side .lr').forEach(r => {
+    const l = P.layers[+r.dataset.layer]; if (!l) return;
+    r.tabIndex = 0; r.setAttribute('role', 'button'); r.setAttribute('aria-pressed', +r.dataset.layer === S.li ? 'true' : 'false');
+    r.setAttribute('aria-label', `${l.name}${l.visible ? '' : ', сховано'}${l.locked ? ', заблоковано' : ''}`);
+    r.onkeydown = e => {
+      if (e.target !== r) return;
+      const i = +r.dataset.layer;
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); r.click(); setTimeout(() => document.querySelector(`#side .lr[data-layer="${i}"]`)?.focus(), 0); }
+      else if (e.key === 'F2') { e.preventDefault(); r.click(); setTimeout(() => document.querySelector('[data-act="layerRename"]')?.click(), 0); }
+      else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); document.querySelector(`#side .lr[data-layer="${i + (e.key === 'ArrowDown' ? -1 : 1)}"]`)?.focus(); }
+    };
+  });
 }
 function renderLayerThumbs() {
   if (!P) return;
@@ -506,7 +535,20 @@ function openPop(anchor, html, pick, at) {
   pop.querySelector('button')?.focus();
 }
 let popClose = null;
-function closePop() { pop.classList.remove('on'); popAnchor = null; const f = popClose; popClose = null; if (f) f(); }
+function closePop() {
+  const a = popAnchor, had = pop.contains(document.activeElement);
+  pop.classList.remove('on'); popAnchor = null; const f = popClose; popClose = null; if (f) f();
+  if (had && a && a.focus && document.contains(a)) { try { a.focus({ preventScroll: true }); } catch (e) { /* елемент зник */ } }  // фокус повертається на кнопку, що відкрила меню
+}
+// стрілки, Home і End ходять по пунктах меню; Tab закриває його
+pop.addEventListener('keydown', e => {
+  const items = [...pop.querySelectorAll('button:not([disabled])')]; if (!items.length) return;
+  const i = items.indexOf(document.activeElement);
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length].focus(); }
+  else if (e.key === 'Home') { e.preventDefault(); items[0].focus(); }
+  else if (e.key === 'End') { e.preventDefault(); items[items.length - 1].focus(); }
+  else if (e.key === 'Tab') closePop();
+});
 pop.addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (b && popPick) { const f = popPick; closePop(); f(b.dataset.v); } });
 document.addEventListener('mousedown', e => { if (pop.classList.contains('on') && !pop.contains(e.target) && !(popAnchor && popAnchor.contains && popAnchor.contains(e.target))) closePop(); });
 const mi = (v, ic, t, sub, k, cls = '') => `<button class="mi ${cls}" data-v="${v}" role="menuitem">${icon(ic, 16)}<span>${esc(t)}${sub ? `<small>${esc(sub)}</small>` : ''}</span>${k ? `<span class="k">${k}</span>` : ''}</button>`;
