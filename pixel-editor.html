@@ -349,6 +349,37 @@
     background: var(--surface); border-left: 1px solid var(--border); overflow-y: auto; padding: 14px;
     display: flex; flex-direction: column; gap: 16px;
   }
+  .pal-actions [hidden], .ref-ctrl[hidden] { display: none !important; }
+  .ramp-row { display: flex; gap: 3px; margin-top: 8px; }
+  .ramp-row button { flex: 1; height: 20px; border-radius: 5px; border: 1px solid rgba(0,0,0,.12); cursor: pointer; padding: 0; }
+  .ramp-row button.mid { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .ramp-row button:hover { transform: translateY(-1px); }
+  .pal-actions { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+  .ref-box { margin-top: 8px; }
+  .modal textarea.pal-text { width: 100%; min-height: 110px; margin-top: 8px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font: 12px 'JetBrains Mono', monospace; padding: 9px; resize: vertical; }
+  .pal-prev { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 8px; max-height: 90px; overflow-y: auto; }
+  .pal-prev i { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,.12); }
+  .layer-tools { float: right; display: inline-flex; gap: 3px; }
+  .layer-tools button { width: 24px; height: 24px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--text2); cursor: pointer; font-size: 14px; font-weight: 800; line-height: 1; display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+  .layer-tools button:hover { background: var(--surface2); color: var(--text); }
+  .layer-tools button:disabled { opacity: .4; cursor: default; }
+  .layer-tools svg { width: 13px; height: 13px; }
+  .layer-list { display: flex; flex-direction: column; gap: 4px; max-height: 190px; overflow-y: auto; }
+  .layer-row { display: flex; align-items: center; gap: 7px; padding: 4px 6px 4px 5px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--text2); }
+  .layer-row.active { border-color: var(--accent-border, var(--accent)); background: var(--accent-light, rgba(79,107,244,.1)); color: var(--text); }
+  .layer-row .l-eye { width: 22px; height: 22px; flex: none; border: none; background: none; color: var(--muted); cursor: pointer; border-radius: 6px; display: grid; place-items: center; padding: 0; }
+  .layer-row .l-eye:hover { background: var(--surface2); color: var(--text); }
+  .layer-row .l-eye.on { color: var(--accent); }
+  .layer-row .l-eye svg { width: 15px; height: 15px; }
+  .layer-row .l-th { width: 28px; height: 28px; flex: none; border-radius: 5px; background: repeating-conic-gradient(#fff 0 25%, #e6e8ec 0 50%) 0 0 / 8px 8px; overflow: hidden; border: 1px solid var(--border); }
+  .layer-row .l-th canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+  .layer-row .l-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .layer-row .l-op { font-size: 11px; color: var(--muted); font-weight: 700; flex: none; }
+  .layer-row.hidden-l .l-th, .layer-row.hidden-l .l-name { opacity: .45; }
+  .layer-row input.l-edit { flex: 1; min-width: 0; height: 24px; border-radius: 6px; border: 1px solid var(--accent); background: var(--surface); color: var(--text); font: inherit; padding: 0 6px; }
+  .layer-opacity { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--text2); }
+  .layer-opacity input { flex: 1; min-width: 0; }
+  .layer-opacity b { min-width: 34px; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
   .panel-label {
     font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted);
     margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
@@ -645,16 +676,32 @@
             <div class="recent-row" id="recent-row" title="Останні кольори"></div>
           </div>
         </div>
+        <div class="ramp-row" id="ramp-row" title="Відтінки поточного кольору: темніші холодніші, світліші теплішіші"></div>
       </div>
 
       <div>
         <div class="panel-label">Палітра <select id="palette-select"></select></div>
         <div class="palette-grid" id="palette-grid"></div>
+        <div class="pal-actions">
+          <button class="mini-btn" id="pal-import" title="Імпорт палітри з файлу (.hex, .gpl, .pal, .txt) або зі списку кодів (Lospec)">Імпорт…</button>
+          <button class="mini-btn" id="pal-from-sprite" title="Створити палітру з кольорів цього спрайту">З малюнка</button>
+          <button class="mini-btn" id="pal-del" title="Видалити цю імпортовану палітру" hidden>Видалити</button>
+        </div>
       </div>
 
       <div>
         <div class="panel-label">Кольори спрайту</div>
         <div class="palette-grid" id="used-grid"></div>
+      </div>
+
+      <div id="layers-box">
+        <div class="panel-label">Шари <span class="layer-tools">
+          <button id="layer-add" title="Новий шар">+</button>
+          <button id="layer-dup" title="Дублювати шар"></button>
+          <button id="layer-merge" title="Об’єднати з нижнім"></button>
+          <button id="layer-del" title="Видалити шар"></button></span></div>
+        <div class="layer-list" id="layer-list"></div>
+        <div class="layer-opacity" id="layer-opacity"><span>Прозорість</span><input type="range" id="layer-op-range" min="5" max="100" step="5" value="100"><b id="layer-op-val">100%</b></div>
       </div>
 
       <div>
@@ -682,12 +729,22 @@
         <div class="size-line" id="size-line">16 × 16</div>
         <button class="wide-btn" id="resize-btn"></button>
         <label class="toggle-row"><span>Сітка</span><span class="switch"><input type="checkbox" id="grid-toggle" checked><span class="slider"></span></span></label>
+        <div class="ref-box">
+          <button class="wide-btn" id="ref-btn"></button>
+          <div class="ref-ctrl" id="ref-ctrl" hidden>
+            <label class="toggle-row"><span>Показувати</span><span class="switch"><input type="checkbox" id="ref-show" checked><span class="slider"></span></span></label>
+            <div class="layer-opacity"><span>Прозорість</span><input type="range" id="ref-op" min="10" max="100" step="5" value="40"><b id="ref-op-val">40%</b></div>
+            <button class="wide-btn" id="ref-remove"></button>
+          </div>
+        </div>
         <label class="toggle-row"><span>Лінії кожні 8 пікселів</span><span class="switch"><input type="checkbox" id="major-toggle" checked><span class="slider"></span></span></label>
       </details>
     </div>
   </div>
 </div>
 
+<input type="file" id="pal-file" accept=".hex,.gpl,.pal,.txt,text/plain" hidden>
+<input type="file" id="ref-file" accept="image/*" hidden>
 <div class="modal-overlay hidden" id="modal"><div class="modal"></div></div>
 <div class="toast" id="toast"></div>
 
@@ -748,6 +805,9 @@
     lasso: '<path d="M12 4c5 0 9 2 9 5.5S17 15 12 15 3 13 3 9.5 7 4 12 4Z" stroke-dasharray="3 2.5"/><path d="M8 15c-1 2 0 4 2.5 4 1.5 0 2-1 2-2"/>',
     dither: '<rect x="4" y="4" width="4" height="4" fill="currentColor"/><rect x="12" y="4" width="4" height="4" fill="currentColor"/><rect x="8" y="8" width="4" height="4" fill="currentColor"/><rect x="16" y="8" width="4" height="4" fill="currentColor"/><rect x="4" y="12" width="4" height="4" fill="currentColor"/><rect x="12" y="12" width="4" height="4" fill="currentColor"/><rect x="8" y="16" width="4" height="4" fill="currentColor"/><rect x="16" y="16" width="4" height="4" fill="currentColor"/>',
     gradient: '<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M7 9v6M11 9v6M15 9v6" opacity=".7"/><path d="M17.5 9v6" opacity=".3"/>',
+    eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+    eyeOff: '<path d="M17.94 17.94A10.1 10.1 0 0 1 12 19c-6.4 0-10-7-10-7a18 18 0 0 1 5.06-5.94M9.9 4.24A9.1 9.1 0 0 1 12 4c6.4 0 10 7 10 7a18 18 0 0 1-2.16 3.19M1 1l22 22"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>',
+    merge: '<path d="M8 4v6a4 4 0 0 0 4 4 4 4 0 0 1 4 4v2"/><path d="M16 4v6a4 4 0 0 1-4 4"/><path d="m13 19 3 3 3-3"/>',
     invert: '<path d="M4 4h16v16H4Z" stroke-dasharray="3 2.5"/><path d="M12 4v16" /><path d="M12 4h8v16h-8Z" fill="currentColor" opacity=".55"/>',
     bucket: '<path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2a2 2 0 0 0 2.8 0L19 11Z" fill="currentColor" opacity=".35"/><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2a2 2 0 0 0 2.8 0L19 11Z"/>'
   };
@@ -822,7 +882,38 @@
   let dpr = 1;
 
   function blank(){ return new Array(W * H).fill(null); }
-  const px = () => frames[cur];
+  // Шари: спільний список для всіх кадрів; у кожного шару своя картинка (cel) на кожен кадр.
+  // frames — готові (складені) кадри для перегляду й експорту; редагується завжди активний шар.
+  let layers = [{ id: 'l0', name: 'Шар 1', visible: true, opacity: 1, cels: [frames[0]] }];
+  let curLayer = 0;
+  const px = () => layers[curLayer].cels[cur];
+  const mkLayer = (name, cels) => ({ id: newId(), name, visible: true, opacity: 1, cels });
+  // Складання шарів у один кадр (знизу догори). Лише один видимий шар без прозорості — повертаємо його самого, без копіювання
+  function composeCels(list, i, w, h){
+    const vis = list.filter(L => L.visible);
+    if(vis.length === 1 && vis[0].opacity >= 1) return vis[0].cels[i];
+    const n = w * h, out = new Array(n).fill(null);
+    if(!vis.length) return out;
+    const R = new Float32Array(n), G = new Float32Array(n), B = new Float32Array(n), A = new Float32Array(n);
+    for(const L of vis){
+      const cel = L.cels[i], sa = L.opacity;
+      if(!cel) continue;
+      for(let p = 0; p < n; p++){
+        const c = cel[p]; if(!c) continue;
+        const rgb = hexToRgb(c), a0 = A[p], ao = sa + a0 * (1 - sa);
+        R[p] = (rgb[0] * sa + R[p] * a0 * (1 - sa)) / ao; G[p] = (rgb[1] * sa + G[p] * a0 * (1 - sa)) / ao; B[p] = (rgb[2] * sa + B[p] * a0 * (1 - sa)) / ao; A[p] = ao;
+      }
+    }
+    for(let p = 0; p < n; p++){
+      const a = A[p]; if(a <= 0.004) continue;
+      out[p] = rgbToHex(R[p], G[p], B[p]) + (a >= 0.996 ? '' : Math.round(a * 255).toString(16).padStart(2, '0'));
+    }
+    return out;
+  }
+  const frameCount = () => layers[0].cels.length;
+  function recomp(i){ if(i >= 0 && i < frameCount()) frames[i] = composeCels(layers, i, W, H); }
+  function recompAll(){ frames = layers[0].cels.map((_, i) => composeCels(layers, i, W, H)); }
+  const layerCelsCopy = L => ({ ...L, cels: L.cels.slice() });
 
   // ---------- Helpers ----------
   function escapeHtml(s){ const d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
@@ -854,7 +945,7 @@
   const rgbCache = new Map();
   function hexToRgb(h){
     let v = rgbCache.get(h);
-    if(!v){ const n = parseInt(h.slice(1), 16); v = [(n >> 16) & 255, (n >> 8) & 255, n & 255]; rgbCache.set(h, v); }
+    if(!v){ const n = parseInt(h.slice(1, 7), 16); v = [(n >> 16) & 255, (n >> 8) & 255, n & 255]; rgbCache.set(h, v); }
     return v;
   }
   function rgbToHex(r, g, b){ return '#' + [r, g, b].map(v => clamp(Math.round(v), 0, 255).toString(16).padStart(2, '0')).join(''); }
@@ -942,7 +1033,7 @@
   // other chars index the sprite's palette. Old saves (arrays of hex) still load.
   function encodeSprite(){
     const pal = [], idx = new Map();
-    const enc = frames.map(f => {
+    const encCels = cels => cels.map(f => {
       let s = '';
       for(const c of f){
         if(!c){ s += '0'; continue; }
@@ -952,17 +1043,27 @@
       }
       return s;
     });
-    return { v:2, palette: pal, frames: enc };
+    // один звичайний шар — старий формат (сумісний з попередніми версіями), кілька — v3
+    if(layers.length === 1 && layers[0].visible && layers[0].opacity >= 1) return { v:2, palette: pal, frames: encCels(layers[0].cels) };
+    const ls = layers.map(L => ({ name: L.name, visible: L.visible, opacity: L.opacity, frames: encCels(L.cels) }));
+    return { v:3, palette: pal, layers: ls, active: curLayer };
   }
   function decodeSprite(s){
     let w = s.width || s.gridSize || 16, h = s.height || s.gridSize || 16;
     let fr;
+    const dec = strs => strs.map(str => {
+      const a = new Array(w * h).fill(null);
+      for(let i = 0; i < a.length && i < str.length; i++){ const k = str.charCodeAt(i) - 49; if(k >= 0) a[i] = s.palette[k] || null; }
+      return a;
+    });
+    if(s.v === 3 && Array.isArray(s.layers) && s.layers.length){
+      const ls = s.layers.map(L => ({ id: newId(), name: String(L.name || 'Шар').slice(0, 40), visible: L.visible !== false, opacity: clamp(+L.opacity || 1, 0, 1), cels: dec(L.frames || []) }));
+      const nf = Math.max(1, ...ls.map(L => L.cels.length));
+      ls.forEach(L => { while(L.cels.length < nf) L.cels.push(new Array(w * h).fill(null)); });
+      return { w, h, layers: ls, frames: ls[0].cels.map((_, i) => composeCels(ls, i, w, h)), fps: s.fps || 8, active: clamp(+s.active || 0, 0, ls.length - 1) };
+    }
     if(s.v === 2 && Array.isArray(s.frames)){
-      fr = s.frames.map(str => {
-        const a = new Array(w * h).fill(null);
-        for(let i = 0; i < a.length && i < str.length; i++){ const k = str.charCodeAt(i) - 49; if(k >= 0) a[i] = s.palette[k] || null; }
-        return a;
-      });
+      fr = dec(s.frames);
     } else if(Array.isArray(s.frames) && s.frames.length){
       fr = s.frames.map(f => (f.pixels || []).slice());
     } else if(s.pixels){
@@ -971,7 +1072,7 @@
       fr = [new Array(w * h).fill(null)];
     }
     fr = fr.map(a => { a.length = w * h; for(let i = 0; i < a.length; i++) if(a[i] === undefined) a[i] = null; return a; });
-    return { w, h, frames: fr, fps: s.fps || 8 };
+    return { w, h, frames: fr, layers: [{ id: newId(), name: 'Шар 1', visible: true, opacity: 1, cels: fr }], fps: s.fps || 8, active: 0 };
   }
   function loadSprites(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }catch(e){ return []; } }
   function saveSprites(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
@@ -981,21 +1082,36 @@
   // ---------- History ----------
   // A snapshot keeps references to the frame arrays; any edit first replaces
   // the touched frame with a copy (beginChange), so snapshots stay intact.
-  function snapshot(){ return { W, H, cur, frames: frames.slice() }; }
+  function snapshot(){ return { W, H, cur, curLayer, layers: layers.map(layerCelsCopy) }; }
   function restore(s){
-    W = s.W; H = s.H; frames = s.frames.slice(); cur = Math.min(s.cur, frames.length - 1);
+    W = s.W; H = s.H; layers = s.layers.map(layerCelsCopy);
+    cur = Math.min(s.cur, frameCount() - 1); curLayer = Math.min(s.curLayer, layers.length - 1);
+    recompAll();
   }
   function beginChange(allFrames){
     undoStack.push(snapshot());
     if(undoStack.length > 120) undoStack.shift();
     redoStack = [];
-    if(allFrames) frames = frames.map(f => f.slice());
-    else frames[cur] = frames[cur].slice();
+    if(allFrames) layers.forEach(L => { L.cels = L.cels.map(f => f.slice()); });
+    else { const L = layers[curLayer]; L.cels[cur] = L.cels[cur].slice(); }
+  }
+  // зміна лише структури шарів (видимість, порядок…): знімок без копіювання картинок
+  function layerChange(fn){
+    commitFloat();
+    undoStack.push(snapshot());
+    if(undoStack.length > 120) undoStack.shift();
+    redoStack = [];
+    fn();
+    afterLayerChange();
+  }
+  function afterLayerChange(){
+    recompAll(); renderLayers(); renderFrames(); refreshUsedColors(); markDirty(); updateUndoButtons(); render();
   }
   function endChange(opts = {}){
     markDirty();
-    if(opts.allThumbs) renderFrames(); else updateFrameThumb(cur);
+    if(opts.allThumbs){ recompAll(); renderFrames(); } else { recomp(cur); updateFrameThumb(cur); }
     refreshUsedColors();
+    renderLayerThumbs();
     updateUndoButtons();
     render();
   }
@@ -1016,7 +1132,7 @@
     afterStructureChange();
   }
   function afterStructureChange(){
-    markDirty(); renderFrames(); refreshUsedColors(); updateUndoButtons(); updateSizeLine(); render();
+    recompAll(); markDirty(); renderFrames(); renderLayers(); refreshUsedColors(); updateUndoButtons(); updateSizeLine(); render();
   }
 
   // ---------- Pixel ops ----------
@@ -1123,8 +1239,8 @@
   function colorInt(c){
     let v = colorIntCache.get(c);
     if(v === undefined){
-      const [r, g, b] = hexToRgb(c);
-      v = ((255 << 24) | (b << 16) | (g << 8) | r) >>> 0;
+      const [r, g, b] = hexToRgb(c), a = c.length > 7 ? parseInt(c.slice(7, 9), 16) : 255;
+      v = ((a << 24) | (b << 16) | (g << 8) | r) >>> 0;
       colorIntCache.set(c, v);
     }
     return v;
@@ -1173,7 +1289,12 @@
     ctx.restore();
 
     ctx.imageSmoothingEnabled = false;
-    const shown = canvasPlaying ? frames[playIndex % frames.length] : px();
+    if(refImg && refShow){ // еталон під спрайтом: вписаний у полотно зі збереженням пропорцій
+      const iw = refImg.naturalWidth, ih = refImg.naturalHeight, k = Math.min(w / iw, h / ih), rw = iw * k, rh = ih * k;
+      ctx.save(); ctx.globalAlpha = refOpacity; ctx.imageSmoothingEnabled = true; ctx.drawImage(refImg, ox + (w - rw) / 2, oy + (h - rh) / 2, rw, rh); ctx.restore();
+    }
+    if(!canvasPlaying) recomp(cur);
+    const shown = canvasPlaying ? frames[playIndex % frames.length] : frames[cur];
 
     if(onion && !canvasPlaying && frames.length > 1){
       const prev = frames[(cur - 1 + frames.length) % frames.length];
@@ -1442,7 +1563,8 @@
 
   function pickColorAt(c){
     if(!inside(c.x, c.y)) return;
-    const v = (sel && sel.float && inSel(c)) ? sel.float.px[(c.y - sel.y) * sel.float.w + (c.x - sel.x)] : px()[c.y * W + c.x];
+    const v = (sel && sel.float && inSel(c)) ? sel.float.px[(c.y - sel.y) * sel.float.w + (c.x - sel.x)] : frames[cur][c.y * W + c.x];
+    if(v && v.length > 7){ setColor(v.slice(0, 7)); return; }
     if(v) setColor(v); else toast('Тут прозорий піксель');
   }
 
@@ -1504,6 +1626,7 @@
     const t = (e.altKey && !SEL_TOOLS.includes(tool)) ? 'picker' : tool;
 
     if(t === 'picker'){ pickColorAt(c); drag = { picker: true }; return; }
+    if(!layers[curLayer].visible && !SEL_TOOLS.includes(t)){ toast('Цей шар сховано. Увімкни його оком у списку шарів, щоб малювати'); return; }
     if(!SEL_TOOLS.includes(t)) commitFloat();
 
     if(t === 'wand'){
@@ -1753,9 +1876,9 @@
   function flip(horizontal){
     if(sel){ liftSelection(); flipFloat(horizontal); return; }
     beginChange(true);
-    transformTargets().forEach(i => {
-      frames[i] = mapFrame(frames[i], (x, y) => horizontal ? y * W + (W - 1 - x) : (H - 1 - y) * W + x);
-    });
+    transformTargets().forEach(i => layers.forEach(L => {
+      L.cels[i] = mapFrame(L.cels[i], (x, y) => horizontal ? y * W + (W - 1 - x) : (H - 1 - y) * W + x);
+    }));
     endChange({ allThumbs:true });
   }
   function rotate(cw){
@@ -1774,40 +1897,41 @@
       // non-square canvas: rotate every frame and swap the canvas size
       beginChange(true);
       const ow = W, oh = H;
-      frames = frames.map(a => {
+      layers.forEach(L => { L.cels = L.cels.map(a => {
         const out = new Array(ow * oh).fill(null);
         for(let y = 0; y < ow; y++) for(let x = 0; x < oh; x++)
           out[y * oh + x] = cw ? a[(oh - 1 - x) * ow + y] : a[x * ow + (ow - 1 - y)];
         return out;
-      });
+      }); });
       W = oh; H = ow;
       afterStructureChange(); fitView();
       if(!$('all-frames-toggle').checked) toast('Полотно не квадратне, тому повернуто всі кадри');
       return;
     }
     beginChange(true);
-    transformTargets().forEach(i => {
-      frames[i] = mapFrame(frames[i], (x, y) => cw ? (W - 1 - x) * W + y : x * W + (W - 1 - y));
-    });
+    transformTargets().forEach(i => layers.forEach(L => {
+      L.cels[i] = mapFrame(L.cels[i], (x, y) => cw ? (W - 1 - x) * W + y : x * W + (W - 1 - y));
+    }));
     endChange({ allThumbs:true });
   }
   function shiftImage(dx, dy){
     beginChange(true);
-    transformTargets().forEach(i => {
-      frames[i] = mapFrame(frames[i], (x, y) => ((y - dy + H) % H) * W + ((x - dx + W) % W));
-    });
+    transformTargets().forEach(i => layers.forEach(L => {
+      L.cels[i] = mapFrame(L.cels[i], (x, y) => ((y - dy + H) % H) * W + ((x - dx + W) % W));
+    }));
     endChange({ allThumbs:true });
   }
   function addOutline(){
     beginChange(true);
     transformTargets().forEach(i => {
-      const a = frames[i], out = a.slice();
+      recomp(i);
+      const a = frames[i], own = layers[curLayer].cels[i], out = own.slice();   // контур за складеним кадром, малюється на активному шарі
       for(let y = 0; y < H; y++) for(let x = 0; x < W; x++){
         if(a[y * W + x]) continue;
         const n = (xx, yy) => inside(xx, yy) && a[yy * W + xx];
         if(n(x - 1, y) || n(x + 1, y) || n(x, y - 1) || n(x, y + 1)) out[y * W + x] = color;
       }
-      frames[i] = out;
+      layers[curLayer].cels[i] = out;
     });
     endChange({ allThumbs:true });
     toast('Додано контур поточним кольором');
@@ -1865,7 +1989,7 @@
     const ow = W, oh = H;
     const ax = anchor % 3, ay = Math.floor(anchor / 3);
     const offX = Math.round((nw - ow) * ax / 2), offY = Math.round((nh - oh) * ay / 2);
-    frames = frames.map(a => {
+    layers.forEach(L => { L.cels = L.cels.map(a => {
       const out = new Array(nw * nh).fill(null);
       for(let y = 0; y < nh; y++) for(let x = 0; x < nw; x++){
         let sx, sy;
@@ -1874,10 +1998,94 @@
         if(sx >= 0 && sy >= 0 && sx < ow && sy < oh) out[y * nw + x] = a[sy * ow + sx];
       }
       return out;
-    });
+    }); });
     W = nw; H = nh;
     afterStructureChange(); fitView();
   }
+
+  // ---------- Шари ----------
+  const layerList = $('layer-list');
+  function renderLayers(){
+    layerList.innerHTML = '';
+    for(let i = layers.length - 1; i >= 0; i--){            // згори вниз: верхній шар першим
+      const L = layers[i];
+      const row = document.createElement('div');
+      row.className = 'layer-row' + (i === curLayer ? ' active' : '') + (L.visible ? '' : ' hidden-l');
+      row.dataset.i = i;
+      row.innerHTML = `<button class="l-eye ${L.visible ? 'on' : ''}" title="${L.visible ? 'Сховати шар' : 'Показати шар'}" aria-label="${L.visible ? 'Сховати шар' : 'Показати шар'}">${svg(L.visible ? I.eye : I.eyeOff)}</button>
+        <span class="l-th"></span><span class="l-name" title="Двічі клацни, щоб перейменувати">${escapeHtml(L.name)}</span>${L.opacity < 1 ? `<span class="l-op">${Math.round(L.opacity * 100)}%</span>` : ''}`;
+      row.querySelector('.l-th').appendChild(thumbCanvas(L.cels[cur]));
+      row.onclick = e => {
+        if(e.target.closest('.l-eye')){ layerChange(() => { L.visible = !L.visible; }); return; }
+        if(i !== curLayer){ commitFloat(); sel = null; curLayer = i; renderLayers(); updateOptbar(); render(); }
+      };
+      row.querySelector('.l-name').ondblclick = () => renameLayer(i);
+      row.draggable = true;
+      row.ondragstart = e => { e.dataTransfer.setData('text/plain', String(i)); };
+      row.ondragover = e => e.preventDefault();
+      row.ondrop = e => { e.preventDefault(); const from = parseInt(e.dataTransfer.getData('text/plain'), 10); if(!isNaN(from) && from !== i) moveLayerTo(from, i); };
+      layerList.appendChild(row);
+    }
+    const L = layers[curLayer];
+    $('layer-op-range').value = Math.round(L.opacity * 100); $('layer-op-val').textContent = Math.round(L.opacity * 100) + '%';
+    $('layer-del').disabled = layers.length <= 1; $('layer-merge').disabled = curLayer === 0;
+  }
+  function renderLayerThumbs(){
+    layerList.querySelectorAll('.layer-row').forEach(row => {
+      const L = layers[+row.dataset.i]; if(!L) return;
+      const th = row.querySelector('.l-th'); th.innerHTML = ''; th.appendChild(thumbCanvas(L.cels[cur]));
+    });
+  }
+  function renameLayer(i){
+    const row = layerList.querySelector(`.layer-row[data-i="${i}"]`); if(!row) return;
+    const nm = row.querySelector('.l-name'), inp = document.createElement('input');
+    inp.className = 'l-edit'; inp.value = layers[i].name; inp.maxLength = 40; inp.setAttribute('aria-label', 'Назва шару');
+    nm.replaceWith(inp); inp.focus(); inp.select();
+    let done = false;
+    const fin = ok => { if(done) return; done = true; const v = inp.value.trim(); if(ok && v && v !== layers[i].name) layerChange(() => { layers[i].name = v.slice(0, 40); }); else renderLayers(); };
+    inp.onkeydown = e => { e.stopPropagation(); if(e.key === 'Enter') fin(true); else if(e.key === 'Escape') fin(false); };
+    inp.onblur = () => fin(true); inp.onclick = e => e.stopPropagation();
+  }
+  function uniqueLayerName(base){ const names = new Set(layers.map(l => l.name)); let n = layers.length + 1, name = base || `Шар ${n}`; while(names.has(name)) name = `Шар ${++n}`; return name; }
+  function addLayer(){
+    layerChange(() => { const L = mkLayer(uniqueLayerName(), layers[0].cels.map(() => blank())); layers.splice(curLayer + 1, 0, L); curLayer++; });
+  }
+  function duplicateLayer(){
+    layerChange(() => { const src = layers[curLayer], L = mkLayer(uniqueLayerName(src.name + ' копія'), src.cels.map(a => a.slice())); L.visible = src.visible; L.opacity = src.opacity; layers.splice(curLayer + 1, 0, L); curLayer++; });
+  }
+  async function deleteLayer(){
+    if(layers.length <= 1) return;
+    layerChange(() => { layers.splice(curLayer, 1); curLayer = Math.min(curLayer, layers.length - 1); });
+    toast('Шар видалено (Ctrl+Z — повернути)');
+  }
+  function moveLayerTo(from, to){
+    layerChange(() => { const [L] = layers.splice(from, 1); layers.splice(to, 0, L); curLayer = to; });
+  }
+  // об’єднати активний шар із нижнім: пікселі зверху перекривають, прозорість обох враховується
+  function mergeDown(){
+    if(curLayer === 0) return;
+    layerChange(() => {
+      const top = layers[curLayer], bot = layers[curLayer - 1];
+      const pair = [bot, top];
+      const cels = bot.cels.map((_, i) => composeCels(pair.map(L => ({ ...L, visible: true })), i, W, H).map(c => c));
+      // шар-результат непрозорий; якщо верхній мав прозорість, її вже враховано в кольорі пікселів (без альфа-каналу)
+      bot.cels = cels.map(a => a.map(c => (c && c.length > 7) ? (parseInt(c.slice(7, 9), 16) >= 128 ? c.slice(0, 7) : null) : c).slice());
+      bot.opacity = 1; bot.visible = true;
+      layers.splice(curLayer, 1); curLayer--;
+    });
+  }
+  $('layer-add').onclick = addLayer;
+  $('layer-dup').innerHTML = svg(I.copy); $('layer-dup').onclick = duplicateLayer;
+  $('layer-merge').innerHTML = svg(I.merge); $('layer-merge').onclick = mergeDown;
+  $('layer-del').innerHTML = svg(I.trash); $('layer-del').onclick = deleteLayer;
+  let opSnap = null;
+  $('layer-op-range').oninput = e => {
+    if(!opSnap){ commitFloat(); opSnap = snapshot(); }
+    const v = (+e.target.value) / 100; layers[curLayer].opacity = v;
+    $('layer-op-val').textContent = Math.round(v * 100) + '%';
+    recompAll(); render(); renderFrames();
+  };
+  $('layer-op-range').onchange = () => { if(opSnap){ undoStack.push(opSnap); opSnap = null; redoStack = []; markDirty(); updateUndoButtons(); renderLayers(); } };
 
   // ---------- Frames ----------
   const framesList = $('frames-list');
@@ -1935,7 +2143,7 @@
   function updateFrameThumb(i){
     const t = framesList.querySelectorAll('.frame-thumb')[i];
     if(!t){ renderFrames(); return; }
-    t.innerHTML = ''; t.appendChild(thumbCanvas(frames[i]));
+    recomp(i); t.innerHTML = ''; t.appendChild(thumbCanvas(frames[i]));
   }
   function updateFrameThumbSoon(){ clearTimeout(thumbTimer); thumbTimer = setTimeout(() => updateFrameThumb(cur), 80); }
   function switchFrame(i){
@@ -1947,14 +2155,14 @@
   function addFrame(){
     commitFloat(); sel = null;
     beginChange();
-    frames.splice(cur + 1, 0, blank());
+    layers.forEach(L => L.cels.splice(cur + 1, 0, blank()));
     cur++;
     afterStructureChange();
   }
   function duplicateFrame(i){
     commitFloat(); sel = null;
     beginChange();
-    frames.splice(i + 1, 0, frames[i].slice());
+    layers.forEach(L => L.cels.splice(i + 1, 0, L.cels[i].slice()));
     cur = i + 1;
     afterStructureChange();
   }
@@ -1962,16 +2170,15 @@
     if(frames.length <= 1) return;
     commitFloat(); sel = null;
     beginChange();
-    frames.splice(i, 1);
-    cur = clamp(cur > i ? cur - 1 : cur, 0, frames.length - 1);
+    layers.forEach(L => L.cels.splice(i, 1));
+    cur = clamp(cur > i ? cur - 1 : cur, 0, frameCount() - 1);
     afterStructureChange();
     toast('Кадр видалено (Ctrl+Z — повернути)');
   }
   function moveFrame(from, to){
     commitFloat(); sel = null;
     beginChange();
-    const [f] = frames.splice(from, 1);
-    frames.splice(to, 0, f);
+    layers.forEach(L => { const [f] = L.cels.splice(from, 1); L.cels.splice(to, 0, f); });
     cur = to;
     afterStructureChange();
   }
@@ -1997,7 +2204,8 @@
     if(previewCanvas.width !== W) previewCanvas.width = W;
     if(previewCanvas.height !== H) previewCanvas.height = H;
     previewCanvas.style.width = W * s + 'px'; previewCanvas.style.height = H * s + 'px';
-    const arr = frames.length > 1 && previewPlaying ? frames[previewIndex % frames.length] : px();
+    recomp(cur);
+    const arr = frames.length > 1 && previewPlaying ? frames[previewIndex % frames.length] : frames[cur];
     previewCtx.clearRect(0, 0, W, H);
     paintFrameTo(previewCtx, arr, W, H);
   }
@@ -2016,6 +2224,47 @@
   $('fps-down').onclick = () => { fps = Math.max(1, fps - 1); updateFps(); markDirty(); };
 
   // ---------- Colours ----------
+  // ---------- Відтінки (рампа) ----------
+  function rgbToHsl(r, g, b){
+    r /= 255; g /= 255; b /= 255;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2; let h = 0, s = 0;
+    if(mx !== mn){
+      const d = mx - mn; s = l > .5 ? d / (2 - mx - mn) : d / (mx + mn);
+      h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60;
+    }
+    return [h, s, l];
+  }
+  function hslToRgb(h, s, l){
+    h = ((h % 360) + 360) % 360 / 360;
+    const f = (p, q, t) => { t = (t + 1) % 1; return t < 1 / 6 ? p + (q - p) * 6 * t : t < .5 ? q : t < 2 / 3 ? p + (q - p) * (2 / 3 - t) * 6 : p; };
+    if(!s) return [l * 255, l * 255, l * 255];
+    const q = l < .5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+    return [f(p, q, h + 1 / 3) * 255, f(p, q, h) * 255, f(p, q, h - 1 / 3) * 255];
+  }
+  // Піксель-арт рампа: тіні холодніші й темніші, світла теплішіші; середній елемент — сам колір
+  function rampColors(c, n = 7){
+    const [h, s, l] = rgbToHsl(...hexToRgb(c)), mid = (n - 1) / 2, out = [];
+    const toward = (from, to, k) => { let d = ((to - from + 540) % 360) - 180; return from + d * k; };
+    for(let i = 0; i < n; i++){
+      const t = (i - mid) / mid;
+      if(!t){ out.push(c); continue; }
+      const L = t < 0 ? l + t * l * .78 : l + t * (1 - l) * .78;
+      const H = t < 0 ? toward(h, 250, .12 * -t) : toward(h, 52, .12 * t);
+      const S = clamp(s * (1 - .12 * Math.abs(t)) + (t < 0 ? .04 : 0), 0, 1);
+      out.push(rgbToHex(...hslToRgb(H, S, clamp(L, .04, .96))));
+    }
+    return out;
+  }
+  function renderRamp(){
+    const row = $('ramp-row'); if(!row) return;
+    row.innerHTML = '';
+    rampColors(color).forEach((c, i) => {
+      const b = document.createElement('button'); b.style.background = c; b.title = c.toUpperCase() + (i === 3 ? ' (поточний)' : '');
+      if(i === 3) b.className = 'mid';
+      b.onclick = () => setColor(c);
+      row.appendChild(b);
+    });
+  }
   function setColor(c){
     c = normHex(c); if(!c) return;
     color = c;
@@ -2023,6 +2272,7 @@
     $('color-input').value = c;
     if(document.activeElement !== $('hex-input')) $('hex-input').value = c.toUpperCase();
     document.querySelectorAll('.swatch[data-c]').forEach(s => s.classList.toggle('active', s.dataset.c === c));
+    renderRamp();
     render();
   }
   function pushRecent(c){
@@ -2040,10 +2290,98 @@
   $('hex-input').addEventListener('input', e => { const c = normHex(e.target.value); if(c) setColor(c); });
   $('hex-input').addEventListener('blur', e => { e.target.value = color.toUpperCase(); });
 
+  // ---------- Еталонна картинка під полотном (не потрапляє в експорт) ----------
+  let refImg = null, refOpacity = .4, refShow = true;
+  function updateRefUi(){
+    $('ref-btn').innerHTML = svg(I.image) + (refImg ? 'Замінити еталон…' : 'Еталонна картинка…');
+    $('ref-ctrl').hidden = !refImg;
+    $('ref-remove').innerHTML = svg(I.trash) + 'Прибрати еталон';
+  }
+  $('ref-btn').title = 'Картинка-підказка під полотном: можна обводити. У готовий спрайт не потрапляє';
+  $('ref-btn').onclick = () => $('ref-file').click();
+  $('ref-file').onchange = async () => {
+    const f = $('ref-file').files[0]; $('ref-file').value = ''; if(!f) return;
+    try{ refImg = await loadImageFile(f); refShow = true; $('ref-show').checked = true; updateRefUi(); render(); toast('Еталон додано. Він видимий лише в редакторі'); }catch(e){ toast('Не вдалося відкрити картинку'); }
+  };
+  $('ref-show').onchange = e => { refShow = e.target.checked; render(); };
+  $('ref-op').oninput = e => { refOpacity = (+e.target.value) / 100; $('ref-op-val').textContent = Math.round(refOpacity * 100) + '%'; render(); };
+  $('ref-remove').onclick = () => { refImg = null; updateRefUi(); render(); };
+
+  // ---------- Імпорт палітр ----------
+  const PAL_KEY = 'edvault-sprite-palettes';
+  let importedPalettes = [];
+  try{ importedPalettes = (JSON.parse(localStorage.getItem(PAL_KEY) || '[]') || []).filter(p => p && p.id && Array.isArray(p.colors)); }catch(e){}
+  importedPalettes.forEach(p => { PALETTES[p.id] = { name: p.name, colors: p.colors, imported: true }; });
+  function savePalettes(){ try{ localStorage.setItem(PAL_KEY, JSON.stringify(importedPalettes)); }catch(e){ toast('Не вдалося зберегти палітру: немає місця'); } }
+  // .hex (RRGGBB в рядок), .gpl (GIMP), JASC .pal, або будь-який текст із кодами #RRGGBB
+  function parsePalette(text){
+    const out = [], seen = new Set();
+    const add = (r, g, b) => { if([r, g, b].some(v => !(v >= 0 && v <= 255))) return; const c = rgbToHex(r, g, b); if(!seen.has(c) && out.length < 256){ seen.add(c); out.push(c); } };
+    const lines = String(text).split(/\r?\n/);
+    if(/^JASC-PAL/i.test(lines[0] || '') || /^GIMP Palette/i.test(lines[0] || '')){
+      for(const ln of lines){ const m = ln.trim().match(/^(\d{1,3})\s+(\d{1,3})\s+(\d{1,3})(?:\s|$)/); if(m) add(+m[1], +m[2], +m[3]); }
+      if(out.length) return out;
+    }
+    const re = /#?\b([0-9a-fA-F]{6})\b/g; let m;
+    for(const ln of lines){ if(/^(#\s|;|\/\/)/.test(ln.trim()) && !/#[0-9a-fA-F]{6}\b/.test(ln)) continue; re.lastIndex = 0; while((m = re.exec(ln))){ const n = parseInt(m[1], 16); add((n >> 16) & 255, (n >> 8) & 255, n & 255); } }
+    return out;
+  }
+  function addImportedPalette(name, colors){
+    const id = 'imp-' + newId();
+    importedPalettes.push({ id, name, colors }); PALETTES[id] = { name, colors, imported: true };
+    savePalettes(); paletteId = id; try{ localStorage.setItem('edvault-sprite-palette', paletteId); }catch(e){}
+    refreshPaletteSelect(); renderPalette();
+    toast(`Палітра «${name}»: ${colors.length} ${plural(colors.length, 'колір', 'кольори', 'кольорів')}`);
+  }
+  function openPaletteImport(){
+    let colors = [], fname = '';
+    const box = openModal(`<h3 class="modal-title">Імпорт палітри</h3>
+      <p class="modal-sub">Встав коди кольорів (наприклад, зі сторінки палітри на Lospec: «Copy hex codes») або вибери файл .hex, .gpl, .pal, .txt.</p>
+      <textarea class="pal-text" id="pi-text" placeholder="#1a1c2c&#10;#5d275d&#10;#b13e53" spellcheck="false"></textarea>
+      <div class="pal-prev" id="pi-prev"></div>
+      <input class="modal-input" id="pi-name" maxlength="40" placeholder="Назва палітри" style="margin-top:10px">
+      <div class="modal-actions"><button class="ghost-btn" data-file>Вибрати файл…</button><button class="ghost-btn" data-x>Скасувати</button><button class="retry-btn" data-ok disabled>Додати</button></div>`, 'modal-sm');
+    const ta = box.querySelector('#pi-text'), prev = box.querySelector('#pi-prev'), ok = box.querySelector('[data-ok]');
+    const refresh = () => {
+      colors = parsePalette(ta.value);
+      prev.innerHTML = colors.slice(0, 64).map(c => `<i style="background:${c}" title="${c}"></i>`).join('') + (colors.length > 64 ? `<span class="opt-hint">+${colors.length - 64}</span>` : '');
+      ok.disabled = !colors.length; ok.textContent = colors.length ? `Додати ${colors.length}` : 'Додати';
+    };
+    ta.oninput = refresh;
+    box.querySelector('[data-file]').onclick = () => $('pal-file').click();
+    $('pal-file').onchange = async () => {
+      const f = $('pal-file').files[0]; $('pal-file').value = ''; if(!f) return;
+      fname = f.name.replace(/\.[^.]+$/, ''); ta.value = await f.text(); refresh();
+      const nm = box.querySelector('#pi-name'); if(!nm.value) nm.value = fname;
+    };
+    box.querySelector('[data-x]').onclick = closeModal;
+    ok.onclick = () => { if(!colors.length) return; const name = box.querySelector('#pi-name').value.trim() || 'Імпортована палітра'; closeModal(); addImportedPalette(name, colors); };
+    setTimeout(() => ta.focus(), 0);
+  }
+  $('pal-import').onclick = openPaletteImport;
+  $('pal-from-sprite').onclick = () => {
+    const counts = new Map();
+    layers.forEach(L => L.cels.forEach(f => f.forEach(c => { if(c) counts.set(c, (counts.get(c) || 0) + 1); })));
+    const cols = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(e => e[0]).slice(0, 256);
+    if(!cols.length){ toast('У спрайті ще немає кольорів'); return; }
+    addImportedPalette(($('sprite-name').value.trim() || 'Спрайт') + ': кольори', cols);
+  };
+  $('pal-del').onclick = async () => {
+    const p = PALETTES[paletteId]; if(!p || !p.imported) return;
+    if(!(await askConfirm('Видалити палітру?', `Палітра «${p.name}» буде прибрана зі списку.`))) return;
+    importedPalettes = importedPalettes.filter(x => x.id !== paletteId); delete PALETTES[paletteId]; savePalettes();
+    paletteId = 'edvault'; try{ localStorage.setItem('edvault-sprite-palette', paletteId); }catch(e){}
+    refreshPaletteSelect(); renderPalette();
+  };
+  function refreshPaletteSelect(){
+    paletteSelect.innerHTML = Object.entries(PALETTES).map(([k, p]) => `<option value="${k}">${escapeHtml(p.name)}</option>`).join('') + '<option value="custom">Мої кольори</option>';
+    paletteSelect.value = paletteId;
+    $('pal-del').hidden = !(PALETTES[paletteId] && PALETTES[paletteId].imported);
+  }
   const paletteSelect = $('palette-select');
-  paletteSelect.innerHTML = Object.entries(PALETTES).map(([k, p]) => `<option value="${k}">${p.name}</option>`).join('') + '<option value="custom">Мої кольори</option>';
-  paletteSelect.value = paletteId;
-  paletteSelect.onchange = () => { paletteId = paletteSelect.value; try{ localStorage.setItem('edvault-sprite-palette', paletteId); }catch(e){} renderPalette(); };
+  if(paletteId !== 'custom' && !PALETTES[paletteId]) paletteId = 'edvault';
+  refreshPaletteSelect();
+  paletteSelect.onchange = () => { paletteId = paletteSelect.value; try{ localStorage.setItem('edvault-sprite-palette', paletteId); }catch(e){} $('pal-del').hidden = !(PALETTES[paletteId] && PALETTES[paletteId].imported); renderPalette(); };
   function swatchBtn(c, onCtx){
     const b = document.createElement('button');
     b.className = 'swatch' + (c === color ? ' active' : ''); b.dataset.c = c; b.style.background = c; b.title = c.toUpperCase();
@@ -2071,14 +2409,13 @@
     commitFloat();
     beginChange(true);
     let n = 0;
-    (all ? frames : [frames[cur]]).forEach(f => { for(let i = 0; i < f.length; i++) if(f[i] === from){ f[i] = to; n++; } });
-    if(!all) frames[cur] = frames[cur];
+    layers.forEach(L => (all ? L.cels : [L.cels[cur]]).forEach(f => { for(let i = 0; i < f.length; i++) if(f[i] === from){ f[i] = to; n++; } }));
     endChange({ allThumbs: true });
     toast(n ? `Замінено пікселів: ${n}` : 'Такого кольору немає');
   }
   function refreshUsedColors(){
     const counts = new Map();
-    frames.forEach(f => f.forEach(c => { if(c) counts.set(c, (counts.get(c) || 0) + 1); }));
+    layers.forEach(L => L.cels.forEach(f => f.forEach(c => { if(c) counts.set(c, (counts.get(c) || 0) + 1); })));
     const used = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(e => e[0]);
     const g = $('used-grid'); g.innerHTML = '';
     if(!used.length){ g.innerHTML = '<span class="panel-empty" style="grid-column:1/-1">Тут з\'являться кольори, якими ти малюєш</span>'; return; }
@@ -2202,6 +2539,7 @@
 
   // ---------- GIF encoder (LZW, global palette, transparency) ----------
   function encodeGIF(frameArrs, w, h, scale, delayMs, bg){
+    frameArrs = frameArrs.map(a => a.map(c => (c && c.length > 7) ? (parseInt(c.slice(7, 9), 16) >= 128 ? c.slice(0, 7) : null) : c));
     const sw = w * scale, sh = h * scale;
     // palette: index 0 = transparent (or background)
     const colors = new Map(); const pal = [[0, 0, 0]];
@@ -2423,7 +2761,7 @@
       const arr = blank(), offX = Math.floor((W - tw) / 2), offY = Math.floor((H - th) / 2);
       for(let y = 0; y < th; y++) for(let x = 0; x < tw; x++) arr[(y + offY) * W + x + offX] = small[y * tw + x];
       beginChange();
-      if(target === 'new'){ frames.splice(cur + 1, 0, arr); cur++; } else frames[cur] = arr;
+      if(target === 'new'){ layers.forEach((L, k) => L.cels.splice(cur + 1, 0, k === curLayer ? arr : blank())); cur++; } else layers[curLayer].cels[cur] = arr;
       afterStructureChange();
       toast('Картинку імпортовано');
     };
@@ -2577,14 +2915,14 @@
     const existing = currentEditId && list.find(s => s.id === currentEditId);
     if(!name){ name = existing ? existing.name : uniqueName('Мій спрайт'); if(!existing) $('sprite-name').value = name; }
     // a lifted selection is part of the picture too
-    let saveFrames = frames;
+    const keepLayers = layers;
     if(sel && sel.float){
-      saveFrames = frames.slice(); const a = saveFrames[cur] = frames[cur].slice(), f = sel.float;
+      layers = layers.map(layerCelsCopy);
+      const a = layers[curLayer].cels[cur] = layers[curLayer].cels[cur].slice(), f = sel.float;
       for(let y = 0; y < f.h; y++) for(let x = 0; x < f.w; x++){ const v = f.px[y * f.w + x], gx = sel.x + x, gy = sel.y + y; if(v && inside(gx, gy)) a[gy * W + gx] = v; }
     }
-    const keep = frames; frames = saveFrames;
     const enc = encodeSprite();
-    frames = keep;
+    layers = keepLayers;
     const data = { name, width: W, height: H, gridSize: W, fps, ...enc, updated: Date.now() };
     if(existing) Object.assign(existing, data), delete existing.pixels;
     else { currentEditId = currentEditId || newId(); list.push({ id: currentEditId, created: Date.now(), ...data }); }
@@ -2599,7 +2937,7 @@
     closeMenu();
     loading = true;
     const d = decodeSprite(s);
-    W = d.w; H = d.h; frames = d.frames; cur = 0; fps = d.fps || 8;
+    W = d.w; H = d.h; layers = d.layers; curLayer = layers.length - 1; frames = d.frames; cur = 0; fps = d.fps || 8;
     currentEditId = s.id || null;
     $('sprite-name').value = s.name || '';
     undoStack = []; redoStack = []; sel = null; clipboard = clipboard || null; drag = null; selDraft = null;
@@ -2609,7 +2947,7 @@
     loading = false;
     isDirty = false; setSaveStatus(currentEditId ? 'saved' : '');
     updateFps(); updatePlayBtn(); updateOnionBtn(); updateSizeLine(); updateUndoButtons();
-    renderFrames(); refreshUsedColors(); renderPalette(); setColor(color); setTool(tool); updateStatus();
+    renderFrames(); renderLayers(); refreshUsedColors(); renderPalette(); setColor(color); setTool(tool); updateStatus();
     resizeCanvas(); fitView();
     if(opts.isNew) save();
   }
@@ -2708,11 +3046,12 @@
   window.addEventListener('blur', () => { spaceDown = false; stage.classList.remove('pan'); });
 
   // ---------- Start ----------
+  updateRefUi();
   applyTheme(isDarkTheme());
   setColor(color);
   renderPalette();
   renderCatalog();
-  window.__spriteEditor = { get state(){ return { W, H, frames, cur, sel, tool, color, undo: undoStack.length, view: { ...view } }; }, encodeGIF };
+  window.__spriteEditor = { get state(){ return { W, H, frames, cur, sel, tool, color, undo: undoStack.length, view: { ...view }, layers, curLayer }; }, encodeGIF };
 })();
 </script>
 
