@@ -399,7 +399,7 @@
   .tag-chip .tag-edit svg { width: 11px; height: 11px; }
   .tag-chip.on { border-color: var(--accent); background: var(--accent-light); color: var(--text); }
   .set-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; white-space: nowrap; font-size: 12.5px; font-weight: 600; color: var(--text2); margin-top: 8px; }
-  .set-row .num-input { width: 56px; padding: 5px 8px; font: 600 12px 'JetBrains Mono', monospace; }
+  .set-row .num-input { width: 42px; padding: 5px 6px; font: 600 12px 'JetBrains Mono', monospace; }
   .set-row input[type=range] { flex: 1; accent-color: var(--accent); min-width: 0; }
   .sheet-prev { margin-top: 10px; display: flex; justify-content: center; background: repeating-conic-gradient(#e9ebef 0 25%, #f7f8fa 0 50%) 0 0 / 12px 12px; border-radius: 10px; padding: 8px; }
   .sheet-prev canvas { max-width: 100%; max-height: 260px; image-rendering: pixelated; }
@@ -423,6 +423,17 @@
   .layer-row .l-eye { width: 22px; height: 22px; flex: none; border: none; background: none; color: var(--muted); cursor: pointer; border-radius: 6px; display: grid; place-items: center; padding: 0; }
   .layer-row .l-eye:hover { background: var(--surface2); color: var(--text); }
   .layer-row .l-eye.on { color: var(--accent); }
+  .layer-row .l-lock { width: 22px; height: 22px; flex: none; border: none; background: none; color: var(--muted); cursor: pointer; border-radius: 6px; display: grid; place-items: center; padding: 0; opacity: 0; transition: opacity .12s ease; }
+  .layer-row:hover .l-lock, .layer-row .l-lock.on, .layer-row .l-lock:focus-visible { opacity: 1; }
+  .layer-row .l-lock.on { color: var(--danger); }
+  .layer-row .l-lock:hover { background: var(--surface2); color: var(--text); }
+  .layer-row .l-lock svg { width: 14px; height: 14px; }
+  .bg-dots { display: inline-flex; gap: 5px; }
+  .bg-dots button { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--border2); cursor: pointer; padding: 0; }
+  .bg-dots button[data-bg=checker] { background: repeating-conic-gradient(#d4d7de 0 25%, #fff 0 50%) 0 0 / 8px 8px; }
+  .bg-dots button[data-bg=white] { background: #fff; } .bg-dots button[data-bg=grey] { background: #808080; } .bg-dots button[data-bg=black] { background: #000; } .bg-dots button[data-bg=green] { background: #2fbf4f; }
+  .bg-dots button.active { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .mini-select { border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--text); font: 600 12px inherit; font-family: inherit; padding: 4px 6px; cursor: pointer; }
   .layer-row .l-eye svg { width: 15px; height: 15px; }
   .layer-row .l-th { width: 28px; height: 28px; flex: none; border-radius: 5px; background: repeating-conic-gradient(#fff 0 25%, #e6e8ec 0 50%) 0 0 / 8px 8px; overflow: hidden; border: 1px solid var(--border); }
   .layer-row .l-th canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
@@ -651,10 +662,11 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <input type="search" class="search-input" id="search-input" placeholder="Пошук спрайтів…">
         </div>
-        <button class="ghost-btn" id="catalog-import-btn" title="Створити спрайт з картинки">
+        <button class="ghost-btn" id="catalog-import-btn" title="Створити спрайт з картинки, аркуша кадрів або відновити з файлу копії (.json). Файл можна й перетягнути на сторінку">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <span class="hide-sm">З картинки</span>
         </button>
+        <button class="ghost-btn" id="backup-all-btn" title="Зберегти копію всіх спрайтів одним файлом"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span class="hide-sm">Копія всіх</span></button>
         <button class="retry-btn" id="add-tile">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Новий спрайт
@@ -797,7 +809,8 @@
         <div class="size-line" id="size-line">16 × 16</div>
         <button class="wide-btn" id="resize-btn"></button>
         <label class="toggle-row"><span>Сітка</span><span class="switch"><input type="checkbox" id="grid-toggle" checked><span class="slider"></span></span></label>
-        <label class="toggle-row"><span>Лінії кожні 8 пікселів</span><span class="switch"><input type="checkbox" id="major-toggle" checked><span class="slider"></span></span></label>
+        <div class="set-row" title="Лише для перегляду в редакторі: на експорт не впливає"><span>Фон полотна</span><span class="bg-dots" id="bg-dots"><button data-bg="checker" title="Шахівниця (прозорість)"></button><button data-bg="white" title="Білий"></button><button data-bg="grey" title="Сірий"></button><button data-bg="black" title="Чорний"></button><button data-bg="green" title="Зелений (для перевірки країв)"></button></span></div>
+        <div class="set-row" title="Товстіші лінії через кожні N пікселів: зручно для тайлів і спрайтів із сіткою 8, 16, 32"><span>Виділені лінії</span><select id="major-step" class="mini-select"><option value="0">Немає</option><option value="4">Кожні 4</option><option value="8" selected>Кожні 8</option><option value="16">Кожні 16</option><option value="32">Кожні 32</option></select></div>
       </section>
       <section class="rp-sec"><div class="panel-label">Перетворення</div>
         <div class="btn-grid" id="transform-grid"></div>
@@ -805,8 +818,8 @@
         <button class="wide-btn" id="outline-btn"></button>
       </section>
       <section class="rp-sec"><div class="panel-label">Калька й плитка</div>
-        <label class="toggle-row" title="Показати спрайт повтореним навколо, щоб перевірити безшовність"><span>Плитка 3×3 навколо полотна</span><span class="switch"><input type="checkbox" id="tile-toggle"><span class="slider"></span></span></label>
-        <div class="set-row" title="Скільки сусідніх кадрів показувати напівпрозорими"><span>Кадрів назад</span><input class="num-input" id="onion-b" type="number" min="0" max="4" value="1"><span>вперед</span><input class="num-input" id="onion-a" type="number" min="0" max="4" value="1"></div>
+        <label class="toggle-row" title="Показує спрайт повтореним навколо, а мазки через край переносяться на протилежний бік: для безшовних текстур"><span>Плитка 3×3 і перенос через край</span><span class="switch"><input type="checkbox" id="tile-toggle"><span class="slider"></span></span></label>
+        <div class="set-row" title="Калька: скільки сусідніх кадрів показувати напівпрозорими"><span>Калька назад</span><input class="num-input" id="onion-b" type="number" min="0" max="4" value="1"><span style="margin-left:-2px">вперед</span><input class="num-input" id="onion-a" type="number" min="0" max="4" value="1"></div>
         <div class="set-row"><span>Яскравість кальки</span><input type="range" id="onion-op" min="10" max="70" step="5" value="30"></div>
       </section>
       <section class="rp-sec"><div class="panel-label">Еталонна картинка</div>
@@ -815,6 +828,8 @@
           <div class="ref-ctrl" id="ref-ctrl" hidden>
             <label class="toggle-row"><span>Показувати</span><span class="switch"><input type="checkbox" id="ref-show" checked><span class="slider"></span></span></label>
             <div class="layer-opacity"><span>Прозорість</span><input type="range" id="ref-op" min="10" max="100" step="5" value="40"><b id="ref-op-val">40%</b></div>
+            <div class="layer-opacity"><span>Розмір</span><input type="range" id="ref-scale" min="20" max="400" step="5" value="100"><b id="ref-scale-val">100%</b></div>
+            <div class="set-row"><span>Зсув X, Y (пікселі)</span><span><input class="num-input" id="ref-x" type="number" value="0" step="1"> <input class="num-input" id="ref-y" type="number" value="0" step="1"></span></div>
             <button class="wide-btn" id="ref-remove"></button>
           </div>
         </div>
@@ -849,6 +864,10 @@
     ellipse: '<ellipse cx="12" cy="12" rx="9" ry="7"/>',
     select: '<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M11 4h2M11 20h2M4 11v2M20 11v2"/>',
     shade: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor"/>',
+    lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+    unlock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/>',
+    up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+    down: '<path d="M12 5v14M6 13l6 6 6-6"/>',
     tabColor: '<circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10.5" r="1.1" fill="currentColor"/><circle cx="12" cy="7.5" r="1.1" fill="currentColor"/><circle cx="15.5" cy="10.5" r="1.1" fill="currentColor"/><path d="M12 21a2.2 2.2 0 0 1 0-4.4h1.6a2 2 0 0 0 0-4"/>',
     tabLayers: '<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12.5 9 5 9-5"/><path d="m3 17 9 5 9-5" opacity=".55"/>',
     tabAnim: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9.2 5 2.8-5 2.8Z" fill="currentColor"/>',
@@ -937,17 +956,18 @@
   let shapeFilled = false;
   let fillAll = false;
   let mirrorX = false, mirrorY = false;
-  let showGrid = true, showMajor = true;
+  let showGrid = true, majorStep = 8;
   let onion = false;
   // анімація: тривалість кадрів (мс, 0 — за замовчуванням з кадр/с), теги, напрямок, налаштування кальки
   let durs = [], tags = [], playDir = 'fwd', activeTag = null;
-  let onionB = 1, onionA = 1, onionOp = .3, tileMode = false;
+  let onionB = 1, onionA = 1, onionOp = .3, tileMode = false, canvasBg = 'checker';
+  const BG_COLORS = { white: '#ffffff', grey: '#808080', black: '#000000', green: '#2fbf4f' };
   const TAG_COLORS = ['#4f6bf4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'];
   const DIRS = { fwd: 'Вперед', rev: 'Назад', pp: 'Туди-назад' };
   const VIEW_KEY = 'edvault-sprite-view';
   const clamp0 = (v, a, b) => Math.max(a, Math.min(b, v));
-  try{ const v = JSON.parse(localStorage.getItem(VIEW_KEY) || '{}'); if(v){ onionB = clamp0(+v.onionB, 0, 4); onionA = clamp0(+v.onionA, 0, 4); if(v.onionOp >= .1 && v.onionOp <= .7) onionOp = v.onionOp; if(isNaN(onionB)) onionB = 1; if(isNaN(onionA)) onionA = 1; } }catch(e){}
-  function saveView(){ try{ localStorage.setItem(VIEW_KEY, JSON.stringify({ onionB, onionA, onionOp })); }catch(e){} }
+  try{ const v = JSON.parse(localStorage.getItem(VIEW_KEY) || '{}'); if(v){ onionB = clamp0(+v.onionB, 0, 4); onionA = clamp0(+v.onionA, 0, 4); if(v.onionOp >= .1 && v.onionOp <= .7) onionOp = v.onionOp; if(isNaN(onionB)) onionB = 1; if(isNaN(onionA)) onionA = 1; if(v.bg === 'checker' || BG_COLORS[v.bg]) canvasBg = v.bg; if([0, 4, 8, 16, 32].includes(v.major)) majorStep = v.major; } }catch(e){}
+  function saveView(){ try{ localStorage.setItem(VIEW_KEY, JSON.stringify({ onionB, onionA, onionOp, bg: canvasBg, major: majorStep })); }catch(e){} }
   let fps = 8;
   let previewPlaying = true;
   let canvasPlaying = false;
@@ -982,7 +1002,7 @@
   let layers = [{ id: 'l0', name: 'Шар 1', visible: true, opacity: 1, cels: [frames[0]] }];
   let curLayer = 0;
   const px = () => layers[curLayer].cels[cur];
-  const mkLayer = (name, cels) => ({ id: newId(), name, visible: true, opacity: 1, cels });
+  const mkLayer = (name, cels) => ({ id: newId(), name, visible: true, locked: false, opacity: 1, cels });
   // Складання шарів у один кадр (знизу догори). Лише один видимий шар без прозорості — повертаємо його самого, без копіювання
   function composeCels(list, i, w, h){
     const vis = list.filter(L => L.visible);
@@ -1139,8 +1159,8 @@
       return s;
     });
     // один звичайний шар — старий формат (сумісний з попередніми версіями), кілька — v3
-    if(layers.length === 1 && layers[0].visible && layers[0].opacity >= 1) return { v:2, palette: pal, frames: encCels(layers[0].cels) };
-    const ls = layers.map(L => ({ name: L.name, visible: L.visible, opacity: L.opacity, frames: encCels(L.cels) }));
+    if(layers.length === 1 && layers[0].visible && !layers[0].locked && layers[0].opacity >= 1) return { v:2, palette: pal, frames: encCels(layers[0].cels) };
+    const ls = layers.map(L => ({ name: L.name, visible: L.visible, locked: L.locked ? true : undefined, opacity: L.opacity, frames: encCels(L.cels) }));
     return { v:3, palette: pal, layers: ls, active: curLayer };
   }
   function normAnim(a, n){
@@ -1166,7 +1186,7 @@
       return a;
     });
     if(s.v === 3 && Array.isArray(s.layers) && s.layers.length){
-      const ls = s.layers.map(L => ({ id: newId(), name: String(L.name || 'Шар').slice(0, 40), visible: L.visible !== false, opacity: clamp(+L.opacity || 1, 0, 1), cels: dec(L.frames || []) }));
+      const ls = s.layers.map(L => ({ id: newId(), name: String(L.name || 'Шар').slice(0, 40), visible: L.visible !== false, locked: !!L.locked, opacity: clamp(+L.opacity || 1, 0, 1), cels: dec(L.frames || []) }));
       const nf = Math.max(1, ...ls.map(L => L.cels.length));
       ls.forEach(L => { while(L.cels.length < nf) L.cels.push(new Array(w * h).fill(null)); });
       return { w, h, layers: ls, frames: ls[0].cels.map((_, i) => composeCels(ls, i, w, h)), fps: s.fps || 8, active: clamp(+s.active || 0, 0, ls.length - 1) };
@@ -1252,6 +1272,7 @@
     if(mirrorX) pts.push([W - 1 - x, y]);
     if(mirrorY) pts.push([x, H - 1 - y]);
     if(mirrorX && mirrorY) pts.push([W - 1 - x, H - 1 - y]);
+    if(tileMode) return pts.map(([px_, py_]) => [((px_ % W) + W) % W, ((py_ % H) + H) % H]);  // плитка: мазок, що виходить за край, з'являється з протилежного боку
     return pts;
   }
   // Чи входить клітинка (dx, dy) у коло-кисть розміром size
@@ -1394,14 +1415,15 @@
     ctx.shadowColor = 'rgba(0,0,0,.18)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 4;
     const dark = false; // полотно спрайта — світла робоча поверхня в будь-якій темі
     if(dark){ if(!checkerDark) checkerDark = makeChecker(true); ctx.fillStyle = checkerDark; }
+    else if(canvasBg !== 'checker'){ ctx.fillStyle = BG_COLORS[canvasBg]; }
     else { if(!checker) checker = makeChecker(false); ctx.fillStyle = checker; }
     ctx.fillRect(ox, oy, w, h);
     ctx.restore();
 
     ctx.imageSmoothingEnabled = false;
     if(refImg && refShow){ // еталон під спрайтом: вписаний у полотно зі збереженням пропорцій
-      const iw = refImg.naturalWidth, ih = refImg.naturalHeight, k = Math.min(w / iw, h / ih), rw = iw * k, rh = ih * k;
-      ctx.save(); ctx.globalAlpha = refOpacity; ctx.imageSmoothingEnabled = true; ctx.drawImage(refImg, ox + (w - rw) / 2, oy + (h - rh) / 2, rw, rh); ctx.restore();
+      const iw = refImg.naturalWidth, ih = refImg.naturalHeight, k = Math.min(w / iw, h / ih) * refScale, rw = iw * k, rh = ih * k;
+      ctx.save(); ctx.globalAlpha = refOpacity; ctx.imageSmoothingEnabled = true; ctx.drawImage(refImg, ox + (w - rw) / 2 + refX * z, oy + (h - rh) / 2 + refY * z, rw, rh); ctx.restore();
     }
     if(!canvasPlaying) recomp(cur);
     const shown = canvasPlaying ? frames[playFrame()] : frames[cur];
@@ -1438,14 +1460,14 @@
       // grid
       if(showGrid && z >= 6){
         ctx.beginPath();
-        for(let x = 1; x < W; x++){ if(showMajor && x % 8 === 0) continue; ctx.moveTo(ox + x * z + .5, oy); ctx.lineTo(ox + x * z + .5, oy + h); }
-        for(let y = 1; y < H; y++){ if(showMajor && y % 8 === 0) continue; ctx.moveTo(ox, oy + y * z + .5); ctx.lineTo(ox + w, oy + y * z + .5); }
+        for(let x = 1; x < W; x++){ if(majorStep && x % majorStep === 0) continue; ctx.moveTo(ox + x * z + .5, oy); ctx.lineTo(ox + x * z + .5, oy + h); }
+        for(let y = 1; y < H; y++){ if(majorStep && y % majorStep === 0) continue; ctx.moveTo(ox, oy + y * z + .5); ctx.lineTo(ox + w, oy + y * z + .5); }
         ctx.strokeStyle = dark ? 'rgba(255,255,255,.07)' : 'rgba(0,0,0,.07)'; ctx.lineWidth = 1; ctx.stroke();
       }
-      if(showMajor && z >= 3 && (W > 8 || H > 8)){
+      if(majorStep && z >= 3 && (W > majorStep || H > majorStep)){
         ctx.beginPath();
-        for(let x = 8; x < W; x += 8){ ctx.moveTo(ox + x * z + .5, oy); ctx.lineTo(ox + x * z + .5, oy + h); }
-        for(let y = 8; y < H; y += 8){ ctx.moveTo(ox, oy + y * z + .5); ctx.lineTo(ox + w, oy + y * z + .5); }
+        for(let x = majorStep; x < W; x += majorStep){ ctx.moveTo(ox + x * z + .5, oy); ctx.lineTo(ox + x * z + .5, oy + h); }
+        for(let y = majorStep; y < H; y += majorStep){ ctx.moveTo(ox, oy + y * z + .5); ctx.lineTo(ox + w, oy + y * z + .5); }
         ctx.strokeStyle = dark ? 'rgba(255,255,255,.2)' : 'rgba(79,107,244,.35)'; ctx.lineWidth = 1; ctx.stroke();
       }
       // mirror axes
@@ -1744,6 +1766,7 @@
 
     if(t === 'picker'){ pickColorAt(c); drag = { picker: true }; return; }
     if(!layers[curLayer].visible && !SEL_TOOLS.includes(t)){ toast('Цей шар сховано. Увімкни його оком у списку шарів, щоб малювати'); return; }
+    if(layers[curLayer].locked && !SEL_TOOLS.includes(t)){ toast('Цей шар заблоковано. Розблокуй його замком у списку шарів'); return; }
     if(!SEL_TOOLS.includes(t)) commitFloat();
 
     if(t === 'wand'){
@@ -2121,22 +2144,34 @@
   }
 
   // ---------- Шари ----------
+  // операції, що змінюють піксели поточного шару, не виконуються на заблокованому
+  const lockGuard = fn => function(...a){ if(layers[curLayer].locked){ toast('Цей шар заблоковано. Розблокуй його замком у списку шарів'); return; } return fn.apply(this, a); };
+  fillSel = lockGuard(fillSel); deleteSel = lockGuard(deleteSel); paste = lockGuard(paste); flip = lockGuard(flip); rotate = lockGuard(rotate);
+  shiftImage = lockGuard(shiftImage); addOutline = lockGuard(addOutline); replaceColor = lockGuard(replaceColor); applyGradient = lockGuard(applyGradient);
   const layerList = $('layer-list');
   function renderLayers(){
     layerList.innerHTML = '';
     for(let i = layers.length - 1; i >= 0; i--){            // згори вниз: верхній шар першим
       const L = layers[i];
       const row = document.createElement('div');
-      row.className = 'layer-row' + (i === curLayer ? ' active' : '') + (L.visible ? '' : ' hidden-l');
+      row.className = 'layer-row' + (i === curLayer ? ' active' : '') + (L.visible ? '' : ' hidden-l') + (L.locked ? ' locked-l' : '');
       row.dataset.i = i;
       row.innerHTML = `<button class="l-eye ${L.visible ? 'on' : ''}" title="${L.visible ? 'Сховати шар' : 'Показати шар'}" aria-label="${L.visible ? 'Сховати шар' : 'Показати шар'}">${svg(L.visible ? I.eye : I.eyeOff)}</button>
-        <span class="l-th"></span><span class="l-name" title="Двічі клацни, щоб перейменувати">${escapeHtml(L.name)}</span>${L.opacity < 1 ? `<span class="l-op">${Math.round(L.opacity * 100)}%</span>` : ''}`;
+        <span class="l-th"></span><span class="l-name" title="Двічі клацни, щоб перейменувати">${escapeHtml(L.name)}</span>${L.opacity < 1 ? `<span class="l-op">${Math.round(L.opacity * 100)}%</span>` : ''}<button class="l-lock ${L.locked ? 'on' : ''}" title="${L.locked ? 'Розблокувати шар' : 'Заблокувати шар від змін'}" aria-label="${L.locked ? 'Розблокувати шар' : 'Заблокувати шар'}">${svg(L.locked ? I.lock : I.unlock)}</button>`;
       row.querySelector('.l-th').appendChild(thumbCanvas(L.cels[cur]));
       row.onclick = e => {
-        if(e.target.closest('.l-eye')){ layerChange(() => { L.visible = !L.visible; }); return; }
+        if(e.target.closest('.l-eye')){
+          if(e.altKey){ // Alt+клік: показати лише цей шар (повторно — показати всі)
+            layerChange(() => { const only = layers.every((l, k) => k === i ? l.visible : !l.visible); layers.forEach((l, k) => { l.visible = only ? true : k === i; }); });
+            return;
+          }
+          layerChange(() => { L.visible = !L.visible; }); return;
+        }
+        if(e.target.closest('.l-lock')){ layerChange(() => { L.locked = !L.locked; }); return; }
         if(i !== curLayer){ commitFloat(); sel = null; curLayer = i; renderLayers(); updateOptbar(); render(); }
       };
       row.querySelector('.l-name').ondblclick = () => renameLayer(i);
+      row.oncontextmenu = e => { e.preventDefault(); if(i !== curLayer){ commitFloat(); sel = null; curLayer = i; renderLayers(); } layerMenu(layerList.querySelector(`.layer-row[data-i="${i}"]`) || row); };
       row.draggable = true;
       row.ondragstart = e => { e.dataTransfer.setData('text/plain', String(i)); };
       row.ondragover = e => e.preventDefault();
@@ -2190,6 +2225,18 @@
       bot.opacity = 1; bot.visible = true;
       layers.splice(curLayer, 1); curLayer--;
     });
+  }
+  function layerMenu(anchor){
+    const L = layers[curLayer], top = curLayer === layers.length - 1;
+    openMenu(anchor, [
+      { label: 'Перейменувати', icon: I.rename, action: () => renameLayer(curLayer) },
+      { label: 'Дублювати', icon: I.copy, action: duplicateLayer },
+      { label: L.locked ? 'Розблокувати' : 'Заблокувати', icon: L.locked ? I.unlock : I.lock, action: () => layerChange(() => { L.locked = !L.locked; }) },
+      ...(top ? [] : [{ label: 'Підняти вище', icon: I.up, action: () => moveLayerTo(curLayer, curLayer + 1) }]),
+      ...(curLayer === 0 ? [] : [{ label: 'Опустити нижче', icon: I.down, action: () => moveLayerTo(curLayer, curLayer - 1) }, { label: 'Об’єднати з нижнім', icon: I.merge, action: mergeDown }]),
+      '-',
+      ...(layers.length > 1 ? [{ label: 'Видалити', icon: I.trash, danger: true, action: deleteLayer }] : [])
+    ]);
   }
   $('layer-add').onclick = addLayer;
   $('layer-dup').innerHTML = svg(I.copy); $('layer-dup').onclick = duplicateLayer;
@@ -2445,12 +2492,18 @@
   // налаштування кальки, плитки
   function syncViewUi(){
     $('onion-b').value = onionB; $('onion-a').value = onionA; $('onion-op').value = Math.round(onionOp * 100);
-    $('tile-toggle').checked = tileMode;
+    $('tile-toggle').checked = tileMode; applyBg();
   }
   $('onion-b').onchange = e => { onionB = clamp(parseInt(e.target.value, 10) || 0, 0, 4); e.target.value = onionB; saveView(); render(); e.target.blur(); };
   $('onion-a').onchange = e => { onionA = clamp(parseInt(e.target.value, 10) || 0, 0, 4); e.target.value = onionA; saveView(); render(); e.target.blur(); };
   $('onion-op').oninput = e => { onionOp = (+e.target.value) / 100; saveView(); render(); };
   $('onion-op').onchange = e => e.target.blur();
+  function applyBg(){
+    document.querySelectorAll('#bg-dots button').forEach(b => b.classList.toggle('active', b.dataset.bg === canvasBg));
+    const pb = $('preview-box'); pb.style.background = canvasBg === 'checker' ? '' : BG_COLORS[canvasBg];
+    $('major-step').value = String(majorStep);
+  }
+  document.querySelectorAll('#bg-dots button').forEach(b => b.onclick = () => { canvasBg = b.dataset.bg; saveView(); applyBg(); render(); });
   $('tile-toggle').onchange = e => { tileMode = e.target.checked; render(); e.target.blur(); };
 
   // ---------- Colours ----------
@@ -2521,7 +2574,7 @@
   $('hex-input').addEventListener('blur', e => { e.target.value = color.toUpperCase(); });
 
   // ---------- Еталонна картинка під полотном (не потрапляє в експорт) ----------
-  let refImg = null, refOpacity = .4, refShow = true;
+  let refImg = null, refOpacity = .4, refShow = true, refScale = 1, refX = 0, refY = 0;
   function updateRefUi(){
     $('ref-btn').innerHTML = svg(I.image) + (refImg ? 'Замінити картинку…' : 'Вибрати картинку…');
     $('ref-ctrl').hidden = !refImg;
@@ -2535,7 +2588,10 @@
   };
   $('ref-show').onchange = e => { refShow = e.target.checked; render(); };
   $('ref-op').oninput = e => { refOpacity = (+e.target.value) / 100; $('ref-op-val').textContent = Math.round(refOpacity * 100) + '%'; render(); };
-  $('ref-remove').onclick = () => { refImg = null; updateRefUi(); render(); };
+  $('ref-scale').oninput = e => { refScale = (+e.target.value) / 100; $('ref-scale-val').textContent = Math.round(refScale * 100) + '%'; render(); };
+  $('ref-x').onchange = e => { refX = clamp(parseInt(e.target.value, 10) || 0, -512, 512); e.target.value = refX; render(); e.target.blur(); };
+  $('ref-y').onchange = e => { refY = clamp(parseInt(e.target.value, 10) || 0, -512, 512); e.target.value = refY; render(); e.target.blur(); };
+  $('ref-remove').onclick = () => { refImg = null; refScale = 1; refX = refY = 0; $('ref-scale').value = 100; $('ref-scale-val').textContent = '100%'; $('ref-x').value = $('ref-y').value = 0; updateRefUi(); render(); };
 
   // ---------- Імпорт палітр ----------
   const PAL_KEY = 'edvault-sprite-palettes';
@@ -2765,7 +2821,7 @@
   $('undo-btn').onclick = undo; $('redo-btn').onclick = redo;
   function updateUndoButtons(){ $('undo-btn').disabled = !undoStack.length && !(sel && sel.float); $('redo-btn').disabled = !redoStack.length; }
   $('grid-toggle').onchange = e => { showGrid = e.target.checked; render(); };
-  $('major-toggle').onchange = e => { showMajor = e.target.checked; render(); };
+  $('major-step').onchange = e => { majorStep = +e.target.value; saveView(); render(); e.target.blur(); };
 
   // ---------- GIF encoder (LZW, global palette, transparency) ----------
   function encodeGIF(frameArrs, w, h, scale, delayMs, bg){
@@ -3021,9 +3077,7 @@
     return [Math.max(1, Math.round(iw * k)), Math.max(1, Math.round(ih * k))];
   }
   $('import-btn').onclick = () => $('import-input').click();
-  $('import-input').onchange = async () => {
-    const file = $('import-input').files[0]; $('import-input').value = '';
-    if(!file) return;
+  async function importImageFile(file){
     let img; try{ img = await loadImageFile(file); }catch(e){ toast('Не вдалося відкрити картинку'); return; }
     const iw = img.naturalWidth, ih = img.naturalHeight;
     const [nw, nh] = fitSize(iw, ih, 64);
@@ -3054,7 +3108,8 @@
       afterStructureChange();
       toast('Картинку імпортовано');
     };
-  };
+  }
+  $('import-input').onchange = () => { const f = $('import-input').files[0]; $('import-input').value = ''; if(f) importImageFile(f); };
 
   // ---------- Імпорт аркуша кадрів: нарізка за сіткою на новий анімований спрайт ----------
   function openSheetImport(img, baseName){
@@ -3161,6 +3216,7 @@
           { label:'Перейменувати', icon:I.rename, action:() => renameSprite(s) },
           { label:'Дублювати', icon:I.copy, action:() => duplicateSprite(s) },
           { label:'Завантажити PNG', icon:I.upload, action:() => quickPng(s) },
+          { label:'Зберегти файл копії (.json)', icon:I.upload, action:() => download(new Blob([JSON.stringify(s)], { type:'application/json' }), (slugify(s.name) || 'sprite') + '.edvault-sprite.json') },
           '-',
           { label:'Видалити', icon:I.trash, danger:true, action:() => deleteSprite(s) }
         ]);
@@ -3235,9 +3291,9 @@
   // create from an image right from the catalog
   const catInput = document.createElement('input'); catInput.type = 'file'; catInput.accept = 'image/*,.json,application/json';
   $('catalog-import-btn').onclick = () => catInput.click();
-  catInput.onchange = async () => {
-    const file = catInput.files[0]; catInput.value = '';
-    if(!file) return;
+  $('backup-all-btn').onclick = backupAll;
+  catInput.onchange = () => { const f = catInput.files[0]; catInput.value = ''; if(f) catalogImport(f); };
+  async function catalogImport(file){
     if(/\.json$/i.test(file.name) || file.type === 'application/json'){ importBackup(file); return; }
     let img; try{ img = await loadImageFile(file); }catch(e){ toast('Не вдалося відкрити картинку'); return; }
     if(img.naturalWidth >= img.naturalHeight * 2 && img.naturalWidth % img.naturalHeight === 0 && img.naturalHeight <= MAX_SIZE){
@@ -3249,7 +3305,7 @@
       return;
     }
     importSingle(img, file);
-  };
+  }
   function importSingle(img, file){
     const [nw, nh] = fitSize(img.naturalWidth, img.naturalHeight, 64);
     const pixels = imageToPixels(img, nw, nh);
@@ -3277,14 +3333,21 @@
     box.querySelector('[data-x]').onclick = closeModal;
     box.querySelector('[data-ok]').onclick = () => { download(new Blob([JSON.stringify(rec)], { type: 'application/json' }), (slugify(rec.name || 'sprite') || 'sprite') + '.edvault-sprite.json'); closeModal(); };
   }
+  // один спрайт, масив спрайтів або {sprites:[…]}
   async function importBackup(file){
     try{
-      const rec = JSON.parse(await file.text());
-      if(!rec || typeof rec !== 'object' || !(rec.frames || rec.layers || rec.pixels)) throw new Error('bad');
-      decodeSprite(rec);
-      const list = loadSprites(); rec.id = newId(); rec.name = uniqueName(String(rec.name || 'Спрайт').slice(0, 60)); rec.updated = Date.now(); list.push(rec);
-      saveSprites(list); renderCatalog(); toast('Спрайт відновлено з файлу');
+      const data = JSON.parse(await file.text());
+      const recs = (Array.isArray(data) ? data : Array.isArray(data && data.sprites) ? data.sprites : [data]).filter(r => r && typeof r === 'object' && (r.frames || r.layers || r.pixels));
+      if(!recs.length) throw new Error('bad');
+      const list = loadSprites();
+      recs.forEach(rec => { decodeSprite(rec); rec.id = newId(); rec.name = uniqueName(String(rec.name || 'Спрайт').slice(0, 60)); rec.updated = Date.now(); list.push(rec); });
+      saveSprites(list); renderCatalog(); toast(recs.length > 1 ? `Відновлено спрайтів: ${recs.length}` : 'Спрайт відновлено з файлу');
     }catch(e){ toast('Не вдалося прочитати файл копії спрайту'); }
+  }
+  function backupAll(){
+    const list = loadSprites(); if(!list.length){ toast('Ще немає спрайтів для копії'); return; }
+    download(new Blob([JSON.stringify({ app: 'Edvault Sprite', version: 1, sprites: list })], { type: 'application/json' }), 'edvault-sprites-' + new Date().toISOString().slice(0, 10) + '.json');
+    toast(`Збережено копію: ${list.length} ${plural(list.length, 'спрайт', 'спрайти', 'спрайтів')}`);
   }
   function markDirty(){
     if(loading) return;
@@ -3403,7 +3466,7 @@
       else if(e.code === 'KeyS'){ e.preventDefault(); commitFloat(); if(save()) toast('Збережено'); }
       else if(e.code === 'KeyC'){ e.preventDefault(); copySel(false); updateOptbar(); }
       else if(e.code === 'KeyX'){ e.preventDefault(); copySel(true); updateOptbar(); }
-      else if(e.code === 'KeyV'){ e.preventDefault(); paste(); }
+      else if(e.code === 'KeyV'){ /* вставка обробляється подією paste: там видно й картинки з буфера ОС */ return; }
       else if(e.code === 'KeyA'){ e.preventDefault(); selectAll(); }
       return;
     }
@@ -3452,7 +3515,7 @@
   if(window.ResizeObserver){ const ro = new ResizeObserver(layoutOptbar); ro.observe(optbarEl); const l = document.querySelector('#view-editor .topbar-left'); if(l) ro.observe(l); const r = document.querySelector('#view-editor .topbar-actions'); if(r) ro.observe(r); }
   window.addEventListener('resize', layoutOptbar);
   // доступні назви для полів без видимого підпису
-  Object.entries({ 'sprite-name': 'Назва спрайту', 'hex-input': 'Колір у форматі hex', 'color-input': 'Вибрати довільний колір', 'layer-op-range': 'Прозорість шару', 'onion-b': 'Кальки назад, кадрів', 'onion-a': 'Кальки вперед, кадрів', 'onion-op': 'Яскравість кальки', 'fdur': 'Тривалість кадру, мс', 'ref-op': 'Прозорість еталона', 'palette-select': 'Палітра', 'tile-toggle': 'Плитка 3×3', 'grid-toggle': 'Сітка', 'major-toggle': 'Лінії кожні 8 пікселів', 'all-frames-toggle': 'Для всіх кадрів' })
+  Object.entries({ 'sprite-name': 'Назва спрайту', 'hex-input': 'Колір у форматі hex', 'color-input': 'Вибрати довільний колір', 'layer-op-range': 'Прозорість шару', 'onion-b': 'Кальки назад, кадрів', 'onion-a': 'Кальки вперед, кадрів', 'onion-op': 'Яскравість кальки', 'fdur': 'Тривалість кадру, мс', 'ref-op': 'Прозорість еталона', 'palette-select': 'Палітра', 'tile-toggle': 'Плитка 3×3', 'grid-toggle': 'Сітка', 'major-step': 'Крок виділених ліній сітки', 'all-frames-toggle': 'Для всіх кадрів' })
     .forEach(([id, t]) => { const e = $(id); if(e && !e.getAttribute('aria-label') && !(e.labels && e.labels.length && e.labels[0].textContent.trim())) e.setAttribute('aria-label', t); });
   $('pixel-canvas').setAttribute('role', 'img'); $('pixel-canvas').setAttribute('aria-label', 'Полотно спрайта');
   // ---------- Вкладки правої панелі ----------
@@ -3473,6 +3536,26 @@
   });
   let savedTab = 'color'; try{ savedTab = localStorage.getItem(TAB_KEY) || 'color'; }catch(e){}
   showTab(savedTab);
+  // ---------- Вставка й перетягування картинок ----------
+  const imgOf = dt => [...((dt && dt.files) || [])].find(f => f.type.startsWith('image/') || /\.(png|gif|jpe?g|webp|bmp)$/i.test(f.name));
+  document.addEventListener('paste', e => {
+    const t = e.target; if(t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+    if(isModalOpen()) return;
+    const editor = !viewEditor.classList.contains('hidden'), f = imgOf(e.clipboardData);
+    if(!editor && !f) return;
+    e.preventDefault();
+    if(f) (editor ? importImageFile : catalogImport)(f); else paste();
+  });
+  ['dragover', 'drop'].forEach(ev => document.addEventListener(ev, e => {
+    const has = e.dataTransfer && [...e.dataTransfer.types].includes('Files');
+    if(!has) return;
+    e.preventDefault();
+    if(ev === 'drop' && !isModalOpen()){
+      const f = imgOf(e.dataTransfer), j = [...e.dataTransfer.files].find(x => /\.json$/i.test(x.name));
+      const editor = !viewEditor.classList.contains('hidden');
+      if(j && !editor) importBackup(j); else if(f) (editor ? importImageFile : catalogImport)(f);
+    }
+  }));
   // ---------- Start ----------
   updateRefUi();
   applyTheme(isDarkTheme());
