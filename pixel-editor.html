@@ -193,7 +193,8 @@
     background: var(--surface); color: var(--text); font-family: inherit; font-size: 14px; outline: none;
   }
   .modal-input:focus, .num-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,107,244,.12); }
-  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; margin-top: 18px; position: sticky; bottom: -22px; padding: 12px 0 0; background: var(--surface); }
+  @media (max-height: 800px) { .export-preview { max-height: 170px; } .modal { max-height: calc(100vh - 24px); } }
   .field-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 14px 0 7px; }
   .size-presets { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
   .size-preset {
@@ -367,11 +368,11 @@
   .rp-body { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; scrollbar-width: thin; }
   .rp-tab { display: flex; flex-direction: column; gap: 16px; }
   .rp-tab[hidden] { display: none; }
+  .kbd-list .tip { color: var(--muted); font-size: 12px; text-align: right; }
   .rp-sec > * + * { margin-top: 9px; }
   .rp-sec > .panel-label { margin-bottom: 0; }
   .rp-sec > .panel-label + * { margin-top: 10px; }
   .rp-sec + .rp-sec { padding-top: 14px; border-top: 1px solid var(--border); }
-  .rp-sec .toggle-row:first-of-type, .rp-sec .wide-btn:first-of-type { margin-top: 0; }
   .pal-actions [hidden], .ref-ctrl[hidden] { display: none !important; }
   .frame-num { bottom: 17px !important; }
   .anim-row.col { flex-direction: column; align-items: stretch; gap: 6px; }
@@ -568,6 +569,7 @@
     #optbar { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 25; min-height: 46px; max-width: calc(100% - 760px);
       border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--isl-shadow); flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
     #optbar::-webkit-scrollbar { display: none; }
+    #optbar.ovf { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 26px), transparent); }
     #optbar .opt-hint { display: none; }
     #optbar .opt-group, #optbar .mini-seg, #optbar .mini-btn, #optbar .opt-title { flex-shrink: 0; flex-wrap: nowrap; white-space: nowrap; }
     #optbar .check-row.mini { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--text2); white-space: nowrap; cursor: pointer; }
@@ -581,10 +583,10 @@
     /* низькі вікна: інструменти у два стовпці, щоб усі були видні */
     @media (max-height: 860px) {
       #toolbar { display: grid; grid-template-columns: repeat(2, 40px); max-height: calc(100% - 150px); overflow-y: auto; }
-      #toolbar .tb-sep { grid-column: 1 / -1; width: auto; }
+      #toolbar .tb-sep { display: none; }
     }
     /* колір, палітра, анімація — острівець праворуч */
-    .right-panel { position: absolute; right: 12px; top: 72px; bottom: auto; width: 268px; z-index: 25; height: min(640px, calc(100% - 84px)); max-height: none;
+    .right-panel { position: absolute; right: 12px; top: 72px; bottom: auto; width: clamp(268px, 15vw, 360px); z-index: 25; height: min(580px, calc(100% - 84px)); max-height: none;
       border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--isl-shadow); padding: 14px; gap: 14px; scrollbar-width: thin; align-self: auto; }
     /* кадри — острівець унизу по центру */
     .frames-strip { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 25; min-height: 0;
@@ -2332,8 +2334,8 @@
   const tagColor = t => TAG_COLORS[Math.max(0, tags.indexOf(t)) % TAG_COLORS.length];
   const frameMs = i => durs[i] > 0 ? durs[i] : Math.round(1000 / fps);
   // порядок показу кадрів: тег або всі кадри, з урахуванням напрямку (вперед / назад / туди-назад)
-  function seqFor(tag, dir){
-    const n = frames.length; let a = 0, b = n - 1;
+  function seqFor(tag, dir, n = frames.length){
+    let a = 0, b = n - 1;
     if(tag){ a = clamp(tag.from, 0, n - 1); b = clamp(tag.to, a, n - 1); dir = tag.dir || 'fwd'; }
     const r = []; for(let i = a; i <= b; i++) r.push(i);
     if(dir === 'rev') r.reverse();
@@ -3138,10 +3140,16 @@
       if(d.frames.length > 1){
         // play the animation while the pointer is over the card
         card.addEventListener('mouseenter', () => {
-          let i = 0; clearInterval(hoverAnim);
-          hoverAnim = setInterval(() => { i = (i + 1) % d.frames.length; const g = c.getContext('2d'); g.clearRect(0, 0, d.w, d.h); paintFrameTo(g, d.frames[i], d.w, d.h); }, 1000 / (d.fps || 8));
+          let i = 0; clearTimeout(hoverAnim);
+          const step = () => { // порядок і тривалість кадрів — як в анімації спрайта
+            const q = seqFor(null, d.anim.dir, d.frames.length); i = (i + 1) % q.length; const f = q[i];
+            const g = c.getContext('2d'); g.clearRect(0, 0, d.w, d.h); paintFrameTo(g, d.frames[f], d.w, d.h);
+            hoverAnim = setTimeout(step, Math.max(20, d.anim.durs[f] > 0 ? d.anim.durs[f] : 1000 / (d.fps || 8)));
+          };
+          const first = d.anim.durs[0] > 0 ? d.anim.durs[0] : 1000 / (d.fps || 8);
+          hoverAnim = setTimeout(step, first);
         });
-        card.addEventListener('mouseleave', () => { clearInterval(hoverAnim); const g = c.getContext('2d'); g.clearRect(0, 0, d.w, d.h); paintFrameTo(g, d.frames[0], d.w, d.h); });
+        card.addEventListener('mouseleave', () => { clearTimeout(hoverAnim); const g = c.getContext('2d'); g.clearRect(0, 0, d.w, d.h); paintFrameTo(g, d.frames[0], d.w, d.h); });
       }
       card.addEventListener('click', e => { if(e.target.closest('.tool-more')) return; openEditor(s); });
       const more = card.querySelector('.tool-more');
@@ -3343,6 +3351,7 @@
   const MOD = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘' : 'Ctrl';
   $('help-btn').onclick = () => {
     const row = (l, k) => `<span>${l}</span><span>${k.split(' ').map(x => `<kbd>${x.replace('Mod', MOD)}</kbd>`).join(' ')}</span>`;
+    const tip = (l, t) => `<span>${l}</span><span class="tip">${t}</span>`;
     const box = openModal(`<h3 class="modal-title">Гарячі клавіші та підказки</h3>
       <div class="kbd-list">
         <div class="kbd-sec">Інструменти</div>
@@ -3367,6 +3376,12 @@
         ${row('Попередній / наступний кадр', ', .')}
         ${row('Новий кадр / дублювати', 'N Shift+N')}
         ${row('Програти анімацію', 'Enter')}
+        <div class="kbd-sec">Підказки</div>
+        ${tip('Шари', 'вкладка «Шари» праворуч')}
+        ${tip('Тривалість кадру, теги, порядок', 'вкладка «Анімація»')}
+        ${tip('Плитка, калька, еталонна картинка', 'вкладка «Полотно»')}
+        ${tip('Замінити колір у спрайті', 'правий клік по кольору в палітрі спрайту')}
+        ${tip('Налаштування інструмента, якщо не вміщаються', 'прокрутка коліщатком над панеллю налаштувань')}
       </div>
       <div class="modal-actions"><button class="retry-btn" data-x>Зрозуміло</button></div>`);
     box.querySelector('[data-x]').onclick = closeModal;
@@ -3421,6 +3436,21 @@
   document.addEventListener('keyup', e => { if(e.code === 'Space'){ spaceDown = false; stage.classList.remove('pan'); } });
   window.addEventListener('blur', () => { spaceDown = false; stage.classList.remove('pan'); });
 
+  // налаштування інструмента: центруємо між лівим і правим острівцями угорі, не наїжджаючи на них
+  const optbarEl = $('optbar');
+  function layoutOptbar(){
+    const l = document.querySelector('#view-editor .topbar-left'), r = document.querySelector('#view-editor .topbar-actions');
+    if(!optbarEl || !l || !r) return;
+    if(window.innerWidth <= 900 || viewEditor.classList.contains('hidden')){ optbarEl.style.left = optbarEl.style.maxWidth = optbarEl.style.transform = ''; optbarEl.classList.remove('ovf'); return; }
+    const L = l.getBoundingClientRect(), R = r.getBoundingClientRect(), min = L.right + 10, max = R.left - 10;
+    optbarEl.style.transform = 'none'; optbarEl.style.maxWidth = Math.max(120, max - min) + 'px';
+    const w = optbarEl.offsetWidth, vr = viewEditor.getBoundingClientRect();
+    const left = clamp((vr.width - w) / 2, min - vr.left, max - vr.left - w);
+    optbarEl.style.left = Math.round(left) + 'px';
+    optbarEl.classList.toggle('ovf', optbarEl.scrollWidth > optbarEl.clientWidth + 2);
+  }
+  if(window.ResizeObserver){ const ro = new ResizeObserver(layoutOptbar); ro.observe(optbarEl); const l = document.querySelector('#view-editor .topbar-left'); if(l) ro.observe(l); const r = document.querySelector('#view-editor .topbar-actions'); if(r) ro.observe(r); }
+  window.addEventListener('resize', layoutOptbar);
   // ---------- Вкладки правої панелі ----------
   const TAB_ICONS = { color: I.tabColor, layers: I.tabLayers, anim: I.tabAnim, canvas: I.tabCanvas }, TAB_KEY = 'edvault-sprite-tab';
   const tabBtns = [...document.querySelectorAll('#rp-tabs [data-tab]')];
