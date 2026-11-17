@@ -68,6 +68,16 @@ for (const [vw, vh] of [[1280, 720], [1366, 768], [1440, 900], [1920, 1080], [25
     await p.keyboard.press('ArrowUp'); assert.equal(await p.evaluate(() => document.activeElement.dataset.layer), '1');
     assert.equal(await p.locator('#side .lr[data-layer="0"]').getAttribute('aria-pressed'), 'true');
   });
+  await step('Пробіл на кнопці натискає її, а не запускає перегляд', async () => {
+    await p.keyboard.press('KeyB'); await p.focus('[data-tool="eraser"], #rail button:nth-child(2)'); await p.keyboard.press('Space'); await p.waitForTimeout(150);
+    assert.equal(await p.evaluate(() => window.Animator.S.tool), 'eraser', 'інструмент вибрано');
+    assert.equal(await p.evaluate(() => !!window.Animator.S.playing), false, 'перегляд не запустився');
+    await p.focus('.fr[data-frame="0"]'); await p.keyboard.press('Space'); await p.waitForTimeout(150);
+    assert.equal(await p.evaluate(() => !!window.Animator.S.playing), false, 'пробіл на кадрі не запускає перегляд');
+    await p.evaluate(() => document.activeElement.blur()); await p.keyboard.press('Space'); await p.waitForTimeout(150);
+    assert.equal(await p.evaluate(() => !!window.Animator.S.playing), true, 'без фокуса на кнопці пробіл грає');
+    await p.keyboard.press('Space'); await p.waitForTimeout(100);
+  });
   await step('перемикачі налаштувань мають доступні назви й стан', async () => {
     await p.keyboard.press('KeyB'); await p.waitForTimeout(100);
     const t = await p.evaluate(() => [...document.querySelectorAll('#prop .tg')].map(b => [b.getAttribute('aria-label'), b.getAttribute('aria-pressed')]));

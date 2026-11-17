@@ -954,6 +954,8 @@ document.addEventListener('keydown', e => {
     if (c === 'KeyA') { e.preventDefault(); setTool('select'); stage.lift({ x: 0, y: 0, w: P.w, h: P.h }).then(renderProp); return; }
     return;
   }
+  // Пробіл на кнопці, кадрі чи заголовку розділу працює як звичайне натискання, а не запускає перегляд
+  if (c === 'Space' && e.target.closest && e.target.closest('button, [role="button"], summary, a, [role="menuitem"]')) return;
   if (c === 'Space') { e.preventDefault(); togglePlay(); return; }
   if (stage.float && e.key.startsWith('Arrow')) { e.preventDefault(); const d = e.shiftKey ? 10 : 1; stage.nudge(e.key === 'ArrowLeft' ? -d : e.key === 'ArrowRight' ? d : 0, e.key === 'ArrowUp' ? -d : e.key === 'ArrowDown' ? d : 0); return; }
   if ((e.key === 'Delete' || e.key === 'Backspace') && stage.float) { e.preventDefault(); stage.deleteFloat(); renderProp(); return; }
