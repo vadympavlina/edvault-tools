@@ -119,6 +119,16 @@ const HL = {
       }
     });
     HL_TYPES.forEach(t => CSS.highlights.set('tc-' + t, new Highlight(...sets[t])));
+    // змінні [У ДУЖКАХ] у промптах
+    const vars = [];
+    $$('.tc-prompt', editor).forEach(p => {
+      const w = document.createTreeWalker(p, NodeFilter.SHOW_TEXT); let n;
+      while ((n = w.nextNode())) {
+        const re = /\[[^\[\]\n]{1,40}\]/g; let m;
+        while ((m = re.exec(n.nodeValue))) { const r = new Range(); try { r.setStart(n, m.index); r.setEnd(n, m.index + m[0].length); vars.push(r); } catch (err) { /* вузол змінився */ } }
+      }
+    });
+    CSS.highlights.set('tc-pvar', new Highlight(...vars));
   },
   init() {
     if (!this.ok) return;

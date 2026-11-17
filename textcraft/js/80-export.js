@@ -48,14 +48,69 @@ function exportClone() {
     b.setAttribute('data-copy', plainText(origBlocks[i] || b));
     const code = b.tagName === 'PRE' && b.querySelector('code');
     if (code && b.dataset.lang !== 'text') code.innerHTML = hlHtml(code.textContent, b.dataset.lang || '');
+    if (b.tagName !== 'PRE') decoratePrompt(b, origBlocks[i] || b);
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'tc-copy';
     btn.textContent = 'Копіювати';
     b.insertBefore(btn, b.firstChild);
+    if (b.tagName !== 'PRE') {
+      const chat = document.createElement('button');
+      chat.type = 'button';
+      chat.className = 'tc-chat';
+      chat.textContent = 'Відкрити в чаті';
+      b.insertBefore(chat, b.firstChild);
+    }
   });
   return c;
 }
+// Змінні [У ДУЖКАХ] у промпті стають чіпами; з’являється форма для їх заповнення й підвал зі статистикою
+const PROMPT_VAR = /\[([^\[\]\n]{1,40})\]/g;
+function decoratePrompt(block, orig) {
+  const names = [];
+  const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  let n;
+  while ((n = walker.nextNode())) nodes.push(n);
+  nodes.forEach(t => {
+    const text = t.nodeValue;
+    PROMPT_VAR.lastIndex = 0;
+    if (!PROMPT_VAR.test(text)) return;
+    PROMPT_VAR.lastIndex = 0;
+    const frag = document.createDocumentFragment();
+    let at = 0, m;
+    while ((m = PROMPT_VAR.exec(text))) {
+      if (m.index > at) frag.appendChild(document.createTextNode(text.slice(at, m.index)));
+      const name = m[1].trim();
+      if (!names.includes(name)) names.push(name);
+      const sp = document.createElement('span');
+      sp.className = 'tc-var'; sp.setAttribute('data-var', name); sp.textContent = m[0];
+      frag.appendChild(sp);
+      at = m.index + m[0].length;
+    }
+    if (at < text.length) frag.appendChild(document.createTextNode(text.slice(at)));
+    t.parentNode.replaceChild(frag, t);
+  });
+  if (names.length) {
+    const form = document.createElement('div');
+    form.className = 'tc-vars';
+    names.forEach(nm => {
+      const l = document.createElement('label');
+      l.appendChild(document.createTextNode(nm));
+      const i = document.createElement('input');
+      i.type = 'text'; i.setAttribute('data-var', nm); i.placeholder = 'Заповніть: ' + nm.toLowerCase(); i.setAttribute('aria-label', nm);
+      l.appendChild(i); form.appendChild(l);
+    });
+    const first = Array.from(block.children).find(x => x.tagName !== 'BUTTON');
+    block.insertBefore(form, first || null);
+  }
+  const foot = document.createElement('div');
+  foot.className = 'tc-promptfoot';
+  const words = countWords(plainText(orig));
+  foot.innerHTML = '<span>' + words + ' ' + pluralUk(words, 'слово', 'слова', 'слів') + '</span>' + (names.length ? '<span>' + names.length + ' ' + pluralUk(names.length, 'змінна', 'змінні', 'змінних') + ': заповніть перед копіюванням</span>' : '');
+  block.appendChild(foot);
+}
+function pluralUk(n, a, b, c) { const m = n % 10, h = n % 100; return m === 1 && h !== 11 ? a : m >= 2 && m <= 4 && (h < 10 || h >= 20) ? b : c; }
 const EXPORT_CSS = `
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -81,6 +136,12 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Commissioner',
 .tc-content .tc-prompt,.tc-content pre.tc-code{position:relative}
 .tc-copy{position:absolute;top:5px;right:8px;z-index:2;height:26px;padding:0 11px;border-radius:7px;cursor:pointer;font:600 11.5px 'Commissioner',sans-serif;border:1px solid var(--accent-border);background:var(--surface);color:var(--accent);transition:background .12s,color .12s}
 .tc-copy:hover{background:var(--accent);color:var(--on-accent)}
+.tc-chat{position:absolute;top:5px;right:98px;z-index:2;height:26px;padding:0 11px;border-radius:7px;cursor:pointer;font:600 11.5px 'Commissioner',sans-serif;border:1px solid var(--accent);background:var(--accent);color:var(--on-accent)}
+.tc-chat:hover{background:var(--accent-hover)}
+.tc-chatmenu{position:absolute;z-index:30;min-width:190px;padding:6px;border-radius:12px;background:var(--surface);border:1px solid var(--border2);box-shadow:var(--shadow-lg);font-family:'Commissioner',sans-serif}
+.tc-chatmenu a{display:block;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--text);text-decoration:none}
+.tc-chatmenu a:hover{background:var(--accent-light);color:var(--accent)}
+.tc-chatmenu small{display:block;padding:4px 12px 2px;color:var(--muted);font-size:11.5px}
 pre.tc-code .tc-copy{top:4px;border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:var(--code-text)}
 pre.tc-code .tc-copy:hover{background:rgba(255,255,255,.18);color:#fff}
 .tc-copy.done{background:var(--success)!important;border-color:var(--success)!important;color:#fff!important}
@@ -107,12 +168,27 @@ const EXPORT_JS = `
     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(function(){done(true)},fb);else fb();
   }
   document.addEventListener('click',function(e){
+    var v=e.target.closest&&e.target.closest('.tc-var');
+    if(v){var vi=v.closest('.tc-prompt').querySelector('.tc-vars input[data-var="'+v.getAttribute('data-var').replace(/"/g,'')+'"]');if(vi){vi.focus();vi.scrollIntoView({block:'nearest'})}return}
+    var cm=document.querySelector('.tc-chatmenu');if(cm&&!(e.target.closest&&e.target.closest('.tc-chatmenu'))&&!(e.target.closest&&e.target.closest('.tc-chat')))cm.remove();
+    var ch=e.target.closest&&e.target.closest('.tc-chat');
+    if(ch){var old=document.querySelector('.tc-chatmenu');if(old){old.remove();return}
+      var pb=ch.parentNode,mn=document.createElement('div');mn.className='tc-chatmenu';
+      mn.innerHTML='<small>Відкрити промпт у…</small><a href="#" data-chat="https://chatgpt.com/?q=">ChatGPT</a><a href="#" data-chat="https://claude.ai/new?q=">Claude</a><a href="#" data-chat="https://gemini.google.com/app" data-copy-first="1">Gemini (промпт скопіюється)</a>';
+      mn.style.top=(ch.offsetTop+ch.offsetHeight+4)+'px';mn.style.right='8px';pb.appendChild(mn);return}
+    var ca=e.target.closest&&e.target.closest('[data-chat]');
+    if(ca){e.preventDefault();var pbl=ca.closest('.tc-prompt'),txt=promptText(pbl),base=ca.getAttribute('data-chat');
+      if(ca.getAttribute('data-copy-first')||txt.length>1800){copy(txt,function(){window.open(base.split('?')[0],'_blank','noopener')})}else window.open(base+encodeURIComponent(txt),'_blank','noopener');
+      ca.closest('.tc-chatmenu').remove();return}
     var b=e.target.closest&&e.target.closest('.tc-copy');
-    if(b){var blk=b.parentNode;copy(blk.getAttribute('data-copy')||'',function(ok){b.classList.add('done');b.textContent=ok?'Скопійовано':'Виділіть і Ctrl+C';setTimeout(function(){b.classList.remove('done');b.textContent='Копіювати'},1600)});return}
+    if(b){var blk=b.parentNode;copy(promptText(blk),function(ok){b.classList.add('done');b.textContent=ok?'Скопійовано':'Виділіть і Ctrl+C';setTimeout(function(){b.classList.remove('done');b.textContent='Копіювати'},1600)});return}
     var img=e.target.closest&&e.target.closest('.tc-content figure img');
     if(img){var lb=document.getElementById('xLightbox');lb.querySelector('img').src=img.src;lb.classList.add('open');return}
     if(e.target.closest&&e.target.closest('#xLightbox'))document.getElementById('xLightbox').classList.remove('open');
   });
+  function promptText(blk){var t=blk.getAttribute('data-copy')||'';[].forEach.call(blk.querySelectorAll('.tc-vars input'),function(i){var v=i.value.trim();if(v)t=t.split('['+i.getAttribute('data-var')+']').join(v)});return t}
+  document.addEventListener('input',function(e){var i=e.target;if(!(i.matches&&i.matches('.tc-vars input')))return;var blk=i.closest('.tc-prompt'),nm=i.getAttribute('data-var'),val=i.value.trim();
+    [].forEach.call(blk.querySelectorAll('.tc-var'),function(c){if(c.getAttribute('data-var')===nm){c.textContent=val||'['+nm+']';c.classList.toggle('filled',!!val)}})});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')document.getElementById('xLightbox').classList.remove('open')});
   window.addEventListener('beforeprint',function(){[].forEach.call(document.querySelectorAll('details.tc-toggle'),function(d){d.open=true})});
   var links=[].slice.call(document.querySelectorAll('.x-toc a')),heads=links.map(function(a){return document.getElementById(a.getAttribute('href').slice(1))});

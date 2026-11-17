@@ -648,3 +648,5 @@ body.tc-readonly #editor{cursor:default}
 /* темна тема Edvault: нейтральні затемнення без синього відтінку */
 :root[data-theme="dark"] .drawer-overlay{background:rgba(0,0,0,.5)}
 :root[data-theme="dark"] .overlay{background:rgba(0,0,0,.55)}
+
+::highlight(tc-pvar){color:var(--accent);background-color:var(--accent-light)}
