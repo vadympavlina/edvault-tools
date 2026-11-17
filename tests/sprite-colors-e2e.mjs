@@ -99,7 +99,7 @@ await step('еталонне зображення: додається, не зм
   const before = await S(); await setColor('#00ff00'); await click(3, 3);
   const after = await S(); assert.equal(after.layers[0][0][3 * 8 + 3], '#00ff00');
   assert.equal(after.layers[0][0].filter(Boolean).length, before.layers[0][0].filter(Boolean).length + 1, 'еталон не став пікселями');
-  await page.uncheck('#ref-show'); await page.click('#ref-remove'); await page.waitForTimeout(100);
+  await page.evaluate(() => document.getElementById('ref-show').click()); await page.click('#ref-remove'); await page.waitForTimeout(100);
   assert.equal(await page.locator('#ref-ctrl').isVisible(), false);
 });
 assert.deepEqual(errors, [], 'помилки консолі: ' + errors.join('; '));
