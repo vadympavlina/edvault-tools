@@ -88,8 +88,9 @@ await step('«З малюнка» збирає кольори спрайту; в
   assert.equal(await page.locator('#pal-del').isVisible(), false);
 });
 await step('еталонне зображення: додається, не змінює піксели, прозорість і приховування', async () => {
-  const proj = await page.evaluate(() => { document.querySelectorAll('details').forEach(d => d.open = true); return !!document.querySelector('#pixel-canvas'); });
+  const proj = await page.evaluate(() => { return !!document.querySelector('#pixel-canvas'); });
   assert.ok(proj);
+  await page.click('[data-tab=canvas]');
   const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==', 'base64');
   assert.equal(await page.locator('#ref-ctrl').isVisible(), false);
   await page.setInputFiles('#ref-file', { name: 'r.png', mimeType: 'image/png', buffer: png }); await page.waitForTimeout(250);

@@ -27,6 +27,7 @@ const at = (arr, x, y, w = 8) => arr[y * w + x];
 await step('новий спрайт 8×8: один шар «Шар 1», видалити й об’єднати недоступні', async () => {
   await page.locator('#add-tile, #empty-new-btn').first().click(); await page.waitForTimeout(200);
   await page.fill('#ns-w', '8'); await page.fill('#ns-h', '8'); await page.locator('[data-ok]').click(); await page.waitForTimeout(500);
+  await page.click('[data-tab=layers]');
   assert.deepEqual(await names(), ['Шар 1']);
   assert.equal(await page.locator('#layer-del').isDisabled(), true); assert.equal(await page.locator('#layer-merge').isDisabled(), true);
 });

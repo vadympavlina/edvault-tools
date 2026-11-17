@@ -350,6 +350,28 @@
     background: var(--surface); border-left: 1px solid var(--border); overflow-y: auto; padding: 14px;
     display: flex; flex-direction: column; gap: 16px;
   }
+  /* права панель: закріплена шапка (колір і перегляд анімації) + вкладки */
+  .right-panel { padding: 0 !important; gap: 0 !important; overflow: hidden !important; }
+  .rp-head { padding: 12px 12px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; gap: 9px; }
+  .rp-top { display: flex; align-items: center; gap: 10px; }
+  .rp-top .color-row { flex: 1; min-width: 0; }
+  .rp-top .color-meta { min-width: 0; }
+  .right-panel .rp-head .preview-box { width: 64px; height: 64px; flex-shrink: 0; margin: 0; padding: 0; }
+  .rp-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; padding: 0 4px; }
+  .rp-tabs button { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 2px 7px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: 700 10.5px/1.2 inherit; font-family: inherit; cursor: pointer; transition: color .12s ease; }
+  .rp-tabs button:hover { color: var(--text); }
+  .rp-tabs button svg { width: 18px; height: 18px; }
+  .rp-tabs button.active { color: var(--text); border-bottom-color: var(--accent); }
+  .rp-tabs button.active svg { color: var(--accent); }
+  .rp-tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 6px; }
+  .rp-body { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; scrollbar-width: thin; }
+  .rp-tab { display: flex; flex-direction: column; gap: 16px; }
+  .rp-tab[hidden] { display: none; }
+  .rp-sec > * + * { margin-top: 9px; }
+  .rp-sec > .panel-label { margin-bottom: 0; }
+  .rp-sec > .panel-label + * { margin-top: 10px; }
+  .rp-sec + .rp-sec { padding-top: 14px; border-top: 1px solid var(--border); }
+  .rp-sec .toggle-row:first-of-type, .rp-sec .wide-btn:first-of-type { margin-top: 0; }
   .pal-actions [hidden], .ref-ctrl[hidden] { display: none !important; }
   .frame-num { bottom: 17px !important; }
   .anim-row.col { flex-direction: column; align-items: stretch; gap: 6px; }
@@ -375,7 +397,7 @@
   .tag-chip .tag-edit { padding: 3px 6px; border-left: 1px solid var(--border); }
   .tag-chip .tag-edit svg { width: 11px; height: 11px; }
   .tag-chip.on { border-color: var(--accent); background: var(--accent-light); color: var(--text); }
-  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--text2); margin-top: 8px; }
+  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; white-space: nowrap; font-size: 12.5px; font-weight: 600; color: var(--text2); margin-top: 8px; }
   .set-row .num-input { width: 56px; padding: 5px 8px; font: 600 12px 'JetBrains Mono', monospace; }
   .set-row input[type=range] { flex: 1; accent-color: var(--accent); min-width: 0; }
   .sheet-prev { margin-top: 10px; display: flex; justify-content: center; background: repeating-conic-gradient(#e9ebef 0 25%, #f7f8fa 0 50%) 0 0 / 12px 12px; border-radius: 10px; padding: 8px; }
@@ -562,9 +584,8 @@
       #toolbar .tb-sep { grid-column: 1 / -1; width: auto; }
     }
     /* колір, палітра, анімація — острівець праворуч */
-    .right-panel { position: absolute; right: 12px; top: 72px; bottom: auto; width: 244px; z-index: 25; height: auto; max-height: calc(100% - 84px);
+    .right-panel { position: absolute; right: 12px; top: 72px; bottom: auto; width: 268px; z-index: 25; height: min(640px, calc(100% - 84px)); max-height: none;
       border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--isl-shadow); padding: 14px; gap: 14px; scrollbar-width: thin; align-self: auto; }
-    .right-panel .preview-box { height: 118px; }
     /* кадри — острівець унизу по центру */
     .frames-strip { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 25; min-height: 0;
       max-width: calc(100% - 560px); padding: 6px 8px; gap: 8px; border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--isl-shadow); }
@@ -576,7 +597,13 @@
     .statusbar { position: absolute; left: 12px; bottom: 58px; z-index: 20; height: auto; padding: 0; background: transparent; border: 0; }
   }
   @media (max-width: 900px) {
-    .right-panel { max-height: 38vh; }
+    .right-panel { max-height: 40vh; }
+    .ramp-row button { height: 18px; }
+    .rp-head { gap: 6px; }
+    .rp-head { padding: 8px 12px; }
+    .right-panel .rp-head .preview-box { width: 52px; height: 52px; }
+    .rp-tabs button { flex-direction: row; justify-content: center; gap: 6px; padding: 7px 2px; }
+    .rp-tabs button svg { width: 15px; height: 15px; }
     .topbar-text p { display: none; }
   }
 </style>
@@ -698,9 +725,9 @@
       </div>
     </div>
 
-    <div class="right-panel">
-      <div>
-        <div class="panel-label">Колір</div>
+    <div class="right-panel" id="right-panel">
+      <div class="rp-head">
+        <div class="rp-top">
         <div class="color-row">
           <label class="color-big" title="Вибрати будь-який колір"><span class="fill" id="color-fill"></span><input type="color" id="color-input"></label>
           <div class="color-meta">
@@ -708,10 +735,19 @@
             <div class="recent-row" id="recent-row" title="Останні кольори"></div>
           </div>
         </div>
+          <div class="preview-box" id="preview-box" title="Перегляд анімації. Клацни, щоб зупинити або запустити"><canvas id="preview-canvas"></canvas></div>
+        </div>
         <div class="ramp-row" id="ramp-row" title="Відтінки поточного кольору: темніші холодніші, світліші теплішіші"></div>
       </div>
-
-      <div>
+      <div class="rp-tabs" id="rp-tabs" role="tablist" aria-label="Розділи панелі">
+        <button role="tab" data-tab="color" title="Палітра і кольори спрайту"><span class="ti"></span>Колір</button>
+        <button role="tab" data-tab="layers" title="Шари"><span class="ti"></span>Шари</button>
+        <button role="tab" data-tab="anim" title="Тривалість кадрів, теги, порядок"><span class="ti"></span>Анімація</button>
+        <button role="tab" data-tab="canvas" title="Розмір, сітка, перетворення, калька, плитка, еталон"><span class="ti"></span>Полотно</button>
+      </div>
+      <div class="rp-body">
+        <div class="rp-tab" data-tab="color" role="tabpanel">
+          <div>
         <div class="panel-label">Палітра <select id="palette-select"></select></div>
         <div class="palette-grid" id="palette-grid"></div>
         <div class="pal-actions">
@@ -719,13 +755,13 @@
           <button class="mini-btn" id="pal-from-sprite" title="Створити палітру з кольорів цього спрайту">З малюнка</button>
           <button class="mini-btn" id="pal-del" title="Видалити цю імпортовану палітру" hidden>Видалити</button>
         </div>
-      </div>
-
-      <div>
+          </div>
+          <div>
         <div class="panel-label">Кольори спрайту</div>
         <div class="palette-grid" id="used-grid"></div>
-      </div>
-
+          </div>
+        </div>
+        <div class="rp-tab" data-tab="layers" role="tabpanel" hidden>
       <div id="layers-box">
         <div class="panel-label">Шари <span class="layer-tools">
           <button id="layer-add" title="Новий шар">+</button>
@@ -736,9 +772,9 @@
         <div class="layer-opacity" id="layer-opacity"><span>Прозорість</span><input type="range" id="layer-op-range" min="5" max="100" step="5" value="100"><b id="layer-op-val">100%</b></div>
       </div>
 
-      <div>
-        <div class="panel-label">Анімація</div>
-        <div class="preview-box" id="preview-box" title="Клацни, щоб зупинити або запустити"><canvas id="preview-canvas"></canvas></div>
+        </div>
+        <div class="rp-tab" data-tab="anim" role="tabpanel" hidden>
+          <div>
         <div class="preview-ctrl">
           <div class="fps-control">
             <button id="fps-down" title="Повільніше">−</button>
@@ -752,23 +788,26 @@
           <div class="anim-row col"><span>Порядок</span><div class="mini-seg" id="dir-seg"><button data-d="fwd" title="Від першого до останнього">Вперед</button><button data-d="rev" title="Від останнього до першого">Назад</button><button data-d="pp" title="Вперед і назад без повтору крайніх кадрів">Туди-назад</button></div></div>
           <div class="tag-list" id="tag-list"></div>
         </div>
-      </div>
-
-      <details class="rp-more">
-        <summary class="panel-label">Перетворення</summary>
-        <div class="btn-grid" id="transform-grid"></div>
-        <label class="toggle-row"><span>Для всіх кадрів</span><span class="switch"><input type="checkbox" id="all-frames-toggle"><span class="slider"></span></span></label>
-        <button class="wide-btn" id="outline-btn"></button>
-      </details>
-
-      <details class="rp-more">
-        <summary class="panel-label">Полотно й сітка</summary>
+          </div>
+        </div>
+        <div class="rp-tab" data-tab="canvas" role="tabpanel" hidden>
+      <section class="rp-sec"><div class="panel-label">Полотно</div>
         <div class="size-line" id="size-line">16 × 16</div>
         <button class="wide-btn" id="resize-btn"></button>
         <label class="toggle-row"><span>Сітка</span><span class="switch"><input type="checkbox" id="grid-toggle" checked><span class="slider"></span></span></label>
+        <label class="toggle-row"><span>Лінії кожні 8 пікселів</span><span class="switch"><input type="checkbox" id="major-toggle" checked><span class="slider"></span></span></label>
+      </section>
+      <section class="rp-sec"><div class="panel-label">Перетворення</div>
+        <div class="btn-grid" id="transform-grid"></div>
+        <label class="toggle-row"><span>Для всіх кадрів</span><span class="switch"><input type="checkbox" id="all-frames-toggle"><span class="slider"></span></span></label>
+        <button class="wide-btn" id="outline-btn"></button>
+      </section>
+      <section class="rp-sec"><div class="panel-label">Калька й плитка</div>
         <label class="toggle-row" title="Показати спрайт повтореним навколо, щоб перевірити безшовність"><span>Плитка 3×3 навколо полотна</span><span class="switch"><input type="checkbox" id="tile-toggle"><span class="slider"></span></span></label>
-        <div class="set-row"><span>Калька: назад</span><input class="num-input" id="onion-b" type="number" min="0" max="4" value="1"><span>вперед</span><input class="num-input" id="onion-a" type="number" min="0" max="4" value="1"></div>
+        <div class="set-row" title="Скільки сусідніх кадрів показувати напівпрозорими"><span>Кадрів назад</span><input class="num-input" id="onion-b" type="number" min="0" max="4" value="1"><span>вперед</span><input class="num-input" id="onion-a" type="number" min="0" max="4" value="1"></div>
         <div class="set-row"><span>Яскравість кальки</span><input type="range" id="onion-op" min="10" max="70" step="5" value="30"></div>
+      </section>
+      <section class="rp-sec"><div class="panel-label">Еталонна картинка</div>
         <div class="ref-box">
           <button class="wide-btn" id="ref-btn"></button>
           <div class="ref-ctrl" id="ref-ctrl" hidden>
@@ -777,8 +816,9 @@
             <button class="wide-btn" id="ref-remove"></button>
           </div>
         </div>
-        <label class="toggle-row"><span>Лінії кожні 8 пікселів</span><span class="switch"><input type="checkbox" id="major-toggle" checked><span class="slider"></span></span></label>
-      </details>
+      </section>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -807,6 +847,10 @@
     ellipse: '<ellipse cx="12" cy="12" rx="9" ry="7"/>',
     select: '<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M11 4h2M11 20h2M4 11v2M20 11v2"/>',
     shade: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor"/>',
+    tabColor: '<circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10.5" r="1.1" fill="currentColor"/><circle cx="12" cy="7.5" r="1.1" fill="currentColor"/><circle cx="15.5" cy="10.5" r="1.1" fill="currentColor"/><path d="M12 21a2.2 2.2 0 0 1 0-4.4h1.6a2 2 0 0 0 0-4"/>',
+    tabLayers: '<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12.5 9 5 9-5"/><path d="m3 17 9 5 9-5" opacity=".55"/>',
+    tabAnim: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9.2 5 2.8-5 2.8Z" fill="currentColor"/>',
+    tabCanvas: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18" opacity=".6"/>',
     mirrorX: '<path d="M12 3v18" stroke-dasharray="1.5 3"/><path d="M9 8 4 12l5 4V8Z"/><path d="m15 8 5 4-5 4V8Z"/>',
     mirrorY: '<path d="M3 12h18" stroke-dasharray="1.5 3"/><path d="M8 9l4-5 4 5H8Z"/><path d="m8 15 4 5 4-5H8Z"/>',
     undo: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
@@ -2477,7 +2521,7 @@
   // ---------- Еталонна картинка під полотном (не потрапляє в експорт) ----------
   let refImg = null, refOpacity = .4, refShow = true;
   function updateRefUi(){
-    $('ref-btn').innerHTML = svg(I.image) + (refImg ? 'Замінити еталон…' : 'Еталонна картинка…');
+    $('ref-btn').innerHTML = svg(I.image) + (refImg ? 'Замінити картинку…' : 'Вибрати картинку…');
     $('ref-ctrl').hidden = !refImg;
     $('ref-remove').innerHTML = svg(I.trash) + 'Прибрати еталон';
   }
@@ -3377,6 +3421,24 @@
   document.addEventListener('keyup', e => { if(e.code === 'Space'){ spaceDown = false; stage.classList.remove('pan'); } });
   window.addEventListener('blur', () => { spaceDown = false; stage.classList.remove('pan'); });
 
+  // ---------- Вкладки правої панелі ----------
+  const TAB_ICONS = { color: I.tabColor, layers: I.tabLayers, anim: I.tabAnim, canvas: I.tabCanvas }, TAB_KEY = 'edvault-sprite-tab';
+  const tabBtns = [...document.querySelectorAll('#rp-tabs [data-tab]')];
+  tabBtns.forEach(b => { b.querySelector('.ti').innerHTML = svg(TAB_ICONS[b.dataset.tab]); b.querySelector('.ti').style.display = 'contents'; });
+  function showTab(name, focus){
+    if(!TAB_ICONS[name]) name = 'color';
+    tabBtns.forEach(b => { const on = b.dataset.tab === name; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; if(on && focus) b.focus(); });
+    document.querySelectorAll('.rp-tab').forEach(p => { p.hidden = p.dataset.tab !== name; });
+    try{ localStorage.setItem(TAB_KEY, name); }catch(e){}
+    if(name === 'layers') renderLayers();
+    if(name === 'anim') updateAnimUi();
+  }
+  tabBtns.forEach((b, i) => {
+    b.onclick = () => showTab(b.dataset.tab);
+    b.onkeydown = e => { const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if(d){ e.preventDefault(); showTab(tabBtns[(i + d + tabBtns.length) % tabBtns.length].dataset.tab, true); } };
+  });
+  let savedTab = 'color'; try{ savedTab = localStorage.getItem(TAB_KEY) || 'color'; }catch(e){}
+  showTab(savedTab);
   // ---------- Start ----------
   updateRefUi();
   applyTheme(isDarkTheme());

@@ -40,6 +40,7 @@ await step('новий спрайт 8×8 з трьома кадрами, у ко
   assert.equal((await S()).n, 3);
   assert.deepEqual((await A()).seq, [0, 1, 2]);
 });
+await page.click('[data-tab=anim]');
 await step('тривалість кадру: за замовчуванням 125 мс (8 кадр/с), змінюємо поточний кадр на 400', async () => {
   assert.equal(await page.inputValue('#fdur'), '125');
   await page.fill('#fdur', '400'); await page.press('#fdur', 'Enter'); await page.waitForTimeout(150);
@@ -90,13 +91,14 @@ await step('збереження й відновлення: тривалості
   await hook();
 });
 await step('калька: налаштування кроків і плитка вмикаються без помилок', async () => {
-  await page.evaluate(() => document.querySelectorAll('details').forEach(d => d.open = true));
+  await page.click('[data-tab=canvas]');
   await page.fill('#onion-b', '2'); await page.fill('#onion-a', '0'); await page.press('#onion-a', 'Tab'); await page.waitForTimeout(80);
   const a = await A(); assert.equal(a.onionB, 2); assert.equal(a.onionA, 0);
   await page.click('#onion-btn'); await page.evaluate(() => document.getElementById('tile-toggle').click()); await page.waitForTimeout(100);
   assert.equal((await A()).tile, true);
   await page.evaluate(() => document.getElementById('tile-toggle').click()); await page.click('#onion-btn');
 });
+await page.click('[data-tab=anim]');
 await step('експорт GIF: тривалість кожного кадру у файлі, порядок за режимом', async () => {
   await page.click('#export-btn'); await page.waitForTimeout(200);
   await page.click('#ex-kind [data-k=gif]'); await page.waitForTimeout(200);
