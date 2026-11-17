@@ -32,7 +32,7 @@ let exp = null;
 await step('блоки в редакторі: підпис і іконка в м\'якому градієнті, темна тема лишає аркуш світлим', async () => {
   await setDoc('<h1>Тест</h1><div class="tc-block tc-callout" data-type="warn"><p>Увага тут</p></div><div class="tc-block tc-prompt"><p>Поясни тему [ТЕМА] для [КЛАС] класу.</p></div><blockquote><p>Цитата</p></blockquote>');
   const r = await page.evaluate(() => { const c = document.querySelector('#editor .tc-callout'), s = getComputedStyle(c, '::before'); return { lab: s.content, bg: getComputedStyle(c).backgroundImage.includes('gradient'), rad: getComputedStyle(c).borderRadius }; });
-  assert.match(r.lab, /Увага/); assert.ok(r.bg, 'градієнт'); assert.equal(r.rad, '16px');
+  assert.match(r.lab, /Увага/); assert.ok(r.bg, 'градієнт'); assert.equal(r.rad, '0px'); assert.ok(!/radial/.test(await page.evaluate(() => getComputedStyle(document.querySelector('#editor .tc-callout')).backgroundImage)), 'без кола');
 });
 await step('змінні у промпті підсвічуються в редакторі, текст не змінюється', async () => {
   await page.waitForTimeout(300);
@@ -72,6 +72,68 @@ await step('експорт: меню «Відкрити в чаті» з ChatGPT
   await p.locator('.tc-chatmenu a', { hasText: 'Claude' }).click();
   assert.match(decodeURIComponent(await p.evaluate(() => window.__o[0])), /^https:\/\/claude\.ai\/new\?q=Поясни тему змінні для \[КЛАС\] класу\.$/);
   assert.equal(await p.locator('.tc-chatmenu').count(), 0);
+  await p.close();
+});
+
+const SVG = c => 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="400" height="300" fill="${c}"/></svg>`);
+const figs = (n, extra = '') => Array.from({ length: n }, (_, i) => `<figure class="tc-figure"${extra}><img src="${SVG(['#6b86c9', '#e8a87c', '#7bbf9a', '#b58ad6'][i % 4])}" alt=""><figcaption>Підпис ${i + 1}</figcaption></figure>`).join('');
+await step('галерея: кнопка на панелі зображення збирає сусідні зображення в сітку, можна змінити колонки й розібрати', async () => {
+  await setDoc('<h1>Фото</h1>' + figs(3) + '<p>Далі текст.</p>');
+  await page.waitForTimeout(200);
+  await page.evaluate(() => UI.selectFigure(document.querySelector('#editor figure.tc-figure')));
+  await page.locator('#imgBar [data-b="galon"]').click();
+  let r = await page.evaluate(() => [...document.querySelectorAll('#editor figure')].map(f => f.dataset.gal));
+  assert.deepEqual(r, ['3', '3', '3']);
+  const xs = await page.evaluate(() => [...document.querySelectorAll('#editor figure')].map(f => Math.round(f.getBoundingClientRect().top)));
+  assert.ok(xs[0] === xs[1] && xs[1] === xs[2], 'три в один ряд: ' + xs);
+  await page.locator('#imgBar [data-b="gal2"]').click();
+  r = await page.evaluate(() => [...document.querySelectorAll('#editor figure')].map(f => f.dataset.gal)); assert.deepEqual(r, ['2', '2', '2']);
+  const tops = await page.evaluate(() => [...document.querySelectorAll('#editor figure')].map(f => Math.round(f.getBoundingClientRect().top)));
+  assert.ok(tops[0] === tops[1] && tops[2] > tops[1], 'два в ряд, третє нижче: ' + tops);
+  assert.ok(await page.evaluate(() => { const p = document.querySelector('#editor p'); const f = [...document.querySelectorAll('#editor figure')].pop(); return p.getBoundingClientRect().top >= f.getBoundingClientRect().bottom - 2; }), 'текст нижче галереї');
+  await page.locator('#imgBar [data-b="galoff"]').click();
+  r = await page.evaluate(() => [...document.querySelectorAll('#editor figure')].map(f => f.dataset.gal)); assert.deepEqual(r, [undefined, undefined, undefined]);
+});
+await step('вставка кількох файлів одразу складає їх у галерею', async () => {
+  await setDoc('<h1>Фото</h1><p><br></p>');
+  const tmp = await mkdtemp(join(tmpdir(), 'tcg-'));
+  const { writeFile } = await import('node:fs/promises');
+  const files = [];
+  for (let i = 0; i < 3; i++) { const f = join(tmp, `im${i}.svg`); await writeFile(f, `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200"><rect width="300" height="200" fill="#${['6b86c9', 'e8a87c', '7bbf9a'][i]}"/></svg>`); files.push(f); }
+  await page.setInputFiles('#imgInput', files);
+  await page.waitForFunction(() => document.querySelectorAll('#editor figure').length === 3, null, { timeout: 8000 });
+  assert.deepEqual(await page.evaluate(() => [...document.querySelectorAll('#editor figure')].map(f => f.dataset.gal)), ['3', '3', '3']);
+});
+await step('перегляд у редакторі: стрілки перемикають зображення по колу, є підпис і лічильник, Esc закриває', async () => {
+  await setDoc('<h1>Фото</h1>' + figs(3));
+  await page.waitForTimeout(150);
+  await page.evaluate(() => UI.selectFigure(document.querySelectorAll('#editor figure')[1]));
+  await page.locator('#imgBar [data-b="view"]').click();
+  assert.equal(await page.locator('#lightbox .lb-count').textContent(), '2 / 3'); assert.equal(await page.locator('#lightbox .lb-cap').textContent(), 'Підпис 2');
+  await page.keyboard.press('ArrowRight'); assert.equal(await page.locator('#lightbox .lb-count').textContent(), '3 / 3');
+  await page.keyboard.press('ArrowRight'); assert.equal(await page.locator('#lightbox .lb-count').textContent(), '1 / 3');
+  await page.locator('#lightbox .lb-prev').click(); assert.equal(await page.locator('#lightbox .lb-count').textContent(), '3 / 3');
+  await page.keyboard.press('Escape'); assert.equal(await page.locator('#lightbox').evaluate(e => e.classList.contains('open')), false);
+});
+await step('опис зображення (alt): кнопка Alt відкриває вікно, значення зберігається в документі', async () => {
+  await page.evaluate(() => UI.selectFigure(document.querySelector('#editor figure')));
+  await page.locator('#imgBar [data-b="alt"]').click();
+  await page.fill('#altText', 'Синій прямокутник'); await page.click('#altOk');
+  assert.equal(await page.evaluate(() => document.querySelector('#editor figure img').getAttribute('alt')), 'Синій прямокутник');
+});
+await step('експорт: галерея лишається сіткою, перегляд має стрілки, підпис, лічильник і завантаження', async () => {
+  await setDoc('<h1>Фото</h1>' + figs(3, ' data-gal="3"') + '<p>Кінець</p>');
+  const text = await exportHtml();
+  assert.match(text, /data-gal="3"/); assert.match(text, /\.tc-content figure\.tc-figure\[data-gal\]/);
+  const p = await openExported(text);
+  const tops = await p.evaluate(() => [...document.querySelectorAll('.tc-content figure')].map(f => Math.round(f.getBoundingClientRect().top)));
+  assert.ok(tops[0] === tops[1] && tops[1] === tops[2], 'у ряд: ' + tops);
+  await p.locator('.tc-content figure img').nth(0).click();
+  assert.equal(await p.locator('#xLightbox .lb-count').textContent(), '1 / 3'); assert.equal(await p.locator('#xLightbox .lb-cap').textContent(), 'Підпис 1');
+  await p.keyboard.press('ArrowRight'); assert.equal(await p.locator('#xLightbox .lb-count').textContent(), '2 / 3');
+  assert.match(await p.locator('#xLightbox .lb-dl').getAttribute('download'), /зображення-2/);
+  await p.locator('#xLightbox .lb-next').click(); assert.equal(await p.locator('#xLightbox .lb-count').textContent(), '3 / 3');
+  await p.keyboard.press('Escape'); assert.equal(await p.locator('#xLightbox').evaluate(e => e.classList.contains('open')), false);
   await p.close();
 });
 await step('жодної помилки в консолі', async () => { assert.deepEqual(errors.filter(e => !/claude\.ai|chatgpt|ERR_/.test(e)), []); });

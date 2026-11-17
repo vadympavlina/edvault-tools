@@ -582,14 +582,20 @@ const UI = {
     const w = parseInt(fig.style.getPropertyValue('--w'), 10) || 0;
     const al = fig.dataset.align || 'center';
     const wrap = fig.dataset.wrap || '';
+    const gal = fig.dataset.gal || '';
     const sizes = wrap ? [['w25', 'S', 25], ['w35', 'M', 35], ['w50', 'L', 50], ['w65', 'XL', 65]] : [['w25', 'S', 25], ['w50', 'M', 50], ['w75', 'L', 75], ['w100', 'XL', 100]];
     $('#imgBar').innerHTML = bar([
-      ...sizes.map(([b, label, n]) => ({ b, label, tip: 'Ширина ' + n + '%', on: w === n })),
-      ...(wrap ? [] : [{ b: 'w0', label: 'Авто', tip: 'Оригінальний розмір', on: !w }]), '|',
+      ...(gal ? [] : sizes.map(([b, label, n]) => ({ b, label, tip: 'Ширина ' + n + '%', on: w === n }))),
+      ...(wrap || gal ? [] : [{ b: 'w0', label: 'Авто', tip: 'Оригінальний розмір', on: !w }]), ...(gal ? [] : ['|']),
+      ...(gal ? [
+        { b: 'gal2', label: '2', tip: 'Галерея в 2 колонки', on: gal === '2' }, { b: 'gal3', label: '3', tip: 'Галерея в 3 колонки', on: gal === '3' }, { b: 'gal4', label: '4', tip: 'Галерея в 4 колонки', on: gal === '4' },
+        { b: 'galoff', icon: 'image', tip: 'Розібрати галерею: зображення стануть окремими' }, '|',
+      ] : [{ b: 'galon', icon: 'gallery', tip: 'Галерея: об’єднати з сусідніми зображеннями в сітку' }]),
+      ...(gal ? [] : [
       { b: 'wrapleft', icon: 'wrapLeft', tip: 'Фото ліворуч, текст праворуч', on: wrap === 'left' },
       { b: 'acenter', icon: 'alignCenter', tip: 'Окремо, по центру', on: !wrap && al === 'center' },
-      { b: 'wrapright', icon: 'wrapRight', tip: 'Фото праворуч, текст ліворуч', on: wrap === 'right' }, '|',
-      { b: 'caption', icon: 'text', tip: 'Додати підпис' }, { b: 'view', icon: 'expand', tip: 'Переглянути' },
+      { b: 'wrapright', icon: 'wrapRight', tip: 'Фото праворуч, текст ліворуч', on: wrap === 'right' }, '|']),
+      { b: 'caption', icon: 'text', tip: 'Додати підпис' }, { b: 'alt', label: 'Alt', tip: 'Опис зображення для незрячих і пошуку' }, { b: 'view', icon: 'expand', tip: 'Переглянути' },
       { b: 'delete', icon: 'trash', tip: 'Видалити зображення', cls: 'danger' },
     ]);
     ['#selBar', '#linkBar', '#blockBar'].forEach(s => $(s).classList.remove('show'));
@@ -770,7 +776,9 @@ $('#imgBar').addEventListener('click', e => {
   if (!b || !fig) return;
   const v = b.dataset.b;
   if (v === 'delete') { UI.deleteSelectedFigure(); return; }
-  if (v === 'view') { openLightbox(fig.querySelector('img').src); return; }
+  if (v === 'view') { openLightbox(fig.querySelector('img')); return; }
+  if (v === 'alt') { openAltModal(fig); return; }
+  if (v === 'galon' || v === 'galoff' || /^gal[234]$/.test(v)) { setGallery(fig, v); return; }
   if (v === 'caption') { const cap = fig.querySelector('figcaption'); UI.deselectFigure(); caretEnd(cap); return; }
   const f = fig;
   let hint = false;
@@ -831,8 +839,73 @@ $('#imgBar').addEventListener('click', e => {
   h.addEventListener('pointerup', end);
   h.addEventListener('pointercancel', end);
 })();
-function openLightbox(src) { const lb = $('#lightbox'); lb.querySelector('img').src = src; lb.classList.add('open'); }
-$('#lightbox').addEventListener('click', () => $('#lightbox').classList.remove('open'));
+// Перегляд: усі зображення документа по черзі (стрілки, Esc, завантаження)
+const LB = { list: [], i: 0 };
+function openLightbox(target) {
+  const imgs = $$('figure.tc-figure img', editor);
+  LB.list = imgs.map(im => ({ src: im.src, alt: im.alt || '', cap: (im.closest('figure').querySelector('figcaption') || {}).textContent || '' }));
+  LB.i = Math.max(0, imgs.indexOf(typeof target === 'string' ? imgs.find(im => im.src === target) : target));
+  if (!LB.list.length) LB.list = [{ src: typeof target === 'string' ? target : target.src, alt: '', cap: '' }];
+  renderLightbox();
+  $('#lightbox').classList.add('open');
+}
+function renderLightbox() {
+  const lb = $('#lightbox'), it = LB.list[LB.i];
+  if (!it) return;
+  lb.querySelector('img').src = it.src;
+  lb.querySelector('img').alt = it.alt;
+  lb.querySelector('.lb-cap').textContent = it.cap.replace(/\u200b/g, '').trim();
+  lb.querySelector('.lb-count').textContent = LB.list.length > 1 ? (LB.i + 1) + ' / ' + LB.list.length : '';
+  lb.classList.toggle('single', LB.list.length < 2);
+}
+function stepLightbox(d) { if (LB.list.length < 2) return; LB.i = (LB.i + d + LB.list.length) % LB.list.length; renderLightbox(); }
+$('#lightbox').addEventListener('click', e => {
+  if (e.target.closest('.lb-prev')) { stepLightbox(-1); return; }
+  if (e.target.closest('.lb-next')) { stepLightbox(1); return; }
+  if (e.target.closest('.lb-dl')) { const it = LB.list[LB.i]; if (it) downloadFile('зображення-' + (LB.i + 1) + (/^data:image\/png|^blob:/.test(it.src) ? '.png' : '.jpg'), it.src.startsWith('data:') ? dataUrlToBlob(it.src) : it.src, 'image/*'); return; }
+  if (e.target.tagName === 'IMG' || e.target.closest('.lb-cap')) return;
+  $('#lightbox').classList.remove('open');
+});
+document.addEventListener('keydown', e => {
+  if (!$('#lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') { $('#lightbox').classList.remove('open'); e.stopPropagation(); }
+  else if (e.key === 'ArrowLeft') { stepLightbox(-1); e.preventDefault(); e.stopPropagation(); }
+  else if (e.key === 'ArrowRight') { stepLightbox(1); e.preventDefault(); e.stopPropagation(); }
+}, true);
+// Галерея: ряд сусідніх зображень стає сіткою з однаковими клітинками
+function figureRun(fig) {
+  const run = [fig];
+  for (let p = fig.previousElementSibling; p && p.tagName === 'FIGURE'; p = p.previousElementSibling) run.unshift(p);
+  for (let n = fig.nextElementSibling; n && n.tagName === 'FIGURE'; n = n.nextElementSibling) run.push(n);
+  return run;
+}
+function setGallery(fig, v) {
+  const run = figureRun(fig);
+  if (v === 'galon' && run.length < 2) { toast('Поставте кілька зображень поруч, щоб зібрати галерею'); return; }
+  const cols = v === 'galon' ? Math.min(4, Math.max(2, run.length > 4 ? 3 : run.length)) : +v.slice(3);
+  mutate(() => run.forEach(f => {
+    if (v === 'galoff') { f.removeAttribute('data-gal'); return; }
+    f.dataset.gal = String(cols); f.removeAttribute('data-wrap'); f.removeAttribute('data-align'); f.style.removeProperty('--w'); if (!f.getAttribute('style')) f.removeAttribute('style');
+  }));
+  UI.selectedFigure = null; UI.selectFigure(fig);
+}
+// Опис зображення (alt)
+function openAltModal(fig) {
+  altCtx = fig;
+  $('#altText').value = fig.querySelector('img').getAttribute('alt') || '';
+  Modal.open('altModal');
+  setTimeout(() => { const i = $('#altText'); i.focus(); i.select(); }, 40);
+}
+let altCtx = null;
+function confirmAlt() {
+  const fig = altCtx; altCtx = null;
+  Modal.close('altModal');
+  if (!fig || !fig.isConnected) return;
+  mutate(() => fig.querySelector('img').setAttribute('alt', $('#altText').value.trim()));
+  toast('Опис збережено', 'ok');
+}
+$('#altOk').addEventListener('click', confirmAlt);
+$('#altText').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); confirmAlt(); } });
 
 // Наведення на блок — показ його панелі
 let hoverTimer = null;

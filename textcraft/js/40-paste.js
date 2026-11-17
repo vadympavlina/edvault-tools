@@ -74,6 +74,7 @@ async function insertImages(files, atRange) {
   const imgs = Array.from(files).filter(f => f && f.type && f.type.startsWith('image/'));
   if (!imgs.length) return;
   let lastFig = null;
+  const made = [];
   for (const f of imgs) {
     const data = await readImageFile(f);
     if (!data) { toast('Не вдалося прочитати зображення «' + f.name + '»', 'err'); continue; }
@@ -84,7 +85,12 @@ async function insertImages(files, atRange) {
       insertBlocks([fig]);
       caretAfterBlock(fig);
     });
-    lastFig = fig;
+    lastFig = fig; made.push(fig);
+  }
+  if (made.length > 1) { // кілька файлів одразу — сітка (2–4 колонки)
+    const cols = made.length > 4 ? 3 : made.length;
+    mutate(() => made.forEach(f => { if (f.isConnected) f.dataset.gal = String(cols); }));
+    toast('Зображення складено в галерею. Змінити сітку чи розібрати її можна на панелі зображення', 'ok', { duration: 4200 });
   }
   if (lastFig && lastFig.isConnected) {
     const img = lastFig.querySelector('img');

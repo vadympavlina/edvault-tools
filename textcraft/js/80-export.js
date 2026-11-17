@@ -134,18 +134,30 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Commissioner',
 .x-page .doc-header:has(+ .doc-student){margin-bottom:0}
 .x-page .doc-student{margin:0 calc(-1*var(--pad-x)) 32px;padding:16px var(--pad-x) 14px;border-bottom:1px solid var(--border)}
 .tc-content .tc-prompt,.tc-content pre.tc-code{position:relative}
-.tc-copy{position:absolute;top:5px;right:8px;z-index:2;height:26px;padding:0 11px;border-radius:7px;cursor:pointer;font:600 11.5px 'Commissioner',sans-serif;border:1px solid var(--accent-border);background:var(--surface);color:var(--accent);transition:background .12s,color .12s}
+.tc-copy{position:absolute;top:5px;right:8px;z-index:2;height:26px;padding:0 11px;border-radius:0;cursor:pointer;font:600 11.5px 'Commissioner',sans-serif;border:1px solid var(--accent-border);background:var(--surface);color:var(--accent);transition:background .12s,color .12s}
 .tc-copy:hover{background:var(--accent);color:var(--on-accent)}
-.tc-chat{position:absolute;top:5px;right:98px;z-index:2;height:26px;padding:0 11px;border-radius:7px;cursor:pointer;font:600 11.5px 'Commissioner',sans-serif;border:1px solid var(--accent);background:var(--accent);color:var(--on-accent)}
+.tc-chat{position:absolute;top:5px;right:98px;z-index:2;height:26px;padding:0 11px;border-radius:0;cursor:pointer;font:600 11.5px 'Commissioner',sans-serif;border:1px solid var(--accent);background:var(--accent);color:var(--on-accent)}
 .tc-chat:hover{background:var(--accent-hover)}
-.tc-chatmenu{position:absolute;z-index:30;min-width:190px;padding:6px;border-radius:12px;background:var(--surface);border:1px solid var(--border2);box-shadow:var(--shadow-lg);font-family:'Commissioner',sans-serif}
-.tc-chatmenu a{display:block;padding:8px 12px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--text);text-decoration:none}
+.tc-chatmenu{position:absolute;z-index:30;min-width:190px;padding:6px;border-radius:0;background:var(--surface);border:1px solid var(--border2);box-shadow:var(--shadow-lg);font-family:'Commissioner',sans-serif}
+.tc-chatmenu a{display:block;padding:8px 12px;border-radius:0;font-size:13.5px;font-weight:600;color:var(--text);text-decoration:none}
 .tc-chatmenu a:hover{background:var(--accent-light);color:var(--accent)}
 .tc-chatmenu small{display:block;padding:4px 12px 2px;color:var(--muted);font-size:11.5px}
 pre.tc-code .tc-copy{top:4px;border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:var(--code-text)}
 pre.tc-code .tc-copy:hover{background:rgba(255,255,255,.18);color:#fff}
 .tc-copy.done{background:var(--success)!important;border-color:var(--success)!important;color:#fff!important}
 .tc-content figure.tc-figure img{cursor:zoom-in}
+.x-lightbox{flex-direction:column;gap:10px}
+.x-lightbox figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:10px;max-width:94vw}
+.x-lightbox img{cursor:default}
+.x-lightbox .lb-cap{color:#e8ebf7;font:14px/1.5 'Commissioner',system-ui,sans-serif;text-align:center;max-width:70ch}
+.x-lightbox .lb-cap:empty{display:none}
+.x-lightbox .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;cursor:pointer;font-size:24px;line-height:1}
+.x-lightbox .lb-nav:hover{background:rgba(255,255,255,.26)}
+.x-lightbox .lb-prev{left:18px}.x-lightbox .lb-next{right:18px}
+.x-lightbox.single .lb-nav{display:none}
+.x-lightbox .lb-bar{position:absolute;left:0;right:0;bottom:16px;display:flex;justify-content:center;align-items:center;gap:14px;color:#e8ebf7;font:600 13px 'Commissioner',sans-serif;pointer-events:none}
+.x-lightbox .lb-dl{pointer-events:auto;height:32px;padding:0 14px;border-radius:9px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;font:inherit;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+.x-lightbox .lb-dl:hover{background:rgba(255,255,255,.22)}
 .x-progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:50}
 .x-top{position:fixed;right:24px;bottom:24px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border2);background:var(--surface);color:var(--text2);box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .15s,transform .15s}
 .x-top.show{opacity:1;pointer-events:auto;transform:none}
@@ -182,10 +194,22 @@ const EXPORT_JS = `
       ca.closest('.tc-chatmenu').remove();return}
     var b=e.target.closest&&e.target.closest('.tc-copy');
     if(b){var blk=b.parentNode;copy(promptText(blk),function(ok){b.classList.add('done');b.textContent=ok?'Скопійовано':'Виділіть і Ctrl+C';setTimeout(function(){b.classList.remove('done');b.textContent='Копіювати'},1600)});return}
+    var lbEl=document.getElementById('xLightbox');
+    if(e.target.closest&&e.target.closest('.lb-prev')){lbStep(-1);return}
+    if(e.target.closest&&e.target.closest('.lb-next')){lbStep(1);return}
+    if(e.target.closest&&e.target.closest('.lb-dl'))return;
     var img=e.target.closest&&e.target.closest('.tc-content figure img');
-    if(img){var lb=document.getElementById('xLightbox');lb.querySelector('img').src=img.src;lb.classList.add('open');return}
-    if(e.target.closest&&e.target.closest('#xLightbox'))document.getElementById('xLightbox').classList.remove('open');
+    if(img){lbList=[].slice.call(document.querySelectorAll('.tc-content figure img'));lbI=lbList.indexOf(img);lbShow();lbEl.classList.add('open');return}
+    if(e.target.closest&&e.target.closest('#xLightbox')&&!(e.target.tagName==='IMG'||e.target.closest('.lb-cap')))lbEl.classList.remove('open');
   });
+  var lbList=[],lbI=0;
+  function lbShow(){var lb=document.getElementById('xLightbox'),im=lbList[lbI];if(!im)return;var fg=im.closest('figure'),cp=fg&&fg.querySelector('figcaption');
+    lb.querySelector('img').src=im.src;lb.querySelector('img').alt=im.alt||'';lb.querySelector('.lb-cap').textContent=cp?cp.textContent.trim():'';
+    lb.querySelector('.lb-count').textContent=lbList.length>1?(lbI+1)+' / '+lbList.length:'';lb.classList.toggle('single',lbList.length<2);
+    var a=lb.querySelector('.lb-dl');a.href=im.src;a.setAttribute('download','зображення-'+(lbI+1)+(/^data:image\\/png/.test(im.src)?'.png':/^data:image\\/svg/.test(im.src)?'.svg':'.jpg'))}
+  function lbStep(d){if(lbList.length<2)return;lbI=(lbI+d+lbList.length)%lbList.length;lbShow()}
+  document.addEventListener('keydown',function(ev){var lb=document.getElementById('xLightbox');if(!lb.classList.contains('open'))return;
+    if(ev.key==='ArrowLeft'){lbStep(-1);ev.preventDefault()}else if(ev.key==='ArrowRight'){lbStep(1);ev.preventDefault()}});
   function promptText(blk){var t=blk.getAttribute('data-copy')||'';[].forEach.call(blk.querySelectorAll('.tc-vars input'),function(i){var v=i.value.trim();if(v)t=t.split('['+i.getAttribute('data-var')+']').join(v)});return t}
   document.addEventListener('input',function(e){var i=e.target;if(!(i.matches&&i.matches('.tc-vars input')))return;var blk=i.closest('.tc-prompt'),nm=i.getAttribute('data-var'),val=i.value.trim();
     [].forEach.call(blk.querySelectorAll('.tc-var'),function(c){if(c.getAttribute('data-var')===nm){c.textContent=val||'['+nm+']';c.classList.toggle('filled',!!val)}})});
@@ -226,7 +250,7 @@ async function exportHtml() {
     '<div class="x-progress" id="xProgress"></div>\n<div class="x-layout">' + toc + '<main class="x-main"><div class="x-wrap"><article class="x-page">' +
     (h.enabled ? headerMarkup(h, headerTitle(h)) : '') + '\n' + content.outerHTML + '\n</article><div class="x-foot">Створено в TextCraft · Edvault</div></div></main></div>\n' +
     '<button class="x-top" id="xTop" aria-label="Догори"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>\n' +
-    '<div class="x-lightbox" id="xLightbox"><img alt=""></div>\n<script>' + EXPORT_JS + '<\/script>\n</body>\n</html>\n';
+    '<div class="x-lightbox" id="xLightbox"><button class="lb-nav lb-prev" aria-label="Попереднє">‹</button><figure><img alt=""><figcaption class="lb-cap"></figcaption></figure><button class="lb-nav lb-next" aria-label="Наступне">›</button><div class="lb-bar"><span class="lb-count"></span><a class="lb-dl" download>Завантажити</a></div></div>\n<script>' + EXPORT_JS + '<\/script>\n</body>\n</html>\n';
   downloadFile(fileName() + '.html', html, 'text/html;charset=utf-8');
 }
 

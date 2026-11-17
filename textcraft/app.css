@@ -650,3 +650,18 @@ body.tc-readonly #editor{cursor:default}
 :root[data-theme="dark"] .overlay{background:rgba(0,0,0,.55)}
 
 ::highlight(tc-pvar){color:var(--accent);background-color:var(--accent-light)}
+
+/* Перегляд зображень: стрілки, підпис, завантаження */
+.lightbox .lb-fig{margin:0;display:flex;flex-direction:column;align-items:center;gap:10px;max-width:94vw}
+.lightbox .lb-fig img{cursor:default}
+.lightbox .lb-cap{color:#e8ebf7;font:14px/1.5 'Commissioner',system-ui,sans-serif;text-align:center;max-width:70ch;cursor:default}
+.lightbox .lb-cap:empty{display:none}
+.lightbox .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;cursor:pointer;display:grid;place-items:center}
+.lightbox .lb-nav:hover{background:rgba(255,255,255,.26)}
+.lightbox .lb-prev{left:18px}.lightbox .lb-next{right:18px}
+.lightbox.single .lb-nav{display:none}
+.lightbox .lb-bar{position:absolute;left:0;right:0;bottom:16px;display:flex;justify-content:center;align-items:center;gap:14px;color:#e8ebf7;font:600 13px 'Commissioner',sans-serif;pointer-events:none}
+.lightbox .lb-dl{pointer-events:auto;display:inline-flex;gap:7px;align-items:center;height:32px;padding:0 14px;border-radius:9px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;font:inherit;cursor:pointer}
+.lightbox .lb-dl:hover{background:rgba(255,255,255,.22)}
+.lightbox .lb-dl svg,.lightbox .lb-nav svg{width:18px;height:18px}
+.field-hint{margin:6px 0 0;font-size:12.5px;color:var(--muted)}

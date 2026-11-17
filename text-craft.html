@@ -300,6 +300,19 @@
   </div>
 </div>
 
+<div class="overlay" id="altModal">
+  <div class="modal" role="dialog" aria-labelledby="altModalTitle">
+    <div class="modal-head"><h3 id="altModalTitle">Опис зображення</h3><button class="tb" data-close><span data-icon="close"></span></button></div>
+    <label class="field-label" for="altText">Що зображено</label>
+    <input type="text" class="inp" id="altText" placeholder="Коротко: що на малюнку" autocomplete="off" maxlength="300">
+    <p class="field-hint">Цей текст прочитає екранний диктор, він показується, якщо картинка не завантажилась, і допомагає пошуку.</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" data-close>Скасувати</button>
+      <button class="btn btn-primary" id="altOk">Зберегти</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="confirmModal">
   <div class="modal" role="alertdialog">
     <div class="modal-head"><h3 id="confirmTitle">Підтвердження</h3></div>
@@ -363,7 +376,7 @@
   </div>
 </div>
 
-<div class="lightbox" id="lightbox"><img alt=""></div>
+<div class="lightbox" id="lightbox"><button class="lb-nav lb-prev" aria-label="Попереднє зображення"><span data-icon="chevL"></span></button><figure class="lb-fig"><img alt=""><figcaption class="lb-cap"></figcaption></figure><button class="lb-nav lb-next" aria-label="Наступне зображення"><span data-icon="chevR"></span></button><div class="lb-bar"><span class="lb-count"></span><button class="lb-dl" aria-label="Завантажити зображення"><span data-icon="download"></span> Завантажити</button></div></div>
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
 <div id="tip"></div>
 <input type="file" id="imgInput" accept="image/*" multiple hidden>
