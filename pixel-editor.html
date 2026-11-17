@@ -3451,6 +3451,10 @@
   }
   if(window.ResizeObserver){ const ro = new ResizeObserver(layoutOptbar); ro.observe(optbarEl); const l = document.querySelector('#view-editor .topbar-left'); if(l) ro.observe(l); const r = document.querySelector('#view-editor .topbar-actions'); if(r) ro.observe(r); }
   window.addEventListener('resize', layoutOptbar);
+  // доступні назви для полів без видимого підпису
+  Object.entries({ 'sprite-name': 'Назва спрайту', 'hex-input': 'Колір у форматі hex', 'color-input': 'Вибрати довільний колір', 'layer-op-range': 'Прозорість шару', 'onion-b': 'Кальки назад, кадрів', 'onion-a': 'Кальки вперед, кадрів', 'onion-op': 'Яскравість кальки', 'fdur': 'Тривалість кадру, мс', 'ref-op': 'Прозорість еталона', 'palette-select': 'Палітра', 'tile-toggle': 'Плитка 3×3', 'grid-toggle': 'Сітка', 'major-toggle': 'Лінії кожні 8 пікселів', 'all-frames-toggle': 'Для всіх кадрів' })
+    .forEach(([id, t]) => { const e = $(id); if(e && !e.getAttribute('aria-label') && !(e.labels && e.labels.length && e.labels[0].textContent.trim())) e.setAttribute('aria-label', t); });
+  $('pixel-canvas').setAttribute('role', 'img'); $('pixel-canvas').setAttribute('aria-label', 'Полотно спрайта');
   // ---------- Вкладки правої панелі ----------
   const TAB_ICONS = { color: I.tabColor, layers: I.tabLayers, anim: I.tabAnim, canvas: I.tabCanvas }, TAB_KEY = 'edvault-sprite-tab';
   const tabBtns = [...document.querySelectorAll('#rp-tabs [data-tab]')];
