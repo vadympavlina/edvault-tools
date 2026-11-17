@@ -26,6 +26,7 @@ function exportClone() {
     if (!img.hasAttribute('alt')) img.setAttribute('alt', '');
   });
   $$('[data-empty]', c).forEach(el => el.removeAttribute('data-empty'));
+  $$('figure.tc-files', c).forEach(b => { b.removeAttribute('contenteditable'); b.removeAttribute('class'); b.className = 'tc-files'; b.innerHTML = filesMarkup(b, 'export'); b.removeAttribute('data-files'); });
   $$('.tc-toggle', c).forEach(b => {
     const d = document.createElement('details');
     d.className = 'tc-block tc-toggle';
@@ -158,6 +159,8 @@ pre.tc-code .tc-copy:hover{background:rgba(255,255,255,.18);color:#fff}
 .x-lightbox .lb-bar{position:absolute;left:0;right:0;bottom:16px;display:flex;justify-content:center;align-items:center;gap:14px;color:#e8ebf7;font:600 13px 'Commissioner',sans-serif;pointer-events:none}
 .x-lightbox .lb-dl{pointer-events:auto;height:32px;padding:0 14px;border-radius:9px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;font:inherit;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
 .x-lightbox .lb-dl:hover{background:rgba(255,255,255,.22)}
+.tc-content figure.tc-files{margin:1.4em 0}
+.tc-content figure.tc-files .tf-th img{cursor:default}
 .x-progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:50}
 .x-top{position:fixed;right:24px;bottom:24px;width:42px;height:42px;border-radius:50%;border:1px solid var(--border2);background:var(--surface);color:var(--text2);box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .15s,transform .15s}
 .x-top.show{opacity:1;pointer-events:auto;transform:none}
@@ -194,14 +197,51 @@ const EXPORT_JS = `
       ca.closest('.tc-chatmenu').remove();return}
     var b=e.target.closest&&e.target.closest('.tc-copy');
     if(b){var blk=b.parentNode;copy(promptText(blk),function(ok){b.classList.add('done');b.textContent=ok?'Скопійовано':'Виділіть і Ctrl+C';setTimeout(function(){b.classList.remove('done');b.textContent='Копіювати'},1600)});return}
+    var tdl=e.target.closest&&e.target.closest('.tf-dl');
+    if(tdl){var fb=blobOf(tdl.getAttribute('data-id'));if(fb)saveBlob(fb,fdata()[tdl.getAttribute('data-id')].n);return}
+    var tall=e.target.closest&&e.target.closest('.tf-all');if(tall){sequential(tall.closest('figure.tc-files'));return}
+    var tzip=e.target.closest&&e.target.closest('.tf-zip');if(tzip){zipAll(tzip.closest('figure.tc-files'));return}
+    if(e.target.closest&&e.target.closest('.tf-stop')){seqStop=true;return}
     var lbEl=document.getElementById('xLightbox');
     if(e.target.closest&&e.target.closest('.lb-prev')){lbStep(-1);return}
     if(e.target.closest&&e.target.closest('.lb-next')){lbStep(1);return}
     if(e.target.closest&&e.target.closest('.lb-dl'))return;
-    var img=e.target.closest&&e.target.closest('.tc-content figure img');
-    if(img){lbList=[].slice.call(document.querySelectorAll('.tc-content figure img'));lbI=lbList.indexOf(img);lbShow();lbEl.classList.add('open');return}
+    var img=e.target.closest&&e.target.closest('.tc-content figure.tc-figure img');
+    if(img){lbList=[].slice.call(document.querySelectorAll('.tc-content figure.tc-figure img'));lbI=lbList.indexOf(img);lbShow();lbEl.classList.add('open');return}
     if(e.target.closest&&e.target.closest('#xLightbox')&&!(e.target.tagName==='IMG'||e.target.closest('.lb-cap')))lbEl.classList.remove('open');
   });
+  var FILES=null;
+  function fdata(){if(FILES)return FILES;var el=document.getElementById('xFiles');try{FILES=el?JSON.parse(el.textContent):{}}catch(x){FILES={}}return FILES}
+  function toU8(b64){var bin=atob(b64),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u}
+  function blobOf(id){var f=fdata()[id];return f?new Blob([toU8(f.d)],{type:f.t||'application/octet-stream'}):null}
+  function saveBlob(blob,name){var u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},5000)}
+  // мініатюри зображень зі списку файлів
+  [].forEach.call(document.querySelectorAll('img[data-th]'),function(im){var f=fdata()[im.getAttribute('data-th')];if(f)im.src='data:'+(f.t||'image/png')+';base64,'+f.d});
+  var crcT=null;
+  function crc32(u){if(!crcT){crcT=[];for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;crcT[n]=c>>>0}}var c2=0xFFFFFFFF;for(var i=0;i<u.length;i++)c2=crcT[(c2^u[i])&255]^(c2>>>8);return(c2^0xFFFFFFFF)>>>0}
+  function zipStore(files){var enc=new TextEncoder(),parts=[],cd=[],off=0,d=new Date();
+    var time=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1),date=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+    function u16(v){return[v&255,(v>>8)&255]}function u32(v){return[v&255,(v>>8)&255,(v>>16)&255,(v>>>24)&255]}
+    files.forEach(function(f){var nm=enc.encode(f.name),crc=crc32(f.u8),sz=f.u8.length;
+      var lh=new Uint8Array([0x50,0x4b,3,4].concat(u16(20),u16(0x0800),u16(0),u16(time),u16(date),u32(crc),u32(sz),u32(sz),u16(nm.length),u16(0)));
+      parts.push(lh,nm,f.u8);
+      cd.push(new Uint8Array([0x50,0x4b,1,2].concat(u16(20),u16(20),u16(0x0800),u16(0),u16(time),u16(date),u32(crc),u32(sz),u32(sz),u16(nm.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(off))),nm);
+      off+=lh.length+nm.length+sz});
+    var cdSize=0;cd.forEach(function(p){cdSize+=p.length});
+    var end=new Uint8Array([0x50,0x4b,5,6].concat(u16(0),u16(0),u16(files.length),u16(files.length),u32(cdSize),u32(off),u16(0)));
+    return new Blob(parts.concat(cd,[end]),{type:'application/zip'})}
+  function blockItems(blk){return[].map.call(blk.querySelectorAll('.tf-item'),function(it){var id=it.getAttribute('data-id'),f=fdata()[id];return f?{id:id,name:f.n}:null}).filter(Boolean)}
+  var seqStop=false;
+  function sequential(blk){var items=blockItems(blk),pr=blk.querySelector('.tf-prog'),bar=pr.querySelector('i'),tx=pr.querySelector('.tf-ptxt'),i=0;
+    if(!items.length)return;seqStop=false;pr.hidden=false;blk.querySelector('.tf-all').disabled=true;
+    function done(msg){tx.textContent=msg;blk.querySelector('.tf-all').disabled=false;pr.querySelector('.tf-stop').hidden=true;setTimeout(function(){pr.hidden=true;pr.querySelector('.tf-stop').hidden=false},3500)}
+    function next(){if(seqStop){done('Зупинено: завантажено '+i+' з '+items.length);return}
+      if(i>=items.length){bar.style.width='100%';done('Готово: усі файли завантажено ('+items.length+')');return}
+      var it=items[i],b=blobOf(it.id);tx.textContent='Завантажуємо '+(i+1)+' з '+items.length+': '+it.name;if(b)saveBlob(b,it.name);i++;bar.style.width=Math.round(i/items.length*100)+'%';setTimeout(next,900)}
+    next()}
+  function uniq(list){var seen={};return list.map(function(f){var n=f.name,k=0,dot=f.name.lastIndexOf('.'),base=dot>0?f.name.slice(0,dot):f.name,ext=dot>0?f.name.slice(dot):'';while(seen[n.toLowerCase()]){k++;n=base+' ('+(k+1)+')'+ext}seen[n.toLowerCase()]=1;return{name:n,u8:f.u8}})}
+  function zipAll(blk){var items=blockItems(blk);if(!items.length)return;var list=uniq(items.map(function(it){return{name:it.name,u8:toU8(fdata()[it.id].d)}}));
+    var t=blk.querySelector('.tf-title'),name=((t&&t.textContent.trim())||'файли').replace(/[/:*?"<>|]+/g,'_').split(String.fromCharCode(92)).join('_').slice(0,60);saveBlob(zipStore(list),name+'.zip')}
   var lbList=[],lbI=0;
   function lbShow(){var lb=document.getElementById('xLightbox'),im=lbList[lbI];if(!im)return;var fg=im.closest('figure'),cp=fg&&fg.querySelector('figcaption');
     lb.querySelector('img').src=im.src;lb.querySelector('img').alt=im.alt||'';lb.querySelector('.lb-cap').textContent=cp?cp.textContent.trim():'';
@@ -231,6 +271,15 @@ async function cssText(id) {
   try { const t = Array.from(l.sheet.cssRules).map(r => r.cssText).join('\n'); if (t) return t; } catch (e) { /* правила недоступні (file://) */ }
   try { return await (await fetch(l.href)).text(); } catch (e) { return ''; }
 }
+// файли з блоків → JSON для вбудовування в сторінку (base64 без префікса, щоб не дублювати)
+function exportFilesJson(c) {
+  const out = {};
+  $$('figure.tc-files', editor).forEach(b => filesOf(b).forEach(it => {
+    const f = Files.get(it.id);
+    if (f) out[f.id] = { n: f.name, t: f.type, d: f.data.slice(f.data.indexOf(',') + 1) };
+  }));
+  return out;
+}
 async function exportHtml() {
   const title = docLabel();
   const [tokensCss, contentCss] = await Promise.all([cssText('tcTokens'), cssText('tcContentCss')]);
@@ -250,6 +299,7 @@ async function exportHtml() {
     '<div class="x-progress" id="xProgress"></div>\n<div class="x-layout">' + toc + '<main class="x-main"><div class="x-wrap"><article class="x-page">' +
     (h.enabled ? headerMarkup(h, headerTitle(h)) : '') + '\n' + content.outerHTML + '\n</article><div class="x-foot">Створено в TextCraft · Edvault</div></div></main></div>\n' +
     '<button class="x-top" id="xTop" aria-label="Догори"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>\n' +
+    (Object.keys(exportFilesJson()).length ? '<script type="application/json" id="xFiles">' + JSON.stringify(exportFilesJson()).replace(/</g, '\\u003c') + '<\/script>\n' : '') +
     '<div class="x-lightbox" id="xLightbox"><button class="lb-nav lb-prev" aria-label="Попереднє">‹</button><figure><img alt=""><figcaption class="lb-cap"></figcaption></figure><button class="lb-nav lb-next" aria-label="Наступне">›</button><div class="lb-bar"><span class="lb-count"></span><a class="lb-dl" download>Завантажити</a></div></div>\n<script>' + EXPORT_JS + '<\/script>\n</body>\n</html>\n';
   downloadFile(fileName() + '.html', html, 'text/html;charset=utf-8');
 }

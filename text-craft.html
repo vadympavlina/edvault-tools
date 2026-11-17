@@ -146,6 +146,7 @@
       <div class="rg-body">
         <button class="rb-big" data-cmd="image" data-tip="Зображення (або Ctrl+V / перетягніть файл)"><span data-icon="image"></span><span>Малюнок</span></button>
         <button class="rb-big" data-act="table" data-tip="Таблиця"><span data-icon="table"></span><span>Таблиця</span></button>
+        <button class="rb-big" data-cmd="files" data-tip="Файли для завантаження: зображення, документи, архів"><span data-icon="download"></span><span>Файли</span></button>
         <button class="rb-big" data-cmd="link" data-tip="Посилання" data-kbd="Ctrl+K"><span data-icon="link"></span><span>Посилання</span></button>
       </div>
       <div class="rg-cap">Об’єкти</div>
@@ -303,9 +304,9 @@
 <div class="overlay" id="altModal">
   <div class="modal" role="dialog" aria-labelledby="altModalTitle">
     <div class="modal-head"><h3 id="altModalTitle">Опис зображення</h3><button class="tb" data-close><span data-icon="close"></span></button></div>
-    <label class="field-label" for="altText">Що зображено</label>
+    <label class="field-label" for="altText" id="altLabel">Що зображено</label>
     <input type="text" class="inp" id="altText" placeholder="Коротко: що на малюнку" autocomplete="off" maxlength="300">
-    <p class="field-hint">Цей текст прочитає екранний диктор, він показується, якщо картинка не завантажилась, і допомагає пошуку.</p>
+    <p class="field-hint" id="altHint">Цей текст прочитає екранний диктор, він показується, якщо картинка не завантажилась, і допомагає пошуку.</p>
     <div class="modal-actions">
       <button class="btn btn-outline" data-close>Скасувати</button>
       <button class="btn btn-primary" id="altOk">Зберегти</button>
@@ -380,6 +381,7 @@
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
 <div id="tip"></div>
 <input type="file" id="imgInput" accept="image/*" multiple hidden>
+<input type="file" id="filesInput" multiple hidden>
 <input type="file" id="importInput" accept=".html,.htm,.md,.markdown,.txt,text/html,text/markdown,text/plain" hidden>
 <input type="file" id="logoInput" accept="image/*" hidden>
 <script src="textcraft/js/00-core.js"></script>
@@ -390,6 +392,7 @@
 <script src="textcraft/js/45-highlight.js"></script>
 <script src="textcraft/js/50-tables.js"></script>
 <script src="textcraft/js/60-ui.js"></script>
+<script src="textcraft/js/65-files.js"></script>
 <script src="textcraft/js/70-docs.js"></script>
 <script src="textcraft/js/72-header.js"></script>
 <script src="textcraft/js/75-tabs.js"></script>

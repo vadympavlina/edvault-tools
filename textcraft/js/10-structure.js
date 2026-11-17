@@ -143,6 +143,10 @@ function normalize() {
     changed = true;
   });
   $$('figure', editor).forEach(fig => {
+    if (fig.classList.contains('tc-files')) { // блок файлів: окремий вид, без зображення й підпису
+      if (fig.parentNode !== editor && !isTcBlock(fig.parentNode)) { const top = topLevelOf(fig); if (top && top !== fig) { top.after(fig); changed = true; } }
+      return;
+    }
     const img = fig.querySelector('img');
     if (!img) { fig.remove(); changed = true; return; }
     if (!fig.classList.contains('tc-figure')) fig.classList.add('tc-figure');
@@ -224,6 +228,7 @@ function normalize() {
   const last = editor.lastElementChild;
   if (last && isAtomic(last)) { editor.appendChild(emptyP()); changed = true; }
 
+  renderAllFiles(editor);
   if (changed && saved) restoreSelNodes(saved, map);
   return changed;
 }

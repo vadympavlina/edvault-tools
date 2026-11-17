@@ -80,6 +80,7 @@ const BLOCK_ITEMS = [
   { id: 'codeblock', label: 'Блок коду', icon: 'codeblock', cls: 'c-code', kw: 'code код програма' },
   { id: 'table', label: 'Таблиця', sub: '3 × 3', icon: 'table', kw: 'table таблиця' },
   { id: 'image', label: 'Зображення', icon: 'image', kw: 'image img картинка зображення фото' },
+  { id: 'files', label: 'Файли для завантаження', sub: 'Список файлів і архів, які можна завантажити зі сторінки', icon: 'download', kw: 'files file файли файл завантаження архів zip download вкладення' },
   { id: 'hr', label: 'Розділювач', icon: 'hr', kw: 'hr divider розділювач лінія' },
   { id: 'header', label: 'Шапка документа', sub: 'Кольоровий заголовок на початку', icon: 'banner', kw: 'шапка банер обкладинка header title заголовок документа' },
 ];
@@ -92,6 +93,7 @@ function applyItem(id) {
   if (id === 'toggle') return doInsertNewBlock('toggle');
   if (id === 'codeblock') return doInsertNewBlock('code');
   if (id === 'table') return doInsertTable(3, 3);
+  if (id === 'files') return doInsertFilesBlock();
   if (id === 'hr') return doInsertHr();
   if (id === 'header') return openHeaderModal();
 }
@@ -314,6 +316,7 @@ const CMD = {
   code: toggleInlineCode,
   clear: clearFormatting,
   link: openLinkModal,
+  files: () => doInsertFilesBlock(),
   fontUp: () => changeFontSize(1),
   fontDown: () => changeFontSize(-1),
   p: () => blockTextCmd(() => doSetBlockTag('p')),
@@ -579,6 +582,12 @@ const UI = {
     this.selectedFigure = fig;
     focusEditor();
     window.getSelection().removeAllRanges();
+    if (fig.classList.contains('tc-files')) { // блок файлів: своя панель, без маркера розміру
+      $('#imgBar').innerHTML = filesBarHtml(fig);
+      ['#selBar', '#linkBar', '#blockBar'].forEach(s => $(s).classList.remove('show'));
+      this.positionFigure();
+      return;
+    }
     const w = parseInt(fig.style.getPropertyValue('--w'), 10) || 0;
     const al = fig.dataset.align || 'center';
     const wrap = fig.dataset.wrap || '';
@@ -603,6 +612,7 @@ const UI = {
   },
   deselectFigure() {
     if (!this.selectedFigure) return;
+    if (this.selectedFigure.classList) this.selectedFigure.classList.remove('sel');
     this.selectedFigure = null;
     $('#imgBar').classList.remove('show');
     $('#figOutline').classList.remove('show');
@@ -612,9 +622,15 @@ const UI = {
     const fig = this.selectedFigure;
     if (!fig) return;
     if (!fig.isConnected) { this.deselectFigure(); return; }
-    const img = fig.querySelector('img');
+    const files = fig.classList.contains('tc-files');
+    const img = files ? fig : fig.querySelector('img');
     const r = img.getBoundingClientRect();
     if (!visibleInArea(r)) { $('#imgBar').classList.remove('show'); $('#figOutline').classList.remove('show'); $('#figHandle').classList.remove('show'); return; }
+    if (files) {
+      const o = $('#figOutline');
+      o.style.left = (r.left - 3) + 'px'; o.style.top = (r.top - 3) + 'px'; o.style.width = (r.width + 6) + 'px'; o.style.height = (r.height + 6) + 'px'; o.classList.add('show');
+      $('#figHandle').classList.remove('show'); placeBar($('#imgBar'), r, {}); return;
+    }
     const o = $('#figOutline');
     o.style.left = (r.left - 3) + 'px'; o.style.top = (r.top - 3) + 'px'; o.style.width = (r.width + 6) + 'px'; o.style.height = (r.height + 6) + 'px';
     o.classList.add('show');
@@ -648,7 +664,7 @@ const UI = {
       if (prev) placeCaretInBlock(prev, 'end'); else mutate(() => { const p = emptyP(); f.before(p); caretStart(p); });
       return true;
     }
-    if (mod && (e.code === 'KeyC' || e.code === 'KeyX')) {
+    if (mod && (e.code === 'KeyC' || e.code === 'KeyX') && !f.classList.contains('tc-files')) {
       e.preventDefault();
       const img = f.querySelector('img');
       const a = img.dataset.asset && Assets.get(img.dataset.asset);
@@ -775,6 +791,7 @@ $('#imgBar').addEventListener('click', e => {
   const fig = UI.selectedFigure;
   if (!b || !fig) return;
   const v = b.dataset.b;
+  if (fig.classList.contains('tc-files')) { filesBarAction(fig, v); return; }
   if (v === 'delete') { UI.deleteSelectedFigure(); return; }
   if (v === 'view') { openLightbox(fig.querySelector('img')); return; }
   if (v === 'alt') { openAltModal(fig); return; }
@@ -842,7 +859,7 @@ $('#imgBar').addEventListener('click', e => {
 // Перегляд: усі зображення документа по черзі (стрілки, Esc, завантаження)
 const LB = { list: [], i: 0 };
 function openLightbox(target) {
-  const imgs = $$('figure.tc-figure img', editor);
+  const imgs = $$('figure.tc-figure img', editor);  // блок файлів не є tc-figure
   LB.list = imgs.map(im => ({ src: im.src, alt: im.alt || '', cap: (im.closest('figure').querySelector('figcaption') || {}).textContent || '' }));
   LB.i = Math.max(0, imgs.indexOf(typeof target === 'string' ? imgs.find(im => im.src === target) : target));
   if (!LB.list.length) LB.list = [{ src: typeof target === 'string' ? target : target.src, alt: '', cap: '' }];
@@ -875,8 +892,8 @@ document.addEventListener('keydown', e => {
 // Галерея: ряд сусідніх зображень стає сіткою з однаковими клітинками
 function figureRun(fig) {
   const run = [fig];
-  for (let p = fig.previousElementSibling; p && p.tagName === 'FIGURE'; p = p.previousElementSibling) run.unshift(p);
-  for (let n = fig.nextElementSibling; n && n.tagName === 'FIGURE'; n = n.nextElementSibling) run.push(n);
+  for (let p = fig.previousElementSibling; p && p.tagName === 'FIGURE' && !p.classList.contains('tc-files'); p = p.previousElementSibling) run.unshift(p);
+  for (let n = fig.nextElementSibling; n && n.tagName === 'FIGURE' && !n.classList.contains('tc-files'); n = n.nextElementSibling) run.push(n);
   return run;
 }
 function setGallery(fig, v) {
@@ -891,21 +908,11 @@ function setGallery(fig, v) {
 }
 // Опис зображення (alt)
 function openAltModal(fig) {
-  altCtx = fig;
-  $('#altText').value = fig.querySelector('img').getAttribute('alt') || '';
-  Modal.open('altModal');
-  setTimeout(() => { const i = $('#altText'); i.focus(); i.select(); }, 40);
+  openTextModal({ title: 'Опис зображення', label: 'Що зображено', value: fig.querySelector('img').getAttribute('alt') || '', placeholder: 'Коротко: що на малюнку',
+    hint: 'Цей текст прочитає екранний диктор, він показується, якщо картинка не завантажилась, і допомагає пошуку.',
+    onOk: val => { if (!fig.isConnected) return; mutate(() => fig.querySelector('img').setAttribute('alt', val)); toast('Опис збережено', 'ok'); } });
 }
-let altCtx = null;
-function confirmAlt() {
-  const fig = altCtx; altCtx = null;
-  Modal.close('altModal');
-  if (!fig || !fig.isConnected) return;
-  mutate(() => fig.querySelector('img').setAttribute('alt', $('#altText').value.trim()));
-  toast('Опис збережено', 'ok');
-}
-$('#altOk').addEventListener('click', confirmAlt);
-$('#altText').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); confirmAlt(); } });
+
 
 // Наведення на блок — показ його панелі
 let hoverTimer = null;

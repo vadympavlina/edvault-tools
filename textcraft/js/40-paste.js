@@ -726,6 +726,10 @@ function blockMd(el, opts) {
     rows.splice(1, 0, '|' + ' --- |'.repeat(cols));
     return rows.join('\n');
   }
+  if (t === 'FIGURE' && el.classList.contains('tc-files')) {
+    const names = filesOf(el).map(x => x.n);
+    return names.length ? '*[Файли для завантаження: ' + names.join(', ') + ']*' : null;
+  }
   if (t === 'FIGURE') {
     const img = el.querySelector('img');
     const cap = (el.querySelector('figcaption') || {}).textContent || '';

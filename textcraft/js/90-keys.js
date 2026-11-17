@@ -113,6 +113,14 @@ document.addEventListener('keydown', e => {
 
 /* ═══════════════════════════ МИША / DRAG & DROP ═══════════════════════════ */
 editor.addEventListener('mousedown', e => {
+  const fb = e.target.closest && e.target.closest('figure.tc-files');
+  if (fb && editor.contains(fb)) { // блок файлів: виділяємо, кнопки всередині працюють самі
+    if (e.target.closest('[data-fa]')) return;
+    e.preventDefault();
+    UI.selectFigure(fb);
+    if (e.button === 0) startFigureDrag(e, fb);
+    return;
+  }
   const img = e.target.closest && e.target.closest('img');
   if (img && editor.contains(img)) {
     e.preventDefault();

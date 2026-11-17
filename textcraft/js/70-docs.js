@@ -251,6 +251,7 @@ function docLabel() {
 function serializeForStore(root) {
   const clone = root.cloneNode(true);
   $$('img[data-asset]', clone).forEach(i => i.setAttribute('src', ''));
+  $$('figure.tc-files', clone).forEach(b => { b.innerHTML = ''; b.removeAttribute('class'); b.className = 'tc-files'; b.removeAttribute('contenteditable'); }); // розмітка відновлюється з даних
   return clone.innerHTML;
 }
 function buildRecord() {
@@ -261,6 +262,7 @@ function buildRecord() {
     label: docLabel(),
     html: serializeForStore(editor),
     assets: Assets.collect(editor),
+    files: Files.collect(editor),
     header: state.header,
     createdAt: state.createdAt || Date.now(),
     updatedAt: Date.now(),
@@ -302,7 +304,7 @@ async function createDoc(opts) {
   const now = Date.now();
   const rec = {
     id: uid('d'), v: 3, title: opts.title || '', label: opts.label || opts.title || 'Без назви',
-    html: opts.html || DEFAULT_HTML, assets: opts.assets || {},
+    html: opts.html || DEFAULT_HTML, assets: opts.assets || {}, files: opts.files || {},
     header: opts.header || defaultHeader(), createdAt: now, updatedAt: now, words: opts.words || 0,
   };
   await Store.put(rec);
@@ -311,9 +313,12 @@ async function createDoc(opts) {
 function loadDoc(rec) {
   UI.hideTransient();
   Assets.clear();
+  Files.clear();
   const assets = rec.assets || {};
   Object.keys(assets).forEach(id => Assets.add(assets[id], id));
+  Files.restore(rec.files);
   editor.innerHTML = rec.html || DEFAULT_HTML;
+  renderAllFiles(editor);
   $$('img[data-asset]', editor).forEach(img => {
     const a = Assets.get(img.dataset.asset);
     if (a) img.src = a.url; else { const f = img.closest('figure'); (f || img).remove(); }
@@ -451,6 +456,7 @@ async function docFromNodes(nodes, title, header) {
     label: title || (tmp.textContent || '').trim().slice(0, 80) || 'Без назви',
     html: serializeForStore(tmp),
     assets: Assets.collect(tmp),
+    files: Files.collect(tmp),
     header: header || defaultHeader(),
     words: countWords(tmp.textContent || ''),
   });
