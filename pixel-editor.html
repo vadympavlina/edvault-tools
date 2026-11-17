@@ -403,6 +403,11 @@
   .set-row input[type=range] { flex: 1; accent-color: var(--accent); min-width: 0; }
   .sheet-prev { margin-top: 10px; display: flex; justify-content: center; background: repeating-conic-gradient(#e9ebef 0 25%, #f7f8fa 0 50%) 0 0 / 12px 12px; border-radius: 10px; padding: 8px; }
   .sheet-prev canvas { max-width: 100%; max-height: 260px; image-rendering: pixelated; }
+  /* доступність: помітний фокус з клавіатури, достатній контраст підписів, повага до «зменшити рухи» */
+  :where(button, [role=button], [tabindex], select, input, summary):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .frame-num, .frame-dur { background: rgba(0,0,0,.74) !important; }
+  .frame-thumb:focus-visible, .layer-row:focus-visible, .preview-box:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; scroll-behavior: auto !important; } }
   .ramp-row { display: flex; gap: 3px; margin-top: 8px; }
   .ramp-row button { flex: 1; height: 20px; border-radius: 5px; border: 1px solid rgba(0,0,0,.12); cursor: pointer; padding: 0; }
   .ramp-row button.mid { outline: 2px solid var(--accent); outline-offset: 1px; }
@@ -698,7 +703,7 @@
         <span class="hide-sm">Спрайти</span>
       </button>
       <input type="text" id="sprite-name" class="name-input" placeholder="Назва спрайту" maxlength="60">
-      <span class="save-status" id="save-status"></span>
+      <span class="save-status" id="save-status" role="status" aria-live="polite"></span>
     </div>
     <div class="topbar-actions">
       <button class="view-btn" id="undo-btn" title="Скасувати (Ctrl+Z)"></button>
@@ -746,7 +751,6 @@
           <label class="color-big" title="Вибрати будь-який колір"><span class="fill" id="color-fill"></span><input type="color" id="color-input"></label>
           <div class="color-meta">
             <input class="hex-input" id="hex-input" maxlength="7" spellcheck="false">
-            <div class="recent-row" id="recent-row" title="Останні кольори"></div>
           </div>
         </div>
           <div class="preview-box" id="preview-box" title="Перегляд анімації. Клацни, щоб зупинити або запустити"><canvas id="preview-canvas"></canvas></div>
@@ -773,6 +777,10 @@
           <div>
         <div class="panel-label">Кольори спрайту</div>
         <div class="palette-grid" id="used-grid"></div>
+          </div>
+          <div id="recent-box" hidden>
+            <div class="panel-label">Нещодавні</div>
+            <div class="palette-grid" id="recent-row"></div>
           </div>
         </div>
         <div class="rp-tab" data-tab="layers" role="tabpanel" hidden>
@@ -843,7 +851,7 @@
 <input type="file" id="pal-file" accept=".hex,.gpl,.pal,.txt,text/plain" hidden>
 <input type="file" id="ref-file" accept="image/*" hidden>
 <div class="modal-overlay hidden" id="modal"><div class="modal"></div></div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script>
 (() => {
@@ -1089,13 +1097,31 @@
   }
   const modalEl = $('modal'), modalBox = modalEl.querySelector('.modal');
   let modalOnClose = null;
+  let modalReturnFocus = null;
   function openModal(html, cls = ''){
-    modalBox.className = 'modal ' + cls; modalBox.innerHTML = html; modalEl.classList.remove('hidden'); return modalBox;
+    modalReturnFocus = document.activeElement && document.activeElement !== document.body ? document.activeElement : modalReturnFocus;
+    modalBox.className = 'modal ' + cls; modalBox.innerHTML = html; modalEl.classList.remove('hidden');
+    modalBox.setAttribute('role', 'dialog'); modalBox.setAttribute('aria-modal', 'true');
+    const h = modalBox.querySelector('.modal-title'); if(h){ h.id = 'modal-title'; modalBox.setAttribute('aria-labelledby', 'modal-title'); } else modalBox.removeAttribute('aria-labelledby');
+    // фокус на перше поле, а якщо його немає — на головну кнопку
+    setTimeout(() => { if(!isModalOpen() || modalBox.contains(document.activeElement)) return; const t = modalBox.querySelector('input:not([type=hidden]), textarea, select') || modalBox.querySelector('[data-ok]') || modalBox.querySelector('button'); if(t) t.focus({ preventScroll: true }); }, 0);
+    return modalBox;
   }
+  // Tab не виходить за межі модалки
+  modalEl.addEventListener('keydown', e => {
+    if(e.key !== 'Tab') return;
+    const f = [...modalBox.querySelectorAll('button, input, select, textarea, [tabindex]:not([tabindex="-1"])')].filter(x => !x.disabled && x.offsetParent);
+    if(!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if(e.shiftKey && (document.activeElement === first || !modalBox.contains(document.activeElement))){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  });
   function closeModal(){
     if(modalEl.classList.contains('hidden')) return;
     modalEl.classList.add('hidden'); modalBox.innerHTML = '';
     const f = modalOnClose; modalOnClose = null; if(f) f();
+    if(modalReturnFocus && document.contains(modalReturnFocus)) try{ modalReturnFocus.focus({ preventScroll: true }); }catch(e){}
+    modalReturnFocus = null;
   }
   const isModalOpen = () => !modalEl.classList.contains('hidden');
   modalEl.addEventListener('mousedown', e => { if(e.target === modalEl) closeModal(); });
@@ -2157,6 +2183,16 @@
       const row = document.createElement('div');
       row.className = 'layer-row' + (i === curLayer ? ' active' : '') + (L.visible ? '' : ' hidden-l') + (L.locked ? ' locked-l' : '');
       row.dataset.i = i;
+      row.tabIndex = 0; row.setAttribute('role', 'button');
+      row.setAttribute('aria-pressed', i === curLayer ? 'true' : 'false');
+      row.setAttribute('aria-label', `${L.name}${L.visible ? '' : ', сховано'}${L.locked ? ', заблоковано' : ''}${L.opacity < 1 ? ', прозорість ' + Math.round(L.opacity * 100) + '%' : ''}`);
+      row.onkeydown = e => {
+        if(e.target !== row) return;
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); if(i !== curLayer){ commitFloat(); sel = null; curLayer = i; renderLayers(); updateOptbar(); render(); const nr = layerList.querySelector(`.layer-row[data-i="${i}"]`); if(nr) nr.focus(); } }
+        else if(e.key === 'F2'){ e.preventDefault(); renameLayer(i); }
+        else if(e.key === 'ContextMenu' || (e.shiftKey && e.key === 'F10')){ e.preventDefault(); if(i !== curLayer){ curLayer = i; renderLayers(); } layerMenu(layerList.querySelector(`.layer-row[data-i="${i}"]`) || row); }
+        else if(e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); const n = layerList.querySelector(`.layer-row[data-i="${i + (e.key === 'ArrowDown' ? -1 : 1)}"]`); if(n) n.focus(); }
+      };
       row.innerHTML = `<button class="l-eye ${L.visible ? 'on' : ''}" title="${L.visible ? 'Сховати шар' : 'Показати шар'}" aria-label="${L.visible ? 'Сховати шар' : 'Показати шар'}">${svg(L.visible ? I.eye : I.eyeOff)}</button>
         <span class="l-th"></span><span class="l-name" title="Двічі клацни, щоб перейменувати">${escapeHtml(L.name)}</span>${L.opacity < 1 ? `<span class="l-op">${Math.round(L.opacity * 100)}%</span>` : ''}<button class="l-lock ${L.locked ? 'on' : ''}" title="${L.locked ? 'Розблокувати шар' : 'Заблокувати шар від змін'}" aria-label="${L.locked ? 'Розблокувати шар' : 'Заблокувати шар'}">${svg(L.locked ? I.lock : I.unlock)}</button>`;
       row.querySelector('.l-th').appendChild(thumbCanvas(L.cels[cur]));
@@ -2271,6 +2307,9 @@
       t.title = `Кадр ${i + 1}`;
       t.appendChild(thumbCanvas(f));
       t.onclick = () => switchFrame(i);
+      t.tabIndex = 0; t.setAttribute('role', 'button'); t.setAttribute('aria-pressed', i === cur ? 'true' : 'false');
+      t.setAttribute('aria-label', `Кадр ${i + 1} з ${frames.length}` + (durs[i] > 0 ? `, ${durs[i]} мс` : ''));
+      t.onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); switchFrame(i); setTimeout(() => { const nt = framesList.querySelectorAll('.frame-thumb')[i]; if(nt) nt.focus(); }, 0); } };
       item.appendChild(t);
       const num = document.createElement('span'); num.className = 'frame-num'; num.textContent = i + 1; item.appendChild(num);
       const acts = document.createElement('div'); acts.className = 'frame-actions';
@@ -2426,7 +2465,14 @@
     drawPreview();
   }
   tick();
-  $('preview-box').onclick = () => { previewPlaying = !previewPlaying; toast(previewPlaying ? 'Перегляд анімації увімкнено' : 'Перегляд на паузі'); };
+  const pvBox = $('preview-box');
+  pvBox.tabIndex = 0; pvBox.setAttribute('role', 'button');
+  function pvLabel(){ pvBox.setAttribute('aria-label', previewPlaying ? 'Перегляд анімації: грає. Натисни, щоб зупинити' : 'Перегляд анімації: на паузі. Натисни, щоб запустити'); pvBox.setAttribute('aria-pressed', previewPlaying ? 'true' : 'false'); }
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) previewPlaying = false;  // за запитом «зменшити рухи» перегляд стартує на паузі
+  pvLabel();
+  const togglePreview = () => { previewPlaying = !previewPlaying; pvLabel(); toast(previewPlaying ? 'Перегляд анімації увімкнено' : 'Перегляд на паузі'); };
+  pvBox.onclick = togglePreview;
+  pvBox.onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); togglePreview(); } };
   function updateFps(){ $('fps-value').textContent = fps + ' кадр/с'; }
   $('fps-up').onclick = () => { fps = Math.min(60, fps + 1); updateFps(); updateAnimUi(); markDirty(); };
   $('fps-down').onclick = () => { fps = Math.max(1, fps - 1); updateFps(); updateAnimUi(); markDirty(); };
@@ -2565,10 +2611,8 @@
   }
   function renderRecent(){
     const row = $('recent-row'); row.innerHTML = '';
-    recent.forEach(c => {
-      const b = document.createElement('button'); b.style.background = c; b.title = c.toUpperCase();
-      b.onclick = () => setColor(c); row.appendChild(b);
-    });
+    recent.forEach(c => row.appendChild(swatchBtn(c)));
+    $('recent-box').hidden = recent.length < 2;
   }
   $('color-input').addEventListener('input', e => setColor(e.target.value));
   $('hex-input').addEventListener('input', e => { const c = normHex(e.target.value); if(c) setColor(c); });
@@ -2585,7 +2629,7 @@
   $('ref-btn').onclick = () => $('ref-file').click();
   $('ref-file').onchange = async () => {
     const f = $('ref-file').files[0]; $('ref-file').value = ''; if(!f) return;
-    try{ refImg = await loadImageFile(f); refShow = true; $('ref-show').checked = true; updateRefUi(); render(); toast('Еталон додано. Він видимий лише в редакторі'); }catch(e){ toast('Не вдалося відкрити картинку'); }
+    try{ refImg = await loadImageFile(f); refShow = true; $('ref-show').checked = true; updateRefUi(); render(); toast('Еталон додано. Він видимий лише в редакторі'); }catch(e){ toast('Не вдалося відкрити картинку. Підходять PNG, JPG, GIF і WebP'); }
   };
   $('ref-show').onchange = e => { refShow = e.target.checked; render(); };
   $('ref-op').oninput = e => { refOpacity = (+e.target.value) / 100; $('ref-op-val').textContent = Math.round(refOpacity * 100) + '%'; render(); };
@@ -2599,7 +2643,7 @@
   let importedPalettes = [];
   try{ importedPalettes = (JSON.parse(localStorage.getItem(PAL_KEY) || '[]') || []).filter(p => p && p.id && Array.isArray(p.colors)); }catch(e){}
   importedPalettes.forEach(p => { PALETTES[p.id] = { name: p.name, colors: p.colors, imported: true }; });
-  function savePalettes(){ try{ localStorage.setItem(PAL_KEY, JSON.stringify(importedPalettes)); }catch(e){ toast('Не вдалося зберегти палітру: немає місця'); } }
+  function savePalettes(){ try{ localStorage.setItem(PAL_KEY, JSON.stringify(importedPalettes)); }catch(e){ toast('Палітру не збережено: у браузері немає місця. Видали зайві спрайти'); } }
   // .hex (RRGGBB в рядок), .gpl (GIMP), JASC .pal, або будь-який текст із кодами #RRGGBB
   function parsePalette(text){
     const out = [], seen = new Set();
@@ -2692,7 +2736,7 @@
   }
   function saveCustom(){ try{ localStorage.setItem('edvault-sprite-colors', JSON.stringify(customColors)); }catch(e){} }
   function replaceColor(from, to, all){
-    if(from === to){ toast('Спершу вибери інший поточний колір'); return; }
+    if(from === to){ toast('Поточний колір уже такий самий. Вибери інший колір, на який замінити'); return; }
     commitFloat();
     beginChange(true);
     let n = 0;
@@ -2732,7 +2776,7 @@
     if(!SEL_TOOLS.includes(id)) { commitFloat(); sel = null; }
     lassoDraft = null; gradDraft = null;
     tool = id;
-    toolbar.querySelectorAll('[data-tool]').forEach(b => b.classList.toggle('active', b.dataset.tool === id));
+    toolbar.querySelectorAll('[data-tool]').forEach(b => { const on = b.dataset.tool === id; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
     updateOptbar(); render();
   }
 
@@ -3043,11 +3087,11 @@
         else if(kind === 'gif') download(new Blob([gifData()], { type:'image/gif' }), `${nm}${suffix}.gif`);
         else {
           try{ await navigator.clipboard.writeText(codeSnippet()); ok.textContent = 'Скопійовано'; }
-          catch(e){ toast('Не вдалося скопіювати автоматично'); }
+          catch(e){ toast('Не вдалося скопіювати автоматично. Виділи код і натисни Ctrl+C'); }
           return;
         }
         toast('Файл збережено');
-      }catch(e){ ok.disabled = false; ok.textContent = 'Завантажити'; toast('Не вдалося створити файл: ' + (e && e.message || 'помилка')); }
+      }catch(e){ ok.disabled = false; ok.textContent = 'Завантажити'; toast('Не вдалося створити файл. Спробуй менше збільшення або менше кадрів'); }
     };
     draw();
   }
@@ -3233,7 +3277,7 @@
   function duplicateSprite(s){
     const list = loadSprites();
     list.push({ ...JSON.parse(JSON.stringify(s)), id: newId(), name: s.name + ' (копія)', created: Date.now(), updated: Date.now() });
-    try{ saveSprites(list); }catch(e){ toast('Не вистачає місця в браузері'); return; }
+    try{ saveSprites(list); }catch(e){ toast('У браузері немає місця для копії. Видали зайві спрайти й спробуй ще раз'); return; }
     renderCatalog(); toast('Копію створено');
   }
   async function deleteSprite(s){
@@ -3343,7 +3387,7 @@
       const list = loadSprites();
       recs.forEach(rec => { decodeSprite(rec); rec.id = newId(); rec.name = uniqueName(String(rec.name || 'Спрайт').slice(0, 60)); rec.updated = Date.now(); list.push(rec); });
       saveSprites(list); renderCatalog(); toast(recs.length > 1 ? `Відновлено спрайтів: ${recs.length}` : 'Спрайт відновлено з файлу');
-    }catch(e){ toast('Не вдалося прочитати файл копії спрайту'); }
+    }catch(e){ toast('Не вдалося прочитати файл. Потрібна копія спрайту (.json), збережена в цьому редакторі'); }
   }
   function backupAll(){
     const list = loadSprites(); if(!list.length){ toast('Ще немає спрайтів для копії'); return; }
