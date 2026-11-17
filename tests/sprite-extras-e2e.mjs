@@ -111,6 +111,24 @@ await step('копія всіх спрайтів: файл завантажує�
   await page.evaluate(async txt => { await window.__spriteEditor.importBackup(new File([txt], 'all.json', { type: 'application/json' })); }, JSON.stringify(data));
   await page.waitForTimeout(200); assert.equal(await page.locator('.tool-card').count(), before * 2);
 });
+await step('старі й пошкоджені записи відкриваються без помилок', async () => {
+  await page.evaluate(() => {
+    const L = JSON.parse(localStorage.getItem('edvault-sprites') || '[]');
+    L.push({ id: 'old1', name: 'Старий', width: 4, height: 4, pixels: ['#ff0000', ...Array(15).fill(null)] });
+    L.push({ id: 'old2', name: 'Дивний', width: 4, height: 4, v: 2, palette: ['#00ff00'], frames: ['1000000000000000', '0100'], fps: 'abc', anim: { durs: ['x', -5, 99999], tags: [{ from: 9, to: -3, dir: '??', name: 5 }, null, { from: 1, to: 0 }], dir: 'zzz' } });
+    L.push({ id: 'old3', name: 'Шари', width: 4, height: 4, v: 3, palette: ['#0000ff'], layers: [{ name: 'a', frames: ['1000000000000000'] }, { name: 'b', frames: [null, 5] }, null], active: 99 });
+    localStorage.setItem('edvault-sprites', JSON.stringify(L));
+  });
+  await page.reload(); await page.waitForTimeout(500);
+  for (const nm of ['Старий', 'Дивний', 'Шари']) {
+    await page.locator('.tool-card', { hasText: nm }).first().click(); await page.waitForTimeout(400);
+    const st = await S(); assert.ok(st.W === 4 && st.n >= 1, nm);
+    const a = await page.evaluate(() => window.__spriteEditor.anim);
+    assert.ok(a.durs.every(v => v === 0 || (v >= 10 && v <= 10000)), nm + ' тривалості: ' + a.durs);
+    assert.ok(a.tags.every(t => t.from >= 0 && t.to >= t.from && t.to < st.n), nm + ' теги');
+    await page.click('#back-btn'); await page.waitForTimeout(250);
+  }
+});
 assert.deepEqual(errors, [], 'помилки консолі: ' + errors.join('; '));
 await browser.close(); server.close();
 console.log('готово');

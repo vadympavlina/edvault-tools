@@ -1166,7 +1166,7 @@
   function normAnim(a, n){
     a = a || {};
     const d = Array.from({ length: n }, (_, i) => { const v = +(a.durs && a.durs[i]); return v > 0 ? clamp(Math.round(v), 10, 10000) : 0; });
-    const t = (Array.isArray(a.tags) ? a.tags : []).map(x => ({ id: String(x.id || newId()), name: String(x.name || 'Тег').slice(0, 24), from: clamp(+x.from | 0, 0, n - 1), to: clamp(+x.to | 0, 0, n - 1), dir: DIRS[x.dir] ? x.dir : 'fwd' }))
+    const t = (Array.isArray(a.tags) ? a.tags : []).filter(x => x && typeof x === 'object').map(x => ({ id: String(x.id || newId()), name: String(x.name || 'Тег').slice(0, 24), from: clamp(+x.from | 0, 0, n - 1), to: clamp(+x.to | 0, 0, n - 1), dir: DIRS[x.dir] ? x.dir : 'fwd' }))
       .map(x => x.to < x.from ? { ...x, from: x.to, to: x.from } : x).slice(0, 12);
     return { durs: d, tags: t, dir: DIRS[a.dir] ? a.dir : 'fwd' };
   }
@@ -1176,17 +1176,18 @@
     if(!d.some(v => v > 0) && !tags.length && playDir === 'fwd') return null;
     return { durs: d.some(v => v > 0) ? d : undefined, tags: tags.length ? tags.map(t => ({ ...t })) : undefined, dir: playDir === 'fwd' ? undefined : playDir };
   }
-  function decodeSprite(s){ const d = decodeSpriteBase(s); d.anim = normAnim(s.anim, d.frames.length); return d; }
+  function decodeSprite(s){ const d = decodeSpriteBase(s); d.fps = clamp(Math.round(+d.fps) || 8, 1, 60); d.anim = normAnim(s.anim, d.frames.length); return d; }
   function decodeSpriteBase(s){
     let w = s.width || s.gridSize || 16, h = s.height || s.gridSize || 16;
     let fr;
     const dec = strs => strs.map(str => {
+      str = typeof str === 'string' ? str : '';
       const a = new Array(w * h).fill(null);
       for(let i = 0; i < a.length && i < str.length; i++){ const k = str.charCodeAt(i) - 49; if(k >= 0) a[i] = s.palette[k] || null; }
       return a;
     });
-    if(s.v === 3 && Array.isArray(s.layers) && s.layers.length){
-      const ls = s.layers.map(L => ({ id: newId(), name: String(L.name || 'Шар').slice(0, 40), visible: L.visible !== false, locked: !!L.locked, opacity: clamp(+L.opacity || 1, 0, 1), cels: dec(L.frames || []) }));
+    if(s.v === 3 && Array.isArray(s.layers) && s.layers.some(L => L && typeof L === 'object')){
+      const ls = s.layers.filter(L => L && typeof L === 'object').map(L => ({ id: newId(), name: String(L.name || 'Шар').slice(0, 40), visible: L.visible !== false, locked: !!L.locked, opacity: clamp(+L.opacity || 1, 0, 1), cels: dec(L.frames || []) }));
       const nf = Math.max(1, ...ls.map(L => L.cels.length));
       ls.forEach(L => { while(L.cels.length < nf) L.cels.push(new Array(w * h).fill(null)); });
       return { w, h, layers: ls, frames: ls[0].cels.map((_, i) => composeCels(ls, i, w, h)), fps: s.fps || 8, active: clamp(+s.active || 0, 0, ls.length - 1) };
